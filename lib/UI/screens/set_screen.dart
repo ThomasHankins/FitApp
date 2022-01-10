@@ -1,5 +1,4 @@
 import 'package:fit_app/UI/components/rounded_button.dart';
-import 'package:fit_app/UI/screens/workout_screen.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutSelect extends StatefulWidget {
@@ -41,9 +40,7 @@ class _WorkoutSelectState extends State<WorkoutSelect> {
                   child: RoundedButton(
                     text: "Custom Workout",
                     colour: Colors.blue,
-                    onPressed: () {
-                      Navigator.pushNamed(context, WorkoutScreen.id);
-                    },
+                    onPressed: null,
                   ),
                 ),
               ],

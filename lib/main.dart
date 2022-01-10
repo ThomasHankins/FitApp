@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // import 'workout-tracker/Exercise.dart';
 import 'UI/screens/welcome_screen.dart';
+import 'UI/screens/workout_screen.dart';
 import 'UI/screens/workout_select.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class FitApp extends StatelessWidget {
       routes: {
         WelcomeScreen.id: (context) => WelcomeScreen(),
         WorkoutSelect.id: (context) => WorkoutSelect(),
+        WorkoutScreen.id: (context) => WorkoutScreen(),
       },
     );
   }

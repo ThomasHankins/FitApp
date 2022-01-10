@@ -1,31 +1,36 @@
-class Exercise { //only a list of sets
+class Exercise {
+  //only a list of sets
   String name;
   List<ExerciseSet> sets;
 
   Exercise(this.name, this.sets);
 
-  factory Exercise.makeFromProgression(Map<String, dynamic> progressionJSON, int week) {
-    Map<String,dynamic> currentWeek = progressionJSON["exercises"][week];
+  factory Exercise.makeFromProgression(
+      Map<String, dynamic> progressionJSON, int week) {
+    Map<String, dynamic> currentWeek = progressionJSON["exercises"][week];
 
     List<ExerciseSet> tempSet = [];
-    for(int i = 0; i < currentWeek["sets"]; i ++){
-      tempSet.add(ExerciseSet(progressionJSON["start weight"] + currentWeek["weightChange"], currentWeek["reps"], true, ""));
+    for (int i = 0; i < currentWeek["sets"]; i++) {
+      tempSet.add(ExerciseSet(
+          progressionJSON["start weight"] + currentWeek["weightChange"],
+          currentWeek["reps"],
+          true,
+          ""));
     }
 
     return Exercise(progressionJSON["name"], tempSet);
-
   }
 
   factory Exercise.makeFromHistoric(Map<String, dynamic> historicJSON) {
     List<ExerciseSet> tempSet = [];
 
-    for(Map<String, dynamic> set in historicJSON["sets"]){
-      tempSet.add(ExerciseSet(set["weight"], set["reps"], set["max set"], set["note"]));
+    for (Map<String, dynamic> set in historicJSON["sets"]) {
+      tempSet.add(
+          ExerciseSet(set["weight"], set["reps"], set["max set"], set["note"]));
     }
 
     return Exercise(historicJSON["name"], tempSet);
   }
-
 }
 
 class ExerciseDescription {
@@ -81,13 +86,11 @@ class ExerciseSet {
     return _note;
   }
 
-  void completeSet(){
+  void completeSet() {
     _complete = true;
   }
 
-  bool isComplete(){
+  bool isComplete() {
     return _complete;
   }
-
-
 }
