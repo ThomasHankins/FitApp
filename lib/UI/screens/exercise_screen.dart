@@ -2,24 +2,23 @@ import 'package:fit_app/UI/components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../workout-tracker/exercise.dart';
-import '../../workout-tracker/workout.dart';
-import '../components/exercise_widget.dart';
+import '../components/set_widget.dart';
 
-class WorkoutScreen extends StatefulWidget {
-  static String id = 'workout_screen';
+class ExerciseScreen extends StatefulWidget {
+  final Exercise thisExercise;
+
+  ExerciseScreen({required this.thisExercise});
 
   @override
-  _WorkoutScreenState createState() => _WorkoutScreenState();
+  _ExerciseScreenState createState() => _ExerciseScreenState();
 }
 
-class _WorkoutScreenState extends State<WorkoutScreen> {
+class _ExerciseScreenState extends State<ExerciseScreen> {
   @override
   void initState() {
     super.initState();
   }
 
-  Workout currentWorkout = Workout.fromEmpty();
-  late Exercise currentExercise = currentWorkout.exercises.first;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,17 +31,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               ListView.builder(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                itemCount: currentWorkout.exercises.length,
+                itemCount: widget.thisExercise.sets.length,
                 itemBuilder: (context, i) {
                   return DismissibleWidget(
-                    item: currentWorkout.exercises[i],
+                    item: widget.thisExercise.sets[i],
                     onDismissed: (DismissDirection) {
                       setState(() {
-                        currentWorkout.exercises.removeAt(i);
+                        widget.thisExercise.sets.removeAt(i);
                       });
                     },
-                    child: ExerciseWidget(
-                        thisExercise: currentWorkout.exercises[i]),
+                    child: SetWidget(thisSet: widget.thisExercise.sets[i]),
                   );
                 },
               ),
@@ -56,15 +54,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     child: MaterialButton(
                       onPressed: () {
                         setState(() {
-                          //will obviously need to update this to be able to select exercise
-                          currentWorkout.exercises.add(
-                            Exercise("Test Exercise", []),
+                          widget.thisExercise.sets.add(
+                            ExerciseSet(10, 10, false, ""),
                           );
                         });
                       },
                       minWidth: 50.0,
                       child: Text(
-                        "Add Exercise",
+                        "Add Set",
                       ),
                       height: 42.0,
                     ),
@@ -77,7 +74,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       onPressed: null,
                       minWidth: 50.0,
                       child: Text(
-                        "Log Workout",
+                        "Log Exercise",
                       ),
                       height: 42.0,
                     ),
