@@ -38,11 +38,6 @@ class ExerciseDescription {
   String description;
 
   ExerciseDescription(this.name, this.description);
-
-  factory ExerciseDescription.fromJSON(Map<String, dynamic> descriptionJSON) {
-    return ExerciseDescription(
-        descriptionJSON['name'], descriptionJSON['description']);
-  }
 }
 
 class ExerciseSet {

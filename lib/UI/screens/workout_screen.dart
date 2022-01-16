@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../workout-tracker/exercise.dart';
 import '../../workout-tracker/workout.dart';
 import '../components/exercise_widget.dart';
+import 'search_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
   static String id = 'workout_screen';
@@ -55,12 +56,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     elevation: 5.0,
                     child: MaterialButton(
                       onPressed: () {
-                        setState(() {
-                          //will obviously need to update this to be able to select exercise
-                          currentWorkout.exercises.add(
-                            Exercise("Test Exercise", []),
-                          );
-                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ExerciseSearch(
+                              currentExercises: currentWorkout.exercises,
+                              notifyParent: () {
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        );
                       },
                       minWidth: 50.0,
                       child: Text(

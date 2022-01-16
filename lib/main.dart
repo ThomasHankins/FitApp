@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// import 'workout-tracker/Exercise.dart';
 import 'UI/screens/welcome_screen.dart';
 import 'UI/screens/workout_screen.dart';
 import 'UI/screens/workout_select.dart';
