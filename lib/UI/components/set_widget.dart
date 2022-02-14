@@ -56,6 +56,14 @@ class SetWidget extends StatelessWidget {
               },
             ),
           ),
+          Text("Is Done "),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 50,
+              minWidth: 50,
+            ),
+            child: Text(thisSet.isComplete().toString())
+          ),
         ],
       ),
     );

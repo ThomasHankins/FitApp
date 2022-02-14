@@ -1,4 +1,5 @@
 import 'package:fit_app/UI/components/rounded_button.dart';
+import 'package:fit_app/UI/screens/workout_history.dart';
 import 'package:flutter/material.dart';
 
 import 'workout_select.dart';
@@ -36,6 +37,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     },
                   ),
                 )
+              ],
+            ), Row(
+              children: [
+                Expanded(
+                  child: RoundedButton(
+                    text: "Saved Workouts",
+                    colour: Colors.blue,
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WorkoutHistoryScreen(), //can change to workout history screen later
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ],

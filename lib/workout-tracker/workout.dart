@@ -1,6 +1,6 @@
 import 'dart:convert' show json;
 import 'dart:io' show File;
-
+import 'HistoryManager.dart';
 import 'package:intl/intl.dart';
 
 import 'exercise.dart';
@@ -41,13 +41,25 @@ class Workout {
         plan, workoutPlans);
   }
 
+  factory Workout.fromJSON(Map<String, dynamic> jsonString){
+    List<Exercise> exercisesList = [];
+    for(Map<String, dynamic> i in jsonString["exercises"]){
+      exercisesList.add(Exercise.makeFromHistoric(i));
+    }
+
+    return Workout(jsonString["name"], exercisesList, null, null);
+  }
+
+
   factory Workout.fromEmpty() {
     DateFormat formater = DateFormat.yMMMMd('en_us');
     return Workout(
         formater.format(DateTime.now()) + " Workout", [], null, null);
   }
 
-  void endWorkout(File historyFile) {
+  Future<void> endWorkout() async {
+
+
     if (plans != null) {
       List<dynamic> planJSON = json.decode(plans!.readAsStringSync());
 
@@ -73,7 +85,8 @@ class Workout {
     }
 
     //save the plan to history
-    List<dynamic> historyJSON = json.decode(historyFile.readAsStringSync());
+    HistoryManager history = HistoryManager();
+    List<dynamic> historyJSON = json.decode(await history.readHistory());
 
     List<dynamic> exercisesJSON = [];
 
@@ -102,6 +115,6 @@ class Workout {
     };
     historyJSON.add(thisWorkout);
 
-    historyFile.writeAsStringSync(json.encode(historyJSON));
+    history.writeHistory(json.encode(historyJSON));
   }
 }

@@ -19,6 +19,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     super.initState();
   }
 
+  int currentSetIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +38,20 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     item: widget.thisExercise.sets[i],
                     onDismissed: (DismissDirection) {
                       setState(() {
-                        widget.thisExercise.sets.removeAt(i);
+                        if(currentSetIndex > i){
+                          currentSetIndex -= 1;
+                          widget.thisExercise.sets.removeAt(i);
+                        } else if (currentSetIndex == i){
+                          if(currentSetIndex != widget.thisExercise.sets.length){
+                            widget.thisExercise.sets.removeAt(i);
+                          } else{
+                            currentSetIndex -= 1;
+                            widget.thisExercise.sets.removeAt(i);
+                            Navigator.pop(context);
+                          }
+                        } else {
+                          widget.thisExercise.sets.removeAt(i);
+                        }
                       });
                     },
                     child: SetWidget(thisSet: widget.thisExercise.sets[i]),
@@ -71,7 +85,21 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     borderRadius: BorderRadius.circular(30.0),
                     elevation: 5.0,
                     child: MaterialButton(
-                      onPressed: null,
+                      onPressed: (){
+                        setState(() {
+                          //mark "finished set"
+                          if(widget.thisExercise.sets.isNotEmpty){
+                            widget.thisExercise.sets[currentSetIndex].completeSet();
+                            if(currentSetIndex < widget.thisExercise.sets.length -1){
+                              currentSetIndex++;
+                            }
+                            else{
+                              Navigator.pop(context);
+                            }
+                          }
+
+                        });
+                      },
                       minWidth: 50.0,
                       child: Text(
                         "Log Exercise",
@@ -80,7 +108,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     ),
                   ),
                 ],
-              )
+              ),
+              Text("Current Index :" + currentSetIndex.toString())
             ],
           ),
         ),

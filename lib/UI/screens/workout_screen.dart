@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import '../../workout-tracker/exercise.dart';
 import '../../workout-tracker/workout.dart';
 import '../components/exercise_widget.dart';
+
 import 'search_screen.dart';
+import 'welcome_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
   static String id = 'workout_screen';
@@ -19,8 +21,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     super.initState();
   }
 
-  Workout currentWorkout = Workout.fromEmpty();
-  late Exercise currentExercise = currentWorkout.exercises.first;
+  Workout thisWorkout = Workout.fromEmpty();
+  late Exercise currentExercise = thisWorkout.exercises.first;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,17 +35,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               ListView.builder(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                itemCount: currentWorkout.exercises.length,
+                itemCount: thisWorkout.exercises.length,
                 itemBuilder: (context, i) {
                   return DismissibleWidget(
-                    item: currentWorkout.exercises[i],
+                    item: thisWorkout.exercises[i],
                     onDismissed: (DismissDirection) {
                       setState(() {
-                        currentWorkout.exercises.removeAt(i);
+                        thisWorkout.exercises.removeAt(i);
                       });
                     },
                     child: ExerciseWidget(
-                        thisExercise: currentWorkout.exercises[i]),
+                        thisExercise: thisWorkout.exercises[i]),
                   );
                 },
               ),
@@ -60,7 +62,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ExerciseSearch(
-                              currentExercises: currentWorkout.exercises,
+                              currentExercises: thisWorkout.exercises,
                               notifyParent: () {
                                 setState(() {});
                               },
@@ -80,7 +82,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     borderRadius: BorderRadius.circular(30.0),
                     elevation: 5.0,
                     child: MaterialButton(
-                      onPressed: null,
+                      onPressed: (){
+                        thisWorkout.endWorkout();
+                        //end workout
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WelcomeScreen(), //can change to workout history screen later
+                          ),
+                        );
+                      },
                       minWidth: 50.0,
                       child: Text(
                         "Log Workout",
