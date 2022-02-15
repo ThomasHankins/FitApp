@@ -31,22 +31,42 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
       ;
     });
   }
-
+  List<bool> selectedExercises = [];
+  List<Exercise> exercisesToAdd = [];
   @override
   void initState() {
-    //should have debugging on call so we know if file got opened
     super.initState();
     if (exerciseList.isEmpty) {
       loadExerciseDescription();
     }
-  }
+    selectedExercises = List.generate(exerciseList.length, (i) => false);
+    exercisesToAdd = [];
 
+
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.blueGrey[900],
       child: SafeArea(
         child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Choose Exercises to Add"), //TODO: will replace with search later
+          //TODO: finish customizing app bar
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            label: const Text("Add"),
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              setState(() {
+                widget.currentExercises.addAll(exercisesToAdd);
+                widget.notifyParent();
+                Navigator.pop(context);
+              });
+            },
+
+          ),
+          //TODO Add floating action button
           backgroundColor: Colors.blueGrey[900],
           body: Column(
             children: [
@@ -54,22 +74,32 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemCount: exerciseList.length,
+                itemExtent: 50,
                 itemBuilder: (context, i) {
-                  return ListTile(
-                    title: Text(exerciseList[i].name),
-                    onTap:
-                        null, //in the future I would like this to open up a description page
-                    onLongPress: () {
-                      setState(() {
-                        widget.currentExercises.add(
-                          Exercise(
-                            exerciseList[i].name,
-                            [],
-                          ),
-                        );
-                        widget.notifyParent();
-                      });
-                    },
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: .2),
+                    child: ListTile(
+                      textColor: Colors.white,
+                      title: Text(exerciseList[i].name),
+                      tileColor: selectedExercises[i] ?  Colors.blueGrey[800] : Colors.blueGrey[900],
+                      onTap: () {
+                        setState(() {
+                          selectedExercises[i] = !selectedExercises[i];
+                        });
+                        if(selectedExercises[i]){
+                          exercisesToAdd.add(
+                            Exercise(
+                              exerciseList[i].name,
+                              [],
+                            ),);
+                        } else {
+                          exercisesToAdd.removeWhere((exercise) => exercise.name == exerciseList[i].name );
+                        }
+                      },
+                      onLongPress: () {
+                        //TODO Open Description Page
+                      },
+                    ),
                   );
                 },
               ),

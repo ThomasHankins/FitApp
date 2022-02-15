@@ -1,16 +1,16 @@
 [
     {
-        "name" : "squat",
+        "name" : "Squat",
         "description" : "brief description here",
         "1 rm" : 100
     },
     {
-        "name" : "bench press",
+        "name" : "Bench press",
         "description" : "brief description here",
         "1 rm" : 100
     },
     {
-        "name" : "dead lift",
+        "name" : "Dead-Lift",
         "description" : "brief description here",
         "1 rm" : 100
     }
