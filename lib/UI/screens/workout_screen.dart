@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 import '../../workout-tracker/exercise.dart';
 import '../../workout-tracker/workout.dart';
 import '../components/exercise_widget.dart';
-
+import 'dashboard.dart';
 import 'search_screen.dart';
-import 'welcome_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
-  static String id = 'workout_screen';
-
   @override
   _WorkoutScreenState createState() => _WorkoutScreenState();
 }
@@ -25,84 +22,86 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   late Exercise currentExercise = thisWorkout.exercises.first;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blueGrey[900],
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.blueGrey[900],
-          body: Column(
-            children: [
-              ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: thisWorkout.exercises.length,
-                itemBuilder: (context, i) {
-                  return DismissibleWidget(
-                    item: thisWorkout.exercises[i],
-                    onDismissed: (DismissDirection) {
-                      setState(() {
-                        thisWorkout.exercises.removeAt(i);
-                      });
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            ReorderableListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: thisWorkout.exercises.length,
+              itemBuilder: (context, i) {
+                return DismissibleWidget(
+                  item: thisWorkout.exercises[i],
+                  key: Key('$i'),
+                  onDismissed: (dismissDirection) {
+                    setState(() {
+                      thisWorkout.exercises.removeAt(i);
+                    });
+                  },
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: .2),
+                      child: ExerciseWidget(
+                          thisExercise: thisWorkout.exercises[i])),
+                );
+              },
+              onReorder: (int oldIndex, int newIndex) {
+                setState(() {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  final Exercise item =
+                      thisWorkout.exercises.removeAt(oldIndex);
+                  thisWorkout.exercises.insert(newIndex, item);
+                });
+              },
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Material(
+                  borderRadius: BorderRadius.circular(30.0),
+                  elevation: 5.0,
+                  child: MaterialButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExerciseSearch(
+                            currentExercises: thisWorkout.exercises,
+                            notifyParent: () {
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      );
                     },
-                    child: ExerciseWidget(
-                        thisExercise: thisWorkout.exercises[i]),
-                  );
-                },
+                    minWidth: 50.0,
+                    child: Text(
+                      "Add Exercise",
+                    ),
+                    height: 42.0,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          label: const Text("Finish Workout"),
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            //TODO add popup confirming end of workout
+            thisWorkout.endWorkout();
+            //end workout
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Dashboard(),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30.0),
-                    elevation: 5.0,
-                    child: MaterialButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ExerciseSearch(
-                              currentExercises: thisWorkout.exercises,
-                              notifyParent: () {
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      minWidth: 50.0,
-                      child: Text(
-                        "Add Exercise",
-                      ),
-                      height: 42.0,
-                    ),
-                  ),
-                  Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30.0),
-                    elevation: 5.0,
-                    child: MaterialButton(
-                      onPressed: (){
-                        thisWorkout.endWorkout();
-                        //end workout
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WelcomeScreen(), //can change to workout history screen later
-                          ),
-                        );
-                      },
-                      minWidth: 50.0,
-                      child: Text(
-                        "Log Workout",
-                      ),
-                      height: 42.0,
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

@@ -4,13 +4,14 @@ class DismissibleWidget<T> extends StatelessWidget {
   final T item;
   final Widget child;
   final DismissDirectionCallback onDismissed;
+  final Key? key;
 
   const DismissibleWidget({
     required this.item,
     required this.child,
     required this.onDismissed,
-    Key? key,
-  }) : super(key: key);
+    required this.key,
+  });
 
   @override
   Widget build(BuildContext context) => Dismissible(
@@ -22,7 +23,7 @@ class DismissibleWidget<T> extends StatelessWidget {
       );
   Widget swipeActionRight() => Container(
         alignment: Alignment.centerRight,
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         color: Colors.red,
         child: const Icon(Icons.delete_forever, color: Colors.white, size: 32),
       );

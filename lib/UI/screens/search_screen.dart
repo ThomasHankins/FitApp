@@ -31,6 +31,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
       ;
     });
   }
+
   List<bool> selectedExercises = [];
   List<Exercise> exercisesToAdd = [];
   @override
@@ -41,9 +42,8 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
     }
     selectedExercises = List.generate(exerciseList.length, (i) => false);
     exercisesToAdd = [];
-
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -51,8 +51,9 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            title: const Text("Choose Exercises to Add"), //TODO: will replace with search later
-          //TODO: finish customizing app bar
+            title: const Text(
+                "Choose Exercises to Add"), //TODO: will replace with search later
+            //TODO: finish customizing app bar
           ),
           floatingActionButton: FloatingActionButton.extended(
             label: const Text("Add"),
@@ -64,10 +65,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                 Navigator.pop(context);
               });
             },
-
           ),
-          //TODO Add floating action button
-          backgroundColor: Colors.blueGrey[900],
           body: Column(
             children: [
               ListView.builder(
@@ -77,23 +75,26 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                 itemExtent: 50,
                 itemBuilder: (context, i) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: .2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: .2),
                     child: ListTile(
                       textColor: Colors.white,
                       title: Text(exerciseList[i].name),
-                      tileColor: selectedExercises[i] ?  Colors.blueGrey[800] : Colors.blueGrey[900],
+                      selected: selectedExercises[i],
                       onTap: () {
                         setState(() {
                           selectedExercises[i] = !selectedExercises[i];
                         });
-                        if(selectedExercises[i]){
+                        if (selectedExercises[i]) {
                           exercisesToAdd.add(
                             Exercise(
                               exerciseList[i].name,
                               [],
-                            ),);
+                            ),
+                          );
                         } else {
-                          exercisesToAdd.removeWhere((exercise) => exercise.name == exerciseList[i].name );
+                          exercisesToAdd.removeWhere((exercise) =>
+                              exercise.name == exerciseList[i].name);
                         }
                       },
                       onLongPress: () {

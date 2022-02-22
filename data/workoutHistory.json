@@ -1,42 +1,11 @@
 [
     {
         "name" : "sample workout",
-        "day" : 1,
-        "month" : 1,
-        "year" : 2021,
-        "length" : 5321,
-
+        "workout id" : 1234,
+        "date" : "01/01/2022",
         "exercises" : [
-            {
-                "name" : "sample1",
-                "sets" : [
-                    {
-                        "reps" : 10,
-                        "weight" : 100,
-                        "note" : "set 1",
-                        "max set" : false
-                    },
-                    {
-                        "reps" : 20,
-                        "weight" : 100,
-                        "note" : "set 2",
-                        "max set" : false
-                    }
-                ]
-            },
-
-            {
-                "name" : "sample2",
-                "sets" : [
-                    {
-                        "reps" : 20,
-                        "weight" : 100,
-                        "note" : "insert note here",
-                        "max set" : true
-                    }
-                ]
-            }
+            "Squat",
+            "Dead-lift"
         ]
-
     }    
 ]

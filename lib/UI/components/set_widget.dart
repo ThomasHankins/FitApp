@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SetWidget extends StatelessWidget {
-  SetWidget({required this.thisSet});
+  const SetWidget({Key? key, required this.thisSet}) : super(key: key);
   final ExerciseSet thisSet;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      selected: thisSet.isComplete(),
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text("Weight "),
+          const Text("Weight "),
           ConstrainedBox(
-            constraints: BoxConstraints(
+            constraints: const BoxConstraints(
               maxWidth: 50,
               minWidth: 50,
             ),
@@ -21,8 +23,8 @@ class SetWidget extends StatelessWidget {
               enabled: !thisSet.isComplete(),
               maxLength: 4,
               initialValue: thisSet.getWeight().toString(),
-              decoration:
-                  InputDecoration(counterText: "", border: InputBorder.none),
+              decoration: const InputDecoration(
+                  counterText: "", border: InputBorder.none),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
               ],
@@ -32,9 +34,9 @@ class SetWidget extends StatelessWidget {
               },
             ),
           ),
-          Text("Reps "),
+          const Text("Reps "),
           ConstrainedBox(
-            constraints: BoxConstraints(
+            constraints: const BoxConstraints(
               maxWidth: 50,
               minWidth: 50,
             ),
@@ -42,7 +44,7 @@ class SetWidget extends StatelessWidget {
               enabled: !thisSet.isComplete(),
               maxLength: 4,
               initialValue: thisSet.getReps().toString(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 counterText: "",
                 border: InputBorder.none,
               ),
@@ -55,14 +57,6 @@ class SetWidget extends StatelessWidget {
                 thisSet.exerciseSetReps(int.parse(changes));
               },
             ),
-          ),
-          Text("Is Done "),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 50,
-              minWidth: 50,
-            ),
-            child: Text(thisSet.isComplete().toString())
           ),
         ],
       ),

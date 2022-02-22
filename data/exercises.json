@@ -2,16 +2,44 @@
     {
         "name" : "Squat",
         "description" : "brief description here",
-        "1 rm" : 100
+        "previous efforts" : [
+            {
+                "sets": [
+                    {
+                        "weight" : 100,
+                        "reps" : 10
+                    }
+                ]
+            }
+        ]
     },
     {
         "name" : "Bench press",
         "description" : "brief description here",
-        "1 rm" : 100
+        "previous efforts" : [
+            {
+                "sets": [
+                    {
+                        "weight" : 100,
+                        "reps" : 10
+                    }
+                ]
+            }
+        ]
     },
     {
         "name" : "Dead-Lift",
         "description" : "brief description here",
-        "1 rm" : 100
+        "previous efforts" : [
+            {
+                "workout id" : 1234,
+                "sets": [
+                    {
+                        "weight" : 100,
+                        "reps" : 10
+                    }
+                ]
+            }
+        ]
     }
 ]

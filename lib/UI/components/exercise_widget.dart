@@ -1,8 +1,8 @@
-import 'package:fit_app/UI/screens/exercise_screen.dart';
+import 'package:fit_app/UI/screens/set_screen.dart';
 import 'package:fit_app/workout-tracker/exercise.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/exercise_screen.dart';
+import '../screens/set_screen.dart';
 
 class ExerciseWidget extends StatelessWidget {
   ExerciseWidget({required this.thisExercise});
@@ -11,6 +11,7 @@ class ExerciseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      selected: thisExercise.isDone,
       title: Row(
         children: [
           Text(thisExercise.name),
@@ -20,7 +21,7 @@ class ExerciseWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ExerciseScreen(
+            builder: (context) => SetScreen(
               thisExercise: thisExercise,
             ),
           ),

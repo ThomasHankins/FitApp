@@ -28,8 +28,19 @@ class Exercise {
       tempSet.add(
           ExerciseSet(set["weight"], set["reps"], set["max set"], set["note"]));
     }
-
     return Exercise(historicJSON["name"], tempSet);
+  }
+
+  bool get isDone {
+    if (sets.isEmpty) {
+      return false;
+    }
+    for (ExerciseSet set in sets) {
+      if (set._complete == false) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 

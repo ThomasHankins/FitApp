@@ -1,56 +1,11 @@
-{
+[
+    {
     "defaultProgram" : {
-        "current week" : 0,
-        "current day" : 0,
-        "workoutDays" : [
-            {
-                "name" : "Leg Day 1",
-                "exercises" : [
-                    {
-                        "name" : "Squat",
-                        "start weight" : 150,
-                        "progression" : [
-                            {
-                                "sets" : 3,
-                                "reps" : 5,
-                                "weightChange"  : 5  
-                            }
-                        ]
-                    }
-                ]
-
-            },
-            {
-
-                "name" : "Push Day 1",
-                "exercises" : [
-                    {
-                        "name" : "Bench Press",
-                        "start weight" : 150,
-                        "progression" : [
-                            {
-                                "sets" : 3,
-                                "reps" : 5,
-                                "weightChange"  : 5  
-                            }
-                        ]
-                    }
-                ]
-
-            },
-            {
-
-            },
-            {
-
-            },
-            {
-
-            },
-            {
-
-            }
-        ]
+        "current day": 0,
+        "workoutDays": [
+                "Leg Day 1",
+                "Push Day 1"
+            ]
+        }
     }
-    
-}
+]
