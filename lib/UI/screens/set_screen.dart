@@ -1,4 +1,5 @@
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../workout-tracker/exercise.dart';
@@ -29,6 +30,7 @@ class _SetScreenState extends State<SetScreen> {
           //TODO: finish customizing app bar
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListView.builder(
               scrollDirection: Axis.vertical,
@@ -61,17 +63,21 @@ class _SetScreenState extends State<SetScreen> {
                 );
               },
             ),
+            const SizedBox(
+              height: 20,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Material(
                   borderRadius: BorderRadius.circular(30.0),
+                  color: Colors.grey[850],
                   elevation: 5.0,
                   child: MaterialButton(
                     onPressed: () {
                       setState(() {
                         widget.thisExercise.sets.add(
-                          ExerciseSet(10, 10, false, ""),
+                          ExerciseSet(10, 10),
                         );
                       });
                     },

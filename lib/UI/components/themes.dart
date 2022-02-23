@@ -6,10 +6,10 @@ class AppThemes {
     return ThemeData(
       fontFamily: 'Uniform',
 
-      primaryColorDark: Colors.black54,
+      primaryColor: Colors.grey[900],
       brightness: Brightness.dark,
       scaffoldBackgroundColor: Colors.grey[900],
-      // backgroundColor: Colors.grey[800],
+      backgroundColor: Colors.grey[800],
       canvasColor: Colors.grey[900],
 
       appBarTheme: AppBarTheme(
@@ -27,9 +27,9 @@ class AppThemes {
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(),
 
-      buttonTheme: ButtonThemeData(
-        buttonColor: Colors.blueAccent,
-        shape: const RoundedRectangleBorder(),
+      buttonTheme: const ButtonThemeData(
+        buttonColor: Colors.deepOrangeAccent,
+        shape: RoundedRectangleBorder(),
         textTheme: ButtonTextTheme.accent,
       ),
 

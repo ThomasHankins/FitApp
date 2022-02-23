@@ -1,5 +1,4 @@
 import 'dart:convert' show json;
-import 'dart:io' show File;
 
 import 'package:intl/intl.dart';
 
@@ -8,113 +7,143 @@ import 'exercise.dart';
 
 class Workout {
   String name;
-  String? planName;
-  File? plans;
   List<Exercise> exercises;
   var date = DateTime.now();
   int length = 0;
 
-  Workout(this.name, this.exercises, this.planName, this.plans);
+  Workout(this.name, this.exercises);
 
-  //needs to be rewritten
-  // factory Workout.fromPlan(String plan, File workoutPlans) {
-  //   List<dynamic> workoutPlansJSON =
-  //       json.decode(workoutPlans.readAsStringSync());
-  //
-  //   Map<String, dynamic> thisPlan = workoutPlansJSON[0];
-  //
-  //   for (Map<String, dynamic> testPlan in workoutPlansJSON) {
-  //     if (testPlan["name"] == plan) {
-  //       thisPlan = testPlan;
-  //       break;
-  //     }
-  //   }
-  //
-  //   int cycleWeek = thisPlan[plan]['current week'];
-  //   int cycleDay = thisPlan[plan]['current day'];
-  //   List<Exercise> tempExercises = [];
-  //
-  //   for (Map<String, dynamic> exercise in thisPlan['workout days'][cycleDay]
-  //       ['exercises']) {
-  //     tempExercises.add(Exercise.makeFromProgression(exercise, cycleWeek));
-  //   }
-  //
-  //   return Workout(thisPlan['workout days'][cycleDay]["name"], tempExercises,
-  //       plan, workoutPlans);
-  // }
+  static Future<Workout> fromHistoric(
+      int workoutID, String workoutName, List<dynamic> exerciseNames) async {
+    //exercise files
+    List<dynamic> exercisesFile =
+        json.decode(await FileManager().readFile('exercises'));
+    //loads first instance in workout file with matching workout id
 
-  factory Workout.fromHistoricJSON(Map<String, dynamic> jsonString) {
     List<Exercise> exercisesList = [];
-    for (Map<String, dynamic> i in jsonString["exercises"]) {
-      exercisesList.add(Exercise.makeFromHistoric(i));
+
+    for (dynamic exerciseName in exerciseNames) {
+      exercisesList.add(
+        Exercise.historic(
+            exercise: exerciseName.toString(),
+            setsFile: exercisesFile
+                .firstWhere((element) =>
+                    element["name"] ==
+                    exerciseName.toString())["previous efforts"]
+                .firstWhere(
+                    (element) => element["workout id"] == workoutID)["sets"]),
+      );
     }
-    return Workout(jsonString["name"], exercisesList, null, null);
+    return Workout(workoutName, exercisesList);
   }
 
-  factory Workout.fromEmpty() {
+  static Future<Workout> fromEmpty() async {
     DateFormat formater = DateFormat.yMMMMd('en_us');
-    return Workout(
-        formater.format(DateTime.now()) + " Workout", [], null, null);
+    return Workout(formater.format(DateTime.now()) + " Workout", []);
   }
 
-  Future<void> savePlan() async {}
+  static Future<Workout> fromSaved(int planID) async {
+    Map<String, dynamic> plan = json
+        .decode(await FileManager().readFile('plans'))
+        .firstWhere((element) => element["plan id"] == planID);
+
+    List<dynamic> exercisesFile =
+        json.decode(await FileManager().readFile('exercises'));
+
+    List<Exercise> exercisesList = [];
+    for (String exerciseName in plan["exercises"]) {
+      exercisesList.add(
+        Exercise.historic(
+            exercise: exerciseName.toString(),
+            setsFile: exercisesFile
+                .firstWhere((element) => element["name"] == exerciseName)[
+                    "previous efforts"]
+                .last["sets"]),
+      );
+    }
+    return Workout(plan["name"], exercisesList);
+    //TODO Implement from saved factory
+  }
+
+  Future<void> saveWorkout(int? id) async {
+    //parse plans file
+    List<dynamic> plansJSON =
+        json.decode(await FileManager().readFile('plans'));
+
+    //save exercise names
+    List<String> exerciseNames = [];
+    for (Exercise exercise in exercises) {
+      exerciseNames.add(exercise.name);
+    }
+    //get plan id
+    int planID;
+    if (id == null) {
+      planID = plansJSON.last["plan id"] + 1;
+    } else {
+      planID = id;
+      plansJSON.removeWhere((element) => element["plan id"] == id);
+    }
+
+    //save JSON file
+    if (exerciseNames.isNotEmpty) {
+      plansJSON.add({
+        "name": name,
+        "plan id": planID,
+        "hidden": false,
+        "exercises": exerciseNames
+      });
+      FileManager().writeFile('plans', json.encode(plansJSON));
+    }
+  }
 
   Future<void> endWorkout() async {
-    if (plans != null) {
-      List<dynamic> planJSON = json.decode(plans!.readAsStringSync());
+    //save the plan to history and exercises
+    //TODO only save exercises with sets & non empty workouts
+    //parse workoutHistory JSON
+    List<dynamic> historyJSON =
+        json.decode(await FileManager().readFile('history'));
 
-      //adjust the plan length
-      Map<String, dynamic> thisPlan = planJSON[0];
-
-      for (Map<String, dynamic> testPlan in planJSON) {
-        if (testPlan["name"] == planName) {
-          thisPlan = testPlan;
-          break;
-        }
-      }
-
-      int workoutWeekLength = thisPlan["workoutDays"].length;
-
-      if (workoutWeekLength <= thisPlan["currentDay"]) {
-        thisPlan["currentDay"] = 0;
-        thisPlan["currentWeek"] += 1;
-      } else {
-        thisPlan["currentDay"] += 1;
-      }
-      plans?.writeAsStringSync(json.encode(planJSON));
-    }
-
-    //save the plan to history
-    HistoryManager history = HistoryManager();
-    List<dynamic> historyJSON = json.decode(await history.readHistory());
-
-    List<dynamic> exercisesJSON = [];
-
+    //determine workout ID and create a list of exercise names
+    int workoutID = historyJSON.last["workout id"] + 1;
+    List<String> exerciseNames = [];
     for (Exercise exercise in exercises) {
-      List<dynamic> setJSON = [];
-      for (ExerciseSet set in exercise.sets) {
-        if (set.isComplete()) {
-          setJSON.add({
-            "reps": set.getReps(),
-            "weight": set.getWeight(),
-            "note": set.getNote(),
-            "max set": set.getIsMaxExerciseSet()
-          });
-        }
-      }
-      exercisesJSON.add({"name": exercise.name, "sets": setJSON});
+      exerciseNames.add(exercise.name);
     }
-
+    //turn data into a Map
     Map<String, dynamic> thisWorkout = {
       "name": name,
-      "day": date.day,
-      "month": date.month,
-      "year": date.year,
+      "workout id": workoutID,
+      "date": "${date.day}/${date.month}/${date.year}",
       "length": length,
-      "exercises": exercisesJSON
+      "exercises": exerciseNames
     };
+
+    //add data to decoded JSON
     historyJSON.add(thisWorkout);
 
-    history.writeHistory(json.encode(historyJSON));
+    //write data to JSON
+    FileManager().writeFile('history', json.encode(historyJSON));
+
+    //decode exercise list
+    List<dynamic> exercisesJSON =
+        json.decode(await FileManager().readFile('exercises'));
+
+    for (Exercise exercise in exercises) {
+      //create a list of dynamic containing weight and reps
+      List<dynamic> sets = [];
+      for (ExerciseSet set in exercise.sets) {
+        if (set.isComplete) {
+          sets.add({"weight": set.weight, "reps": set.reps});
+        }
+      }
+      //adding sets to matching exercise
+      exercisesJSON
+          .firstWhere(
+              (element) => element["name"] == exercise.name)["previous efforts"]
+          .add(
+        {"workout id": workoutID, "sets": sets},
+      );
+    }
+    FileManager().writeFile('exercises', json.encode(exercisesJSON));
   }
 }

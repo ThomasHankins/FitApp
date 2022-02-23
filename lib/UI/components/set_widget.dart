@@ -9,7 +9,7 @@ class SetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      selected: thisSet.isComplete(),
+      selected: thisSet.isComplete,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -20,9 +20,9 @@ class SetWidget extends StatelessWidget {
               minWidth: 50,
             ),
             child: TextFormField(
-              enabled: !thisSet.isComplete(),
+              enabled: !thisSet.isComplete,
               maxLength: 4,
-              initialValue: thisSet.getWeight().toString(),
+              initialValue: thisSet.weight.toString(),
               decoration: const InputDecoration(
                   counterText: "", border: InputBorder.none),
               inputFormatters: <TextInputFormatter>[
@@ -30,7 +30,7 @@ class SetWidget extends StatelessWidget {
               ],
               keyboardType: TextInputType.number,
               onChanged: (changes) {
-                thisSet.exerciseSetWeight(int.parse(changes));
+                thisSet.selectWeight = int.parse(changes);
               },
             ),
           ),
@@ -41,9 +41,9 @@ class SetWidget extends StatelessWidget {
               minWidth: 50,
             ),
             child: TextFormField(
-              enabled: !thisSet.isComplete(),
+              enabled: !thisSet.isComplete,
               maxLength: 4,
-              initialValue: thisSet.getReps().toString(),
+              initialValue: thisSet.reps.toString(),
               decoration: const InputDecoration(
                 counterText: "",
                 border: InputBorder.none,
@@ -54,7 +54,7 @@ class SetWidget extends StatelessWidget {
               ],
               keyboardType: TextInputType.number,
               onChanged: (changes) {
-                thisSet.exerciseSetReps(int.parse(changes));
+                thisSet.selectReps = int.parse(changes);
               },
             ),
           ),

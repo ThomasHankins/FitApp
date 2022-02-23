@@ -2,8 +2,10 @@
     {
         "name" : "Squat",
         "description" : "brief description here",
+        "muscle group" : "Legs",
         "previous efforts" : [
             {
+                "workout id": 1234,
                 "sets": [
                     {
                         "weight" : 100,
@@ -16,8 +18,10 @@
     {
         "name" : "Bench press",
         "description" : "brief description here",
+        "muscle group" : "Chest",
         "previous efforts" : [
             {
+                "workout id": 1235,
                 "sets": [
                     {
                         "weight" : 100,
@@ -28,8 +32,9 @@
         ]
     },
     {
-        "name" : "Dead-Lift",
+        "name" : "Deadlift",
         "description" : "brief description here",
+        "muscle group" : "Legs",
         "previous efforts" : [
             {
                 "workout id" : 1234,

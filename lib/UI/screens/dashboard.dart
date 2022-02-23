@@ -1,5 +1,6 @@
 import 'dart:convert' show json;
 
+import 'package:fit_app/UI/screens/saved_workouts.dart';
 import 'package:fit_app/workout-tracker/FileManager.dart';
 import 'package:fit_app/workout-tracker/workout.dart';
 import 'package:flutter/material.dart';
@@ -17,54 +18,92 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List<dynamic> history = [];
+  List<dynamic> exercises = [];
   bool showHistory = false;
   @override
   void initState() {
-    loadHistory();
+    loadFiles();
     super.initState();
   }
 
-  void loadHistory() async {
-    history = json.decode(await HistoryManager().readHistory());
+  bool loaded = false;
+  Future<void> loadFiles() async {
+    history = json.decode(await FileManager().readFile('history'));
+    exercises = json.decode(await FileManager().readFile('exercises'));
+    loaded = true;
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: showHistory
-          ? Column(
-              children: [
-                ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: history.length,
-                  itemBuilder: (context, i) {
-                    return ListTile(
-                        //TODO improve widget appearance
-                        title: Text(history[i]["name"]),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HistoryDetailScreen(
-                                  thisWorkout:
-                                      Workout.fromHistoricJSON(history[i]),
+      body: loaded
+          ? (showHistory
+              ? Column(
+                  children: [
+                    ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: history.length,
+                      itemBuilder: (context, i) {
+                        return ListTile(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(history[i]["name"].toString()),
+                              IconButton(
+                                //TODO format so that button is hidden unless long press
+                                onPressed: () {
+                                  int tempID = history[i]["workout id"];
+                                  history.removeAt(i);
+                                  for (Map<String, dynamic> exercise
+                                      in exercises) {
+                                    exercise["previous efforts"].removeWhere(
+                                        (element) =>
+                                            element["workout id"] == tempID);
+                                  }
+                                  FileManager().writeFile(
+                                      'history', json.encode(history));
+                                  FileManager().writeFile(
+                                      'exercises', json.encode(exercises));
+                                  setState(() {});
+                                },
+                                icon: const Icon(
+                                  Icons.delete_forever,
+                                  color: Colors.redAccent,
                                 ),
-                              )
-                              //move to workout detail
-                              );
-                        });
-                  },
-                ),
-              ],
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[], //TODO Add dashboard content here
-              ),
+                              ),
+                            ],
+                          ),
+                          subtitle: Text(history[i]["length"]
+                              .toString()), //TODO format to look like time
+                          //TODO add formatted date to subtitle
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return HistoryDetailScreen(
+                                  thisWorkout: Workout.fromHistoric(
+                                      history[i]["workout id"],
+                                      history[i]["name"].toString(),
+                                      history[i]["exercises"]),
+                                );
+                              },
+                            ));
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                )
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[], //TODO Add dashboard content here
+                  ),
+                ))
+          : const Center(
+              child: CircularProgressIndicator(),
             ),
       bottomNavigationBar: Material(
         child: BottomAppBar(
@@ -95,11 +134,12 @@ class _DashboardState extends State<Dashboard> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: SpeedDial(
           onPress: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    WorkoutScreen(), //can change to workout history screen later
+                builder: (context) => WorkoutScreen(
+                  thisWorkout: Workout.fromEmpty(),
+                ), //TODO will change to program workout if available
               ),
             );
           },
@@ -111,11 +151,12 @@ class _DashboardState extends State<Dashboard> {
                 child: const Icon(Icons.new_label),
                 label: 'Blank Workout',
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          WorkoutScreen(), //can change to workout history screen later
+                      builder: (context) => WorkoutScreen(
+                        thisWorkout: Workout.fromEmpty(),
+                      ),
                     ),
                   );
                 }),
@@ -126,8 +167,9 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          WorkoutBuilderScreen(), //can change to workout history screen later
+                      builder: (context) => WorkoutBuilderScreen(
+                        thisWorkout: Workout.fromEmpty(),
+                      ),
                     ),
                   );
                 }),
@@ -135,7 +177,12 @@ class _DashboardState extends State<Dashboard> {
                 child: const Icon(Icons.save),
                 label: 'Saved Workouts',
                 onTap: () {
-                  //TODO ADD LINK TO SAVED WORKOUT SCREEN
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SavedWorkouts(),
+                    ),
+                  );
                 }),
           ]),
     );
