@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -21,9 +24,11 @@ class WorkoutScreen extends StatefulWidget {
 class _WorkoutScreenState extends State<WorkoutScreen> {
   late Workout thisWorkout;
   bool loaded = false;
+  int clock = 0;
 
   Future<void> loadWorkout() async {
     thisWorkout = await widget.thisWorkout;
+    thisWorkout.timer.start(); // start workout clock
     loaded = true;
     setState(() {});
   }
@@ -32,6 +37,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   void initState() {
     loadWorkout();
     super.initState();
+
+    Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      if (mounted) {
+        return setState(() {
+          clock = thisWorkout.timer.elapsed.inSeconds;
+        });
+      }
+    });
   }
 
   late Exercise currentExercise = thisWorkout.exercises.first;
@@ -40,9 +53,64 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     return loaded
         ? Scaffold(
             appBar: AppBar(
-              title: Text(thisWorkout.name),
-              automaticallyImplyLeading: false,
-              //TODO: add timer
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.redAccent,
+                ),
+                onPressed: () async {
+                  return showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text(
+                              'Are you sure you want to cancel workout?'),
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30))),
+                          actionsAlignment: MainAxisAlignment.center,
+                          actions: <Widget>[
+                            MaterialButton(
+                              child: const Text('Yes'),
+                              onPressed: () async {
+                                Navigator.pop(context, 'Yes');
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Dashboard(),
+                                  ),
+                                );
+                              },
+                            ),
+                            MaterialButton(
+                              child: const Text('Cancel'),
+                              onPressed: () async {
+                                Navigator.pop(context, 'Cancel');
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
+              ),
+              title: Row(children: [
+                SizedBox(
+                  width: 260,
+                  child: TextFormField(
+                    initialValue: thisWorkout.name,
+                    maxLength: 28,
+                    maxLines: 1,
+                    decoration: const InputDecoration(
+                        counterText: "", border: InputBorder.none),
+                    keyboardType: TextInputType.text,
+                    onChanged: (changes) {
+                      thisWorkout.name = changes;
+                    },
+                  ),
+                ),
+                Text(ClockConverter().convert(clock)),
+              ]),
             ),
             body: Column(
               children: [
@@ -66,7 +134,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               thisExercise: thisWorkout.exercises[i])),
                     );
                   },
-                  //TODO block reorder on completed workouts
+                  //TODO block reorder on completed sets
                   onReorder: (int oldIndex, int newIndex) {
                     setState(() {
                       if (oldIndex < newIndex) {
@@ -117,16 +185,43 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               label: const Text("Finish Workout"),
               icon: const Icon(Icons.logout),
               onPressed: () async {
-                //TODO add popup confirming end of workout
-                await thisWorkout.endWorkout();
-                //end workout
-                //TODO add indicator while saving before switching to next screen
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Dashboard(),
-                  ),
-                );
+                return showDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context) {
+                      thisWorkout.timer.stop();
+                      return AlertDialog(
+                          title: const Center(
+                            child: Text(
+                                'Are you sure you want to end the workout?'),
+                          ),
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30))),
+                          actionsAlignment: MainAxisAlignment.center,
+                          actions: <Widget>[
+                            MaterialButton(
+                              child: const Text('Yes'),
+                              onPressed: () async {
+                                await thisWorkout.endWorkout();
+                                Navigator.pop(context, 'Yes');
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Dashboard(),
+                                  ),
+                                );
+                              },
+                            ),
+                            MaterialButton(
+                              child: const Text('Cancel'),
+                              onPressed: () async {
+                                Navigator.pop(context, 'Cancel');
+                                thisWorkout.timer.start();
+                              },
+                            )
+                          ]);
+                    });
               },
             ),
           )

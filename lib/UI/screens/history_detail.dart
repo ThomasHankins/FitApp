@@ -8,13 +8,12 @@ Takes a Workout class and will display the information
 class HistoryDetailScreen extends StatefulWidget {
   Future<Workout> thisWorkout;
 
-  HistoryDetailScreen({required this.thisWorkout});
+  HistoryDetailScreen({Key? key, required this.thisWorkout}) : super(key: key);
 
   @override
   _HistoryDetailScreenState createState() => _HistoryDetailScreenState();
 }
 
-//TODO improve appearance
 class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   bool loaded = false;
   late Workout thisWorkout;
@@ -35,18 +34,22 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: loaded ? Text(thisWorkout.name) : null,
+        title: loaded
+            ? Row(children: [
+                Text(thisWorkout.name),
+              ])
+            : null, //TODO add length information and total volume also extend height of app bar
       ),
       body: loaded
           ? Column(
               children: [
-                //TODO add some other information about the workout at the top
                 ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: thisWorkout.exercises.length,
                   itemBuilder: (context, i) {
                     return ListTile(
+                      //TODO add ontap that opens exercise description
                       horizontalTitleGap: 0,
                       title: Text(thisWorkout.exercises[i].name),
                       subtitle: ListView.builder(

@@ -1,15 +1,16 @@
+import 'dart:async';
 import 'dart:convert' show json;
 
 import 'package:intl/intl.dart';
 
-import 'FileManager.dart';
 import 'exercise.dart';
+import 'file_manager.dart';
 
 class Workout {
   String name;
   List<Exercise> exercises;
   var date = DateTime.now();
-  int length = 0;
+  Stopwatch timer = Stopwatch();
 
   Workout(this.name, this.exercises);
 
@@ -39,7 +40,7 @@ class Workout {
 
   static Future<Workout> fromEmpty() async {
     DateFormat formater = DateFormat.yMMMMd('en_us');
-    return Workout(formater.format(DateTime.now()) + " Workout", []);
+    return Workout(formater.format(DateTime.now()) + " - Workout", []);
   }
 
   static Future<Workout> fromSaved(int planID) async {
@@ -62,7 +63,6 @@ class Workout {
       );
     }
     return Workout(plan["name"], exercisesList);
-    //TODO Implement from saved factory
   }
 
   Future<void> saveWorkout(int? id) async {
@@ -99,6 +99,7 @@ class Workout {
   Future<void> endWorkout() async {
     //save the plan to history and exercises
     //TODO only save exercises with sets & non empty workouts
+
     //parse workoutHistory JSON
     List<dynamic> historyJSON =
         json.decode(await FileManager().readFile('history'));
@@ -114,7 +115,7 @@ class Workout {
       "name": name,
       "workout id": workoutID,
       "date": "${date.day}/${date.month}/${date.year}",
-      "length": length,
+      "length": timer.elapsed.inSeconds,
       "exercises": exerciseNames
     };
 

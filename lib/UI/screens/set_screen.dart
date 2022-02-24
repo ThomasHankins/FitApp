@@ -8,7 +8,7 @@ import '../components/set_widget.dart';
 class SetScreen extends StatefulWidget {
   final Exercise thisExercise;
 
-  SetScreen({required this.thisExercise});
+  const SetScreen({Key? key, required this.thisExercise}) : super(key: key);
 
   @override
   _SetScreenState createState() => _SetScreenState();
@@ -26,8 +26,20 @@ class _SetScreenState extends State<SetScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.thisExercise.name),
-          //TODO: finish customizing app bar
+          title: Row(children: [
+            Text(widget.thisExercise.name),
+            const Spacer(),
+            IconButton(
+              icon: const Icon(
+                Icons.info,
+              ),
+              onPressed: () async {
+                setState(() {
+//TODO go to exercise description screen
+                });
+              },
+            ),
+          ]),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +94,7 @@ class _SetScreenState extends State<SetScreen> {
                       });
                     },
                     minWidth: 50.0,
-                    child: Text(
+                    child: const Text(
                       "Add Set",
                     ),
                     height: 42.0,

@@ -34,6 +34,8 @@ class ExerciseDescription {
   String name;
   String description;
   String muscleGroup;
+  bool? compound; //need to integrate later
+  bool? machine;
   ExerciseDescription(this.name, this.description, this.muscleGroup);
 }
 

@@ -1,7 +1,7 @@
 import 'dart:convert' show json;
 
 import 'package:fit_app/UI/screens/workout_builder.dart';
-import 'package:fit_app/workout-tracker/FileManager.dart';
+import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:fit_app/workout-tracker/workout.dart';
 import 'package:flutter/material.dart';
 
@@ -79,6 +79,7 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                       onTap: () {
                         Navigator.pushReplacement(context, MaterialPageRoute(
                           builder: (context) {
+                            //TODO fix infinite loading
                             return WorkoutScreen(
                               thisWorkout:
                                   Workout.fromSaved(plans[i]["plan id"]),

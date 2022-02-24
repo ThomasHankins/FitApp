@@ -25,7 +25,7 @@ class AppThemes {
         selectedColor: Colors.white,
       ),
 
-      floatingActionButtonTheme: FloatingActionButtonThemeData(),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(),
 
       buttonTheme: const ButtonThemeData(
         buttonColor: Colors.deepOrangeAccent,

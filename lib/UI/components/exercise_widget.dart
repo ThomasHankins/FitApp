@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import '../screens/set_screen.dart';
 
 class ExerciseWidget extends StatelessWidget {
-  ExerciseWidget({required this.thisExercise});
+  const ExerciseWidget({Key? key, required this.thisExercise})
+      : super(key: key);
   final Exercise thisExercise;
 
   @override

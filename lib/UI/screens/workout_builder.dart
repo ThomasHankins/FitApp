@@ -38,9 +38,53 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
     return loaded
         ? Scaffold(
             appBar: AppBar(
-              title: Text(thisWorkout.name), //TODO allow editing name
-              //TODO enable back arrow
-              //TODO Add prompt on return to home screen confirming cancel
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.redAccent,
+                ),
+                onPressed: () async {
+                  return showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Center(
+                            child: Text(
+                                'Are you sure you want to discard changes?'),
+                          ),
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          actionsAlignment: MainAxisAlignment.center,
+                          actions: <Widget>[
+                            MaterialButton(
+                              child: const Text('Yes'),
+                              onPressed: () async {
+                                Navigator.pop(context, 'Yes');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            MaterialButton(
+                              child: const Text('Cancel'),
+                              onPressed: () async {
+                                Navigator.pop(context, 'Cancel');
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
+              ),
+              title: TextFormField(
+                initialValue: thisWorkout.name,
+                decoration: const InputDecoration(
+                    counterText: "", border: InputBorder.none),
+                keyboardType: TextInputType.text,
+                onChanged: (changes) {
+                  thisWorkout.name = changes;
+                },
+              ),
             ),
             body: Column(
               children: [
@@ -83,7 +127,7 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Material(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(15),
                       elevation: 10.0,
                       color: Colors.grey[850],
                       child: MaterialButton(
@@ -115,7 +159,6 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
               label: const Text("Save Workout"),
               icon: const Icon(Icons.save_outlined),
               onPressed: () {
-                //TODO add popup confirming save
                 thisWorkout.saveWorkout(widget.planID);
                 //end workout
                 Navigator.push(

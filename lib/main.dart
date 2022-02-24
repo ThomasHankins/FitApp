@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'UI/components/themes.dart';
 import 'UI/screens/dashboard.dart';
 
@@ -15,7 +16,7 @@ class FitApp extends StatelessWidget {
       title: "Fit App",
       darkTheme: AppThemes().dark(),
       themeMode: ThemeMode.dark,
-      home: Dashboard(),
+      home: const Dashboard(),
     );
   }
 }

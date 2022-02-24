@@ -11,7 +11,7 @@ class DismissibleWidget<T> extends StatelessWidget {
     required this.child,
     required this.onDismissed,
     required this.key,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Dismissible(
