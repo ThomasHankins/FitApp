@@ -7,35 +7,54 @@ import 'exercise.dart';
 import 'file_manager.dart';
 
 class Workout {
+  int? _id;
   String name;
   List<Exercise> exercises;
-  var date = DateTime.now();
-  Stopwatch timer = Stopwatch();
+  DateTime date;
+  Stopwatch? timer; //init  Stopwatch() later
+  int length = 0;
 
-  Workout(this.name, this.exercises);
+  Map<String, dynamic> toMap() {
+    return {
+      'id': _id,
+      'name': name,
+      'date': date.toIso8601String(),
+      'length': length,
+    };
+  }
 
-  static Future<Workout> fromHistoric(
-      int workoutID, String workoutName, List<dynamic> exerciseNames) async {
-    //exercise files
-    List<dynamic> exercisesFile =
-        json.decode(await FileManager().readFile('exercises'));
-    //loads first instance in workout file with matching workout id
+  @override
+  String toString() {
+    //can remove later if necessary
+    return 'Workout{id: $_id, name: $name, date: $date.toIso8601String(), length: $length)';
+  }
 
-    List<Exercise> exercisesList = [];
+  Workout(
+      {required this.name,
+      required this.exercises,
+      required this.date,
+      required this.length});
 
-    for (dynamic exerciseName in exerciseNames) {
-      exercisesList.add(
-        Exercise.historic(
-            exercise: exerciseName.toString(),
-            setsFile: exercisesFile
-                .firstWhere((element) =>
-                    element["name"] ==
-                    exerciseName.toString())["previous efforts"]
-                .firstWhere(
-                    (element) => element["workout id"] == workoutID)["sets"]),
-      );
+  Future<void> generateID() async {
+    if (_id is int) {
+      _id = (await DatabaseManager().generateWorkoutID())!;
     }
-    return Workout(workoutName, exercisesList);
+    int? availableID = await DatabaseManager().;
+    availableID = (availableID is! int) ? 1 : availableID;
+    for (Exercise exercise in exercises) {
+      exercise.giveID = availableID!;
+      availableID++;
+    }
+  }
+
+  //DateTime.now().toIso8601String() add this to blank workout constructor
+  Workout.fromHistoric(
+      int oldID, String oldName, String oldDate, int oldLength) {
+    _id = oldID;
+    exercises = [];
+    name = oldName;
+    date = DateTime.parse(oldDate);
+    length = oldLength;
   }
 
   static Future<Workout> fromEmpty() async {
@@ -97,54 +116,15 @@ class Workout {
   }
 
   Future<void> endWorkout() async {
-    //save the plan to history and exercises
-    //TODO only save exercises with sets & non empty workouts
-
-    //parse workoutHistory JSON
-    List<dynamic> historyJSON =
-        json.decode(await FileManager().readFile('history'));
-
-    //determine workout ID and create a list of exercise names
-    int workoutID = historyJSON.last["workout id"] + 1;
-    List<String> exerciseNames = [];
     for (Exercise exercise in exercises) {
-      exerciseNames.add(exercise.name);
+      exercise.sets.removeWhere((element) => !element.isComplete);
     }
-    //turn data into a Map
-    Map<String, dynamic> thisWorkout = {
-      "name": name,
-      "workout id": workoutID,
-      "date": "${date.day}/${date.month}/${date.year}",
-      "length": timer.elapsed.inSeconds,
-      "exercises": exerciseNames
-    };
 
-    //add data to decoded JSON
-    historyJSON.add(thisWorkout);
-
-    //write data to JSON
-    FileManager().writeFile('history', json.encode(historyJSON));
-
-    //decode exercise list
-    List<dynamic> exercisesJSON =
-        json.decode(await FileManager().readFile('exercises'));
-
-    for (Exercise exercise in exercises) {
-      //create a list of dynamic containing weight and reps
-      List<dynamic> sets = [];
-      for (ExerciseSet set in exercise.sets) {
-        if (set.isComplete) {
-          sets.add({"weight": set.weight, "reps": set.reps});
-        }
-      }
-      //adding sets to matching exercise
-      exercisesJSON
-          .firstWhere(
-              (element) => element["name"] == exercise.name)["previous efforts"]
-          .add(
-        {"workout id": workoutID, "sets": sets},
-      );
+    exercises.removeWhere((element) => element.sets.isEmpty);
+    timer?.stop();
+    length = timer?.elapsed;
+    if (exercises.isNotEmpty) {
+      DatabaseManager().insertWorkout(this);
     }
-    FileManager().writeFile('exercises', json.encode(exercisesJSON));
   }
 }
