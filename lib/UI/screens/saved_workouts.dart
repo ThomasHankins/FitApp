@@ -1,11 +1,7 @@
-import 'dart:convert' show json;
-
 import 'package:fit_app/UI/screens/workout_builder.dart';
-import 'package:fit_app/workout-tracker/file_manager.dart';
+import 'package:fit_app/UI/screens/workout_screen.dart';
 import 'package:fit_app/workout-tracker/workout.dart';
 import 'package:flutter/material.dart';
-
-import 'workout_screen.dart';
 
 class SavedWorkouts extends StatefulWidget {
   const SavedWorkouts({Key? key}) : super(key: key);
@@ -24,7 +20,7 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
 
   bool loaded = false;
   Future<void> loadFiles() async {
-    plans = json.decode(await FileManager().readFile('plans'));
+    //TODO implement a plans variable
     loaded = true;
     setState(() {});
   }
@@ -38,21 +34,22 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                 ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: plans.length,
+                  itemCount: 0, //TODO replace with plans.length
                   itemBuilder: (context, i) {
                     return ListTile(
                       title: Row(
                         children: [
-                          Text(plans[i]["name"].toString()),
+                          Text(""), //TODO replace with plans[i].name
                           const Spacer(),
                           IconButton(
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
                                   return WorkoutBuilderScreen(
-                                    thisWorkout:
-                                        Workout.fromSaved(plans[i]["plan id"]),
-                                    planID: plans[i]["plan id"],
+                                    thisWorkout: Workout
+                                        .fromEmpty(), //replace with saved
+
+                                    //TODO open workout builder screen with saved plan
                                   );
                                 },
                               ));
@@ -64,9 +61,7 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                           ),
                           IconButton(
                             onPressed: () {
-                              plans.removeAt(i);
-                              FileManager()
-                                  .writeFile('plans', json.encode(plans));
+                              //TODO call delete plan in file manager - for this plan
                               setState(() {});
                             },
                             icon: const Icon(
@@ -79,10 +74,9 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                       onTap: () {
                         Navigator.pushReplacement(context, MaterialPageRoute(
                           builder: (context) {
-                            //TODO fix infinite loading
                             return WorkoutScreen(
-                              thisWorkout:
-                                  Workout.fromSaved(plans[i]["plan id"]),
+                              thisWorkout: Workout.fromEmpty(),
+                              //TODO change to saved workout plan
                             );
                           },
                         ));

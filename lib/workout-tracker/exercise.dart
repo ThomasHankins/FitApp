@@ -1,47 +1,59 @@
+import 'package:fit_app/workout-tracker/file_manager.dart';
+
 class Exercise {
-  late final int _id;
+  final int _id;
   final int _workoutID;
-  final int _descriptionID;
+  final ExerciseDescription _exerciseDescription;
   List<ExerciseSet> sets = [];
 
-  Exercise(
-      {required int workoutID, required int descriptionID, required this.sets})
-      : _workoutID = workoutID,
-        _descriptionID = descriptionID;
-
-  Exercise.blank({required int workoutID, required int descriptionID})
-      : _workoutID = workoutID,
-        _descriptionID = descriptionID;
-
-  Exercise.fromDatabase(
-      {required int id,
-      required int workoutID,
-      required int descriptionID,
-      required this.sets})
-      : _id = id,
-        _workoutID = workoutID,
-        _descriptionID = descriptionID;
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': _id,
-      'workout_id': _workoutID,
-      'description_id': _descriptionID,
-    };
-  }
-
-  @override
-  String toString() {
-    return 'Exercise{id: $_id, workout_id: $_workoutID, description_id: $_descriptionID)';
-  }
-
-  set giveID(int id) {
-    _id = id;
+  void giveSetsID() async {
     int i = 0;
     for (ExerciseSet exSet in sets) {
       exSet.position = i;
       i++;
     }
+  }
+
+  Exercise(
+      {required int workoutID,
+      required ExerciseDescription description,
+      required this.sets})
+      : _id = DatabaseManager().exerciseID,
+        _workoutID = workoutID,
+        _exerciseDescription = description;
+
+  Exercise.blank(
+      {required int workoutID, required ExerciseDescription description})
+      : _id = DatabaseManager().exerciseID,
+        _workoutID = workoutID,
+        _exerciseDescription = description;
+
+  Exercise.fromDatabase(
+      {required int id,
+      required int workoutID,
+      required ExerciseDescription exerciseDescription,
+      required int descriptionID,
+      required this.sets})
+      : _id = id,
+        _workoutID = workoutID,
+        _exerciseDescription = exerciseDescription;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': _id,
+      'workout_id': _workoutID,
+      'description_id': _exerciseDescription.getID,
+    };
+  }
+
+  @override
+  String toString() {
+    int desID = _exerciseDescription.getID;
+    return 'Exercise(id: $_id, workout_id: $_workoutID, description_id: $desID)';
+  }
+
+  get id {
+    return _id;
   }
 
   bool get isAllDone {
@@ -55,21 +67,39 @@ class Exercise {
     }
     return true;
   }
+
+  ExerciseDescription get description {
+    return _exerciseDescription;
+  }
 }
 
 class ExerciseDescription {
-  final int? _id; //TODO make non nullable
+  final int _id;
   final String? _name;
   final String? _description;
   final String? _muscleGroup;
   bool _isCompound = false;
   bool _isMachine = false;
 
-  ExerciseDescription(int compound, int machine,
-      [this._id, this._name, this._description, this._muscleGroup]) {
-    _isCompound = (compound == 0) ? false : true;
-    _isMachine = (machine == 0) ? false : true;
+  ExerciseDescription(int compound, int machine, this._id,
+      [this._name, this._description, this._muscleGroup]) {
+    _isCompound = (compound == 1);
+    _isMachine = (machine == 1);
   }
+
+  ExerciseDescription.fromDatabase(
+      {required int id,
+      required String name,
+      required String description,
+      required String muscleGroup,
+      required int isCompound,
+      required int isMachine})
+      : _id = id,
+        _name = name,
+        _description = description,
+        _muscleGroup = muscleGroup,
+        _isCompound = (isCompound == 1),
+        _isMachine = (isMachine == 1);
 
   Map<String, dynamic> toMap() {
     return {
@@ -87,11 +117,27 @@ class ExerciseDescription {
     //can remove later if necessary
     return 'ExerciseDescription(id: $_id, name: $_name, description: $_description, muscle_group: $_muscleGroup, is_compound: $_isCompound, is_machine: $_isMachine)';
   }
+
+  int get getID {
+    if (_id != null) {
+      return _id!.toInt();
+    } else {
+      return -1;
+    }
+  }
+
+  String get name {
+    if (_name != null) {
+      return _name.toString();
+    } else {
+      return "";
+    }
+  }
 }
 
 class ExerciseSet {
-  int? _exerciseID;
-  int _position = 0; //workout ID and position form primary key
+  final int _exerciseID;
+  int? _position; //workout ID and position form primary key
   double _weight = 0;
   int _reps = 0;
   int _rpe = 10;
@@ -100,18 +146,17 @@ class ExerciseSet {
   bool _complete = false;
 
   ExerciseSet.fromDatabase(int exerciseID, int position, double weight,
-      int reps, int rpe, String note, int inKG) {
-    _exerciseID = exerciseID;
-    _position = position;
-    _weight = weight;
-    _reps = reps;
-    _rpe = rpe;
-    _note = note;
-    _inKG = (inKG == 0) ? false : true;
-    _complete = true;
-  }
+      int reps, int rpe, String note, int inKG)
+      : _exerciseID = exerciseID,
+        _position = position,
+        _weight = weight,
+        _reps = reps,
+        _rpe = rpe,
+        _note = note,
+        _inKG = (inKG == 1),
+        _complete = true;
 
-  ExerciseSet.fromBlank([this._exerciseID]);
+  ExerciseSet.fromBlank(this._exerciseID, [this._position]);
 
   Map<String, dynamic> toMap() {
     return {

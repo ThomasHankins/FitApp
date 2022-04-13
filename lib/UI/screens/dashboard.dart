@@ -1,5 +1,3 @@
-import 'dart:convert' show json;
-
 import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/UI/screens/saved_workouts.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
@@ -19,7 +17,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List<dynamic> history = [];
-  List<dynamic> exercises = [];
   bool showHistory = false;
   @override
   void initState() {
@@ -29,8 +26,7 @@ class _DashboardState extends State<Dashboard> {
 
   bool loaded = false;
   Future<void> loadFiles() async {
-    history = json.decode(await FileManager().readFile('history'));
-    exercises = json.decode(await FileManager().readFile('exercises'));
+    history = await DatabaseManager().getWorkouts();
     loaded = true;
     setState(() {});
   }
@@ -59,18 +55,9 @@ class _DashboardState extends State<Dashboard> {
                                 IconButton(
                                   //TODO format so that button is hidden unless long press
                                   onPressed: () {
-                                    int tempID = history[i]["workout id"];
+                                    DatabaseManager()
+                                        .deleteWorkout(history[i].getID());
                                     history.removeAt(i);
-                                    for (Map<String, dynamic> exercise
-                                        in exercises) {
-                                      exercise["previous efforts"].removeWhere(
-                                          (element) =>
-                                              element["workout id"] == tempID);
-                                    }
-                                    FileManager().writeFile(
-                                        'history', json.encode(history));
-                                    FileManager().writeFile(
-                                        'exercises', json.encode(exercises));
                                     setState(() {});
                                   },
                                   icon: const Icon(
@@ -111,10 +98,7 @@ class _DashboardState extends State<Dashboard> {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
                                   return HistoryDetailScreen(
-                                    thisWorkout: Workout.fromHistoric(
-                                        history[i]["workout id"],
-                                        history[i]["name"].toString(),
-                                        history[i]["exercises"]),
+                                    thisWorkout: history[i],
                                   );
                                 },
                               ));

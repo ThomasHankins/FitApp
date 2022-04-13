@@ -11,7 +11,7 @@ import 'dashboard.dart';
 import 'search_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
-  Future<Workout> thisWorkout;
+  Workout thisWorkout;
   WorkoutScreen({
     Key? key,
     required this.thisWorkout,
@@ -27,8 +27,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   int clock = 0;
 
   Future<void> loadWorkout() async {
-    thisWorkout = await widget.thisWorkout;
-    thisWorkout.timer.start(); // start workout clock
+    //this might be redundant since thisWorkout is not longer a future, need to check with synchronization issues before deleting
+    thisWorkout = widget.thisWorkout;
+    thisWorkout.timer?.start(); // start workout clock
     loaded = true;
     setState(() {});
   }
@@ -41,7 +42,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (mounted) {
         return setState(() {
-          clock = thisWorkout.timer.elapsed.inSeconds;
+          int? time = thisWorkout.timer?.elapsed.inSeconds;
+          time ??= 0;
+          clock = time;
         });
       }
     });
@@ -162,7 +165,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ExerciseSearch(
-                                currentExercises: thisWorkout.exercises,
+                                currentWorkout: thisWorkout,
                                 notifyParent: () {
                                   setState(() {});
                                 },
@@ -189,7 +192,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     context: context,
                     barrierDismissible: true,
                     builder: (BuildContext context) {
-                      thisWorkout.timer.stop();
+                      thisWorkout.timer?.stop();
                       return AlertDialog(
                           title: const Center(
                             child: Text(
@@ -217,7 +220,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               child: const Text('Cancel'),
                               onPressed: () async {
                                 Navigator.pop(context, 'Cancel');
-                                thisWorkout.timer.start();
+                                thisWorkout.timer?.start();
                               },
                             )
                           ]);

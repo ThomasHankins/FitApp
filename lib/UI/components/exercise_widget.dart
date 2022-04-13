@@ -15,7 +15,7 @@ class ExerciseWidget extends StatelessWidget {
       selected: thisExercise.isAllDone,
       title: Row(
         children: [
-          Text(thisExercise.name),
+          Text(thisExercise.description.name),
         ],
       ),
       onTap: () {

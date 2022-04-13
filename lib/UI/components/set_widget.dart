@@ -30,7 +30,7 @@ class SetWidget extends StatelessWidget {
               ],
               keyboardType: TextInputType.number,
               onChanged: (changes) {
-                thisSet.selectWeight = int.parse(changes);
+                thisSet.selectWeight = double.parse(changes);
               },
             ),
           ),

@@ -51,7 +51,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                     return ListTile(
                       //TODO add ontap that opens exercise description
                       horizontalTitleGap: 0,
-                      title: Text(thisWorkout.exercises[i].name),
+                      title: Text(thisWorkout.exercises[i].description.name),
                       subtitle: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,

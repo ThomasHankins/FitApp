@@ -1,5 +1,4 @@
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../workout-tracker/exercise.dart';
@@ -27,7 +26,7 @@ class _SetScreenState extends State<SetScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Row(children: [
-            Text(widget.thisExercise.name),
+            Text(widget.thisExercise.description.name),
             const Spacer(),
             IconButton(
               icon: const Icon(
@@ -89,7 +88,8 @@ class _SetScreenState extends State<SetScreen> {
                     onPressed: () {
                       setState(() {
                         widget.thisExercise.sets.add(
-                          ExerciseSet(10, 10),
+                          ExerciseSet.fromBlank(widget.thisExercise.id,
+                              widget.thisExercise.sets.length),
                         );
                       });
                     },

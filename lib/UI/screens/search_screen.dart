@@ -1,15 +1,14 @@
-import 'dart:convert' show json;
-
 import 'package:fit_app/workout-tracker/exercise.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
+import 'package:fit_app/workout-tracker/workout.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseSearch extends StatefulWidget {
-  final List<Exercise> currentExercises;
+  final Workout currentWorkout;
   final Function() notifyParent;
 
   const ExerciseSearch(
-      {Key? key, required this.currentExercises, required this.notifyParent})
+      {Key? key, required this.currentWorkout, required this.notifyParent})
       : super(key: key);
 
   @override
@@ -20,11 +19,11 @@ class SearchEntry {
   int position;
   bool visible = true;
   bool selected = false;
-  ExerciseDescription entry;
-  SearchEntry({required this.position, required this.entry});
+  ExerciseDescription desc;
+  SearchEntry({required this.position, required this.desc});
 
   String get name {
-    return entry.name;
+    return desc.name;
   }
 }
 
@@ -49,14 +48,10 @@ class SearchList {
   void loadSearchList() async {
     if (_list.isEmpty) {
       int i = 0;
-      var jsonData = json.decode(await FileManager().readFile('exercises'));
-      for (Map<String, dynamic> jsonExercise in jsonData) {
-        _list.add(SearchEntry(
-            position: i,
-            entry: ExerciseDescription(
-                jsonExercise["name"].toString(),
-                jsonExercise["description"].toString(),
-                jsonExercise["muscle group"].toString())));
+      List<ExerciseDescription> dbList =
+          await DatabaseManager().getExerciseDescriptionList();
+      for (ExerciseDescription desc in dbList) {
+        _list.add(SearchEntry(position: i, desc: desc));
         i++;
       }
     }
@@ -184,10 +179,11 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                 setState(() {
                   for (SearchEntry entry in searchList.list) {
                     if (entry.selected) {
-                      widget.currentExercises.add(
-                        Exercise(
-                          entry.name,
-                          [], //TODO change to last time's effort
+                      widget.currentWorkout.exercises.add(
+                        Exercise.blank(
+                          workoutID: widget.currentWorkout.getID,
+                          description: entry.desc,
+                          //TODO change to last time's effort
                         ),
                       );
                     }

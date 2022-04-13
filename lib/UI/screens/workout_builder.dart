@@ -7,7 +7,7 @@ import 'dashboard.dart';
 import 'search_screen.dart';
 
 class WorkoutBuilderScreen extends StatefulWidget {
-  Future<Workout> thisWorkout;
+  Workout thisWorkout;
   int? planID;
   WorkoutBuilderScreen({Key? key, required this.thisWorkout, this.planID})
       : super(key: key);
@@ -21,7 +21,8 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
   bool loaded = false;
 
   Future<void> loadWorkout() async {
-    thisWorkout = await widget.thisWorkout;
+    //might also be able to remove this function -- again need to check for sync issues
+    thisWorkout = widget.thisWorkout;
     loaded = true;
     setState(() {});
   }
@@ -105,7 +106,8 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0, vertical: .2),
                           child: ListTile(
-                            title: Text(thisWorkout.exercises[i].name),
+                            title:
+                                Text(thisWorkout.exercises[i].description.name),
                           )),
                     );
                   },
@@ -136,7 +138,7 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ExerciseSearch(
-                                currentExercises: thisWorkout.exercises,
+                                currentWorkout: thisWorkout,
                                 notifyParent: () {
                                   setState(() {});
                                 },
@@ -159,7 +161,7 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
               label: const Text("Save Workout"),
               icon: const Icon(Icons.save_outlined),
               onPressed: () {
-                thisWorkout.saveWorkout(widget.planID);
+                thisWorkout.endWorkout();
                 //end workout
                 Navigator.push(
                   context,

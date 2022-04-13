@@ -1,17 +1,29 @@
 import 'dart:async';
-import 'dart:io' show File;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'exercise.dart';
 import 'workout.dart';
 
 class DatabaseManager {
+  static int? _currentWorkoutID;
+  static int? _currentExerciseID;
+
+  get workoutID async {
+    _currentWorkoutID ??= await _generateWorkoutID();
+    _currentWorkoutID = _currentWorkoutID! + 1;
+    return _currentWorkoutID;
+  }
+
+  get exerciseID async {
+    _currentExerciseID ??= await _generateWorkoutID();
+    _currentExerciseID = _currentExerciseID! + 1;
+    return _currentExerciseID;
+  }
+
   void ensureInit() {
     WidgetsFlutterBinding.ensureInitialized();
   }
@@ -45,12 +57,13 @@ class DatabaseManager {
             'note TEXT,'
             'in_KG INTEGER,'
             'PRIMARY KEY(exercise_ID, position))');
+        //TODO add some sort of plan database
       },
-      //add lines for inserting exercises
       version: 1, //INITIAL VERSION
     );
   }
 
+  //Inserting
   Future<void> _insertExerciseSet(Database db, ExerciseSet exerciseSet) async {
     await db.insert(
       'set_history',
@@ -83,7 +96,9 @@ class DatabaseManager {
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
   }
+  //TODO add inserting plans
 
+  //Deleting
   Future<void> deleteWorkout(int workoutID) async {
     final db = await _database;
     await db.delete(
@@ -92,12 +107,14 @@ class DatabaseManager {
       whereArgs: [workoutID],
     ); //don't need to do anything else since changes cascade
   }
+  //TODO ADD DELETING PLANS
 
+  //Data Retrieval
   Future<List<ExerciseSet>> _getExerciseSets(
       Database db, int exerciseID) async {
     final List<Map<String, dynamic>> maps = await db.query(
       'set_history',
-      where: 'exercise_id = ?',
+      where: 'exercise_id = ?', //referencing the specific exercise instance
       whereArgs: [exerciseID],
     );
     return List.generate(
@@ -116,7 +133,41 @@ class DatabaseManager {
     );
   }
 
-  Future<List<Exercise>> _getExercises(Database db, int workoutID) async {
+  Future<List<ExerciseDescription>> getExerciseDescriptionList() async {
+    final db = await _database;
+    List<Map<String, dynamic>> maps = await db.query('exercise_descriptions');
+
+    return Future.wait(List.generate(maps.length, (index) async {
+      return ExerciseDescription.fromDatabase(
+          id: maps[index]['id'],
+          name: maps[index]['name'],
+          description: maps[index]['description'],
+          muscleGroup: maps[index]['muscle_group'],
+          isCompound: maps[index]['is_compound'],
+          isMachine: maps[index]['is_machine']);
+    }));
+  }
+
+  Future<ExerciseDescription> _getExerciseDescription(
+      Database db, int descID) async {
+    List<Map<String, dynamic>> maps = await db.query(
+      'exercise_descriptions',
+      where: 'id = ?',
+      whereArgs: [descID],
+    );
+
+    return ExerciseDescription.fromDatabase(
+      id: maps[0]['id'],
+      name: maps[0]['name'],
+      description: maps[0]['description'],
+      muscleGroup: maps[0]['muscle_group'],
+      isCompound: maps[0]['is_compound'],
+      isMachine: maps[0]['is_machine'],
+    );
+  }
+
+  Future<List<Exercise>> _getExercises(Database? db, int workoutID) async {
+    db ??= await _database;
     List<Map<String, dynamic>> maps = await db.query(
       'exercise_history',
       where: 'workout_id = ?',
@@ -127,12 +178,15 @@ class DatabaseManager {
       maps.length,
       (index) async {
         List<ExerciseSet> setList =
-            await _getExerciseSets(db, maps[index]['id']);
+            await _getExerciseSets(db!, maps[index]['id']);
+        ExerciseDescription description =
+            await _getExerciseDescription(db, maps[index]['description_id']);
         return Exercise.fromDatabase(
           id: maps[index]['id'],
           workoutID: maps[index]['workout_id'],
           descriptionID: maps[index]['description_id'],
           sets: setList,
+          exerciseDescription: description,
         );
       },
     ));
@@ -141,121 +195,38 @@ class DatabaseManager {
   Future<List<Workout>> getWorkouts() async {
     final db = await _database;
     List<Map<String, dynamic>> workoutData = await db.query('workout_history');
-    return List.generate(workoutData.length, (index) {
-      Workout.fromHistoric();
-    });
+    return Future.wait(List.generate(workoutData.length, (index) async {
+      List<Exercise> exercises =
+          await _getExercises(db, workoutData[index]['id']);
+      return Workout.fromHistoric(
+          oldID: workoutData[index]['id'],
+          oldExercises: exercises,
+          oldName: workoutData[index]['name'],
+          oldDate: workoutData[index]['date'],
+          oldLength: workoutData[index]['length']);
+    }));
   }
 
-  Future<int?> generateWorkoutID() async {
+  //TODO ADD GET PLANS USING ID
+
+  //Accessing the database to find ID values
+  Future<int> _generateWorkoutID() async {
     final db = await _database;
     final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
         'FROM workout_history;');
 
-    return int.tryParse(id.first.values.first.toString());
+    int? tempID = int.tryParse(id.first.values.first.toString());
+    tempID ??= 0;
+    return tempID;
   }
 
-  Future<int?> generateExerciseID() async {
+  Future<int> _generateExerciseID() async {
     final db = await _database;
     final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
         'FROM exercise_history;');
 
-    return int.tryParse(id.first.values.first.toString());
-  }
-}
-
-class FileManager {
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  Future<File> get _plansFile async {
-    final path = await _localPath;
-    if (!File('$path/workoutPlans.json').existsSync()) {
-      String data = await rootBundle.loadString("data/workoutPlans.json");
-      File('$path/workoutPlans.json').writeAsString(data);
-    }
-    return File('$path/workoutPlans.json');
-  }
-
-  Future<File> get _historyFile async {
-    final path = await _localPath;
-    if (!File('$path/workoutHistory.json').existsSync()) {
-      String data = await rootBundle.loadString("data/workoutHistory.json");
-      File('$path/workoutHistory.json').writeAsString(data);
-    }
-    return File('$path/workoutHistory.json');
-  }
-
-  Future<File> get _exercisesFile async {
-    final path = await _localPath;
-    if (!File('$path/exercises.json').existsSync()) {
-      String data = await rootBundle.loadString("data/exercises.json");
-      File('$path/exercises.json').writeAsString(data);
-    }
-    return File('$path/exercises.json');
-  }
-
-  Future<File> get _programsFile async {
-    final path = await _localPath;
-    if (!File('$path/workoutPrograms.json').existsSync()) {
-      String data = await rootBundle.loadString("data/workoutPrograms.json");
-      File('$path/workoutPrograms.json').writeAsString(data);
-    }
-    return File('$path/workoutPrograms.json');
-  }
-
-  Future<String> readFile(String filename) async {
-    try {
-      switch (filename) {
-        case 'exercises':
-          final file = await _exercisesFile;
-          final String contents = await file.readAsString();
-          return contents;
-
-        case 'history':
-          final file = await _historyFile;
-          final String contents = await file.readAsString();
-          return contents;
-
-        case 'plans':
-          final file = await _plansFile;
-          final String contents = await file.readAsString();
-          return contents;
-
-        case 'programs':
-          final file = await _programsFile;
-          final String contents = await file.readAsString();
-          return contents;
-
-        default:
-          return "";
-      }
-    } catch (e) {
-      // If encountering an error, return 0
-      return "";
-    }
-  }
-
-  Future<File?> writeFile(String filename, String newText) async {
-    switch (filename) {
-      case 'exercises':
-        final file = await _exercisesFile;
-        return file.writeAsString(newText);
-
-      case 'history':
-        final file = await _historyFile;
-        return file.writeAsString(newText);
-
-      case 'plans':
-        final file = await _plansFile;
-        return file.writeAsString(newText);
-
-      case 'programs':
-        final file = await _programsFile;
-        return file.writeAsString(newText);
-      default:
-        return null;
-    }
+    int? tempID = int.tryParse(id.first.values.first.toString());
+    tempID ??= 0;
+    return tempID;
   }
 }
