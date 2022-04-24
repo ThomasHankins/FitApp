@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/workout.dart';
+import '../../../workout-tracker/workout.dart';
 
 /*
 Takes a Workout class and will display the information
  */
 class HistoryDetailScreen extends StatefulWidget {
-  Future<Workout> thisWorkout;
+  Workout thisWorkout;
 
   HistoryDetailScreen({Key? key, required this.thisWorkout}) : super(key: key);
 
@@ -19,7 +19,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   late Workout thisWorkout;
 
   Future<void> loadWorkout() async {
-    thisWorkout = await widget.thisWorkout;
+    thisWorkout = widget.thisWorkout;
     loaded = true;
     setState(() {});
   }

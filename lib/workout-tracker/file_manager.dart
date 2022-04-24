@@ -57,7 +57,11 @@ class DatabaseManager {
             'note TEXT,'
             'in_KG INTEGER,'
             'PRIMARY KEY(exercise_ID, position))');
+        //TODO add template workout database
+        //includes list of exercise descriptions and id
         //TODO add some sort of plan database
+        //includes a list of template workouts, id, some kind of progression
+        //TODO database with workout id and plan id and date
       },
       version: 1, //INITIAL VERSION
     );

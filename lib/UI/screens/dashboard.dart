@@ -1,11 +1,11 @@
-import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/UI/screens/saved_workouts.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:fit_app/workout-tracker/workout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-import 'history_detail.dart';
+import 'dashboard_components/dashboard_ui.dart';
+import 'dashboard_components/workout_history_ui.dart';
 import 'workout_builder.dart';
 import 'workout_screen.dart';
 
@@ -16,8 +16,9 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  List<dynamic> history = [];
+  List<Workout> history = [];
   bool showHistory = false;
+
   @override
   void initState() {
     loadFiles();
@@ -25,9 +26,14 @@ class _DashboardState extends State<Dashboard> {
   }
 
   bool loaded = false;
+
   Future<void> loadFiles() async {
     history = await DatabaseManager().getWorkouts();
     loaded = true;
+    setState(() {});
+  }
+
+  void updateState() {
     setState(() {});
   }
 
@@ -36,85 +42,12 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       body: loaded
           ? (showHistory //TODO highlight dashboard/history whatever is being shown - will implement with new data structure
-              ? SingleChildScrollView(
-                  physics: const ScrollPhysics(),
-                  child: Column(
-                    children: [
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: history.length,
-                        itemBuilder: (context, i) {
-                          i = history.length - i - 1; //flip indicies
-                          return ListTile(
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(history[i]["name"].toString()),
-                                IconButton(
-                                  //TODO format so that button is hidden unless long press
-                                  onPressed: () {
-                                    DatabaseManager()
-                                        .deleteWorkout(history[i].getID());
-                                    history.removeAt(i);
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(
-                                    Icons.delete_forever,
-                                    color: Colors.redAccent,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            subtitle: Row(
-                              children: [
-                                SizedBox(
-                                  width: 80,
-                                  child: Text(
-                                    history[i]["date"],
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white38,
-                                    ),
-                                  ),
-                                ),
-                                const Icon(
-                                  Icons.timelapse_outlined,
-                                  size: 12,
-                                  color: Colors.white38,
-                                ),
-                                Text(
-                                  ClockConverter()
-                                      .convert(history[i]["length"]),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white38,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return HistoryDetailScreen(
-                                    thisWorkout: history[i],
-                                  );
-                                },
-                              ));
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+              ? HistoryWidget(
+                  setState: updateState,
+                  history: history,
                 )
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[], //TODO Add dashboard content here
-                  ),
+              : DashboardWidget(
+                  setState: updateState,
                 ))
           : const Center(
               child: CircularProgressIndicator(),
