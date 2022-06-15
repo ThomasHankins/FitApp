@@ -5,8 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'exercise.dart';
-import 'workout.dart';
+import 'data_structures/exercise.dart';
+import 'data_structures/workout.dart';
+import 'databases/dbv1.dart';
 
 class DatabaseManager {
   static int? _currentWorkoutID;
@@ -32,64 +33,7 @@ class DatabaseManager {
     return openDatabase(
       join(await getDatabasesPath(), 'workout_database.db'),
       onCreate: (db, version) {
-        db.execute('CREATE TABLE workout_history('
-            'id INTEGER PRIMARY KEY,'
-            'name TEXT,'
-            'date TEXT,'
-            'length INTEGER)');
-        db.execute('CREATE TABLE exercise_descriptions('
-            'id INTEGER PRIMARY KEY,'
-            'name TEXT,'
-            'description TEXT,'
-            'muscle_group TEXT,' //will make this reference muscleGroup DB when implemented
-            'is_compound INTEGER,'
-            'is_machine INTEGER)');
-        db.execute('CREATE TABLE exercise_history('
-            'id INTEGER PRIMARY KEY,'
-            'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'
-            'description_id INTEGER REFERENCES exercise_description(id) ON DELETE SET NULL');
-        db.execute('CREATE TABLE set_history('
-            'exercise_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
-            'position INTEGER,'
-            'weight REAL,'
-            'reps INTEGER,'
-            'RPE INTEGER,'
-            'note TEXT,'
-            'in_KG INTEGER,'
-            'PRIMARY KEY(exercise_ID, position))');
-        db.execute('CREATE TABLE workout_routines('
-            'id INT PRIMARY KEY,'
-            'plan_name TEXT'
-            ')');
-        db.execute(
-            'CREATE TABLE routine_exercises(' //appropriate weight will be determined by model weighted on most recent weeks
-            'routine_id INT REFERENCES workout_routines(id) ON DELETE CASCADE,'
-            'description_id INT REFERENCES exercise_descriptions(id),'
-            'order INT,'
-            'effort INT' //in %
-            'minimum_reps INT,'
-            'maximum_reps INT,'
-            'minimum_sets INT,'
-            'maximum_sets INT,'
-            'PRIMARY KEY(routine_id, order)');
-        db.execute('CREATE TABLE workout_plans('
-            'id INT PRIMARY KEY,'
-            'name TEXT,'
-            'cycle_length INT,' //in days
-            'num_of_deload_days INT,'
-            'rest_week_effort INT');
-        db.execute('CREATE TABLE plans_to_routine('
-            'plan_id INT REFERENCES exercise_plans(id) ON DELETE CASCADE,'
-            'routine_id INT REFERENCES workout_routines(id) ON DELETE CASCADE,'
-            'day_of_week INT,'
-            'day_in_cycle INT,'
-            'PRIMARY KEY(plan_id, routine_id)');
-        db.execute('CREATE TABLE workout_to_plan(' //historic workouts to plans
-            'plan_id INT REFERENCES exercise_plans(id) ON DELETE CASCADE,'
-            'routine_id INT REFERENCES workout_routines(id) ON DELETE CASCADE,'
-            'workout_id INT REFERENCES workout_history(id) ON DELETE CASCADE,'
-            'date TEXT,'
-            'PRIMARY_KEY(plan_id, routine_id, workout_id, date)');
+        createDatabase1(db, version);
       },
       version: 1, //INITIAL VERSION
     );
