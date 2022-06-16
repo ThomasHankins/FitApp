@@ -1,34 +1,19 @@
 import 'dart:async';
 
+import 'package:fit_app/workout-tracker/data_structures/exercise_set.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout_plan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'data_structures/exercise.dart';
+import 'data_structures/exercise_description.dart';
 import 'data_structures/workout.dart';
 import 'databases/dbv1.dart';
 
 class DatabaseManager {
-  static int? _currentWorkoutID;
-  static int? _currentExerciseID;
-
-  get workoutID async {
-    _currentWorkoutID ??= await _generateWorkoutID();
-    _currentWorkoutID = _currentWorkoutID! + 1;
-    return _currentWorkoutID;
-  }
-
-  get exerciseID async {
-    _currentExerciseID ??= await _generateWorkoutID();
-    _currentExerciseID = _currentExerciseID! + 1;
-    return _currentExerciseID;
-  }
-
-  void ensureInit() {
-    WidgetsFlutterBinding.ensureInitialized();
-  }
-
+  //init database
   Future<Database> get _database async {
     return openDatabase(
       join(await getDatabasesPath(), 'workout_database.db'),
@@ -39,51 +24,103 @@ class DatabaseManager {
     );
   }
 
+  void ensureInit() {
+    //not sure what this does
+    WidgetsFlutterBinding.ensureInitialized();
+  }
+
+  //exercise IDs
+  static int? _currentExerciseDescriptionID;
+  static int? _currentWorkoutID;
+  static int? _currentExerciseID;
+  static int? _currentSavedWorkoutID;
+  static int? _currentWorkoutPlan;
+
+  get nextExerciseDescriptionID =>
+      _generateID(_currentExerciseDescriptionID, "exercise_descriptions");
+  //TODO eventually add equipment lists/equipment ID
+  get nextWorkoutID => _generateID(_currentWorkoutID, "workout_history");
+  get nextExerciseID => _generateID(_currentExerciseID, "exercise_history");
+  get nextSavedWorkoutID =>
+      _generateID(_currentSavedWorkoutID, "saved_workouts");
+  get nextWorkoutPlanID => _generateID(_currentWorkoutPlan, "workout_plans");
+
+  int _generateID(int? tableID, String tableName) {
+    tableID ??= () async {
+      final db = await _database;
+      final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
+          'FROM $tableName;');
+
+      int? tempID = int.tryParse(id.first.values.first.toString());
+      tempID ??= 0;
+      return tempID;
+    } as int?;
+    tableID = tableID! + 1;
+    return tableID;
+  }
+
   //Inserting
-  Future<void> _insertExerciseSet(Database db, ExerciseSet exerciseSet) async {
-    await db.insert(
-      'set_history',
-      exerciseSet.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.abort,
-    );
-  }
-
-  Future<void> _insertExercise(Database db, Exercise exercise) async {
-    //add sets to sets to database
-    for (ExerciseSet set in exercise.sets) {
-      _insertExerciseSet(db, set);
-    }
-    await db.insert(
-      'exercise_history',
-      exercise.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.abort,
-    );
-  }
-
-  Future<void> insertWorkout(Workout workout) async {
+  void insertExerciseDescription(ExerciseDescription ed) =>
+      _insertItem(ed.toMap(), "exercise_descriptions");
+  void insertHistoricWorkout(LiveWorkout workout) =>
+      _insertItem(workout.toMap(), "workout_history");
+  void insertHistoricExercise(LiveExercise exercise) =>
+      _insertItem(exercise.toMap(), "exercise_history");
+  void insertHistoricSet(HistoricSet set) =>
+      _insertItem(set.toMap(), "set_history");
+  void insertHistoricCardio(HistoricCardio cardio) =>
+      _insertItem(cardio.toMap(), "cardio_history");
+  void insertSavedWorkout(FutureWorkout workout) =>
+      _insertItem(workout.toMap(), "saved_workouts");
+  void insertSavedExercise(int workoutId, int descriptionId, int order) =>
+      _insertItem({
+        'workout_id': workoutId,
+        "description_id": descriptionId,
+        "order": order,
+      }, "saved_exercises");
+  void insertPlan(WorkoutPlan plan) => _insertItem(plan, "workout_plans");
+  void insertPlanMap(int planId, int workoutId) => _insertItem({
+        'plan_id': planId,
+        'workout_id': workoutId,
+      }, "plans_to_saved_workouts");
+  Future<void> _insertItem(var item, String table) async {
     final db = await _database;
-
-    for (Exercise ex in workout.exercises) {
-      _insertExercise(db, ex);
-    }
     await db.insert(
-      'workout_history',
-      workout.toMap(),
+      table,
+      item,
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
   }
-  //TODO add inserting plans
+
+  //Updating
+  void updateExerciseDescription(ExerciseDescription ed) =>
+      _updateItem(ed, "exercise_descriptions");
+  void updateSavedWorkout(FutureWorkout workout) =>
+      _updateItem(workout, "saved_workouts");
+  void updatePlan(WorkoutPlan plan) => _updateItem(plan, "workout_plans");
+
+  Future<void> _updateItem(dynamic item, String table) async {
+    final db = await _database;
+    await db.update(table, item.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
 
   //Deleting
-  Future<void> deleteWorkout(int workoutID) async {
+
+  void deleteExerciseDescription(int id) =>
+      _deleteItem(id, "exercise_descriptions");
+  void deleteHistoricWorkout(int id) => _insertItem(id, "workout_history");
+  void deleteSavedWorkout(int id) => _insertItem(id, "saved_workouts");
+  void deletePlan(int id) => _insertItem(id, "workout_plans");
+
+  Future<void> _deleteItem(int id, String table) async {
     final db = await _database;
     await db.delete(
-      'workout_history',
+      table,
       where: 'id = ?',
-      whereArgs: [workoutID],
-    ); //don't need to do anything else since changes cascade
+      whereArgs: [id],
+    );
   }
-  //TODO ADD DELETING PLANS
 
   //Data Retrieval
   Future<List<ExerciseSet>> _getExerciseSets(
@@ -190,16 +227,6 @@ class DatabaseManager {
     final db = await _database;
     final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
         'FROM workout_history;');
-
-    int? tempID = int.tryParse(id.first.values.first.toString());
-    tempID ??= 0;
-    return tempID;
-  }
-
-  Future<int> _generateExerciseID() async {
-    final db = await _database;
-    final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
-        'FROM exercise_history;');
 
     int? tempID = int.tryParse(id.first.values.first.toString());
     tempID ??= 0;

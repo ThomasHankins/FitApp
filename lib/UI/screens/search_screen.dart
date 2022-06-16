@@ -1,6 +1,6 @@
-import 'package:fit_app/workout-tracker/exercise.dart';
+import 'package:fit_app/workout-tracker/data_structures/exercise.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
-import 'package:fit_app/workout-tracker/workout.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseSearch extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:fit_app/UI/screens/set_screen.dart';
-import 'package:fit_app/workout-tracker/exercise.dart';
+import 'package:fit_app/workout-tracker/data_structures/exercise.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/set_screen.dart';

@@ -1,6 +1,6 @@
 import 'package:fit_app/UI/screens/workout_builder.dart';
 import 'package:fit_app/UI/screens/workout_screen.dart';
-import 'package:fit_app/workout-tracker/workout.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout.dart';
 import 'package:flutter/material.dart';
 
 class SavedWorkouts extends StatefulWidget {

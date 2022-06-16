@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../workout-tracker/workout.dart';
+import '../../../workout-tracker/data_structures/workout.dart';
 
 /*
 Takes a Workout class and will display the information

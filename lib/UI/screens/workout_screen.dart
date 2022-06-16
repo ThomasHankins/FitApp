@@ -4,14 +4,14 @@ import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/exercise.dart';
-import '../../workout-tracker/workout.dart';
+import '../../workout-tracker/data_structures/exercise.dart';
+import '../../workout-tracker/data_structures/workout.dart';
 import '../components/exercise_widget.dart';
 import 'dashboard.dart';
 import 'search_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
-  Workout thisWorkout;
+  LiveWorkout thisWorkout;
   WorkoutScreen({
     Key? key,
     required this.thisWorkout,
@@ -22,14 +22,14 @@ class WorkoutScreen extends StatefulWidget {
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
-  late Workout thisWorkout;
+  late LiveWorkout thisWorkout;
   bool loaded = false;
   int clock = 0;
 
   Future<void> loadWorkout() async {
     //this might be redundant since thisWorkout is not longer a future, need to check with synchronization issues before deleting
     thisWorkout = widget.thisWorkout;
-    thisWorkout.timer?.start(); // start workout clock
+    thisWorkout.timer.start(); // start workout clock
     loaded = true;
     setState(() {});
   }
@@ -42,7 +42,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (mounted) {
         return setState(() {
-          int? time = thisWorkout.timer?.elapsed.inSeconds;
+          int? time = thisWorkout.timer.elapsed.inSeconds;
           time ??= 0;
           clock = time;
         });

@@ -3,7 +3,7 @@ void createDatabase1(db, version) {
       'id INTEGER PRIMARY KEY,'
       'name TEXT,'
       'description TEXT,'
-      'exercise_type)');
+      'exercise_type TEXT)');
   db.execute('CREATE TABLE equipment_list('
       'id INTEGER PRIMARY KEY,'
       'name TEXT,'
@@ -19,9 +19,10 @@ void createDatabase1(db, version) {
       'date TEXT,'
       'length INTEGER)');
   db.execute('CREATE TABLE exercise_history('
-      'id INTEGER PRIMARY KEY,'
       'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'
-      'description_id INTEGER REFERENCES exercise_description(id) ON DELETE SET NULL)');
+      'position INTEGER'
+      'description_id INTEGER REFERENCES exercise_description(id) ON DELETE SET NULL'
+      'PRIMARY KEY(workout_id, position)');
   db.execute('CREATE TABLE set_history('
       'exercise_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
       'position INTEGER,'
@@ -30,23 +31,25 @@ void createDatabase1(db, version) {
       'rest_time INTEGER'
       'RPE INTEGER,'
       'note TEXT,'
-      'PRIMARY KEY(exercise_ID, position))');
+      'PRIMARY KEY(exercise_id, position))');
   db.execute('CREATE TABLE cardio_history('
       'exercise_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
+      'position INTEGER'
       'length INT,'
       'calories INT,'
-      'distance INT)');
+      'distance INT,'
+      'PRIMARY KEY(exercise_ID, position))');
   db.execute('CREATE TABLE saved_workouts('
       'id INT PRIMARY KEY,'
-      'plan_name TEXT,'
-      'description TEXT'
+      'name TEXT,'
+      'description TEXT,'
       ')');
   db.execute(
       'CREATE TABLE saved_exercises(' //appropriate weight will be determined by model weighted on most recent weeks
-      'routine_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
-      'description_id INT REFERENCES exercise_descriptions(id),'
+      'workout_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
+      'description_id INT REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
       'order INT,'
-      'PRIMARY KEY(routine_id, order))');
+      'PRIMARY KEY(workout_id, order))');
   db.execute('CREATE TABLE workout_plans('
       'id INT PRIMARY KEY,'
       'name TEXT,'
@@ -55,5 +58,5 @@ void createDatabase1(db, version) {
   db.execute('CREATE TABLE plans_to_saved_workouts('
       'plan_id INT REFERENCES workout_plans(id) ON DELETE CASCADE,'
       'workout_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
-      'PRIMARY KEY(plan_id, routine_id))');
+      'PRIMARY KEY(plan_id, workout_id))');
 }

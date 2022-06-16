@@ -1,7 +1,7 @@
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/exercise.dart';
+import '../../workout-tracker/data_structures/exercise.dart';
 import '../components/set_widget.dart';
 
 class SetScreen extends StatefulWidget {
