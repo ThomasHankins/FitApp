@@ -1,6 +1,7 @@
 class ClockConverter {
   ClockConverter();
   String convert(int number) {
+    //TODO MAKE THIS THE CONSTRUCTOR!!!!!!!!!!!!!!!!!!!!
     if (number < 60) {
       return number.toString() + 's';
     } else if (number % 60 > 10) {
