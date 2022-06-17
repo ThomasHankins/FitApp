@@ -16,7 +16,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  List<Workout> history = [];
+  List<HistoricWorkout> history = [];
+  //List<SavedWorkouts> savedWorkouts = [];
   bool showHistory = false;
 
   @override
@@ -28,7 +29,8 @@ class _DashboardState extends State<Dashboard> {
   bool loaded = false;
 
   Future<void> loadFiles() async {
-    history = await DatabaseManager().getWorkouts();
+    history = await DatabaseManager().getHistoricWorkouts();
+    //savedWorkouts = await DatabaseManager().getSavedWorkouts();
     loaded = true;
     setState(() {});
   }
@@ -41,10 +43,11 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: loaded
-          ? (showHistory //TODO highlight dashboard/history whatever is being shown - will implement with new data structure
+          ? (showHistory //TODO highlight dashboard/history whatever is being shown
               ? HistoryWidget(
                   setState: updateState,
-                  history: history,
+                  history:
+                      history, //TODO add a refresh which refreshes this list
                 )
               : DashboardWidget(
                   setState: updateState,
@@ -85,8 +88,8 @@ class _DashboardState extends State<Dashboard> {
               context,
               MaterialPageRoute(
                 builder: (context) => WorkoutScreen(
-                  thisWorkout: Workout.fromEmpty(),
-                ), //TODO will change to program workout if available
+                  thisWorkout: LiveWorkout(),
+                ), //TODO will change to plan workout if available
               ),
             );
           },
@@ -102,7 +105,7 @@ class _DashboardState extends State<Dashboard> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => WorkoutScreen(
-                        thisWorkout: Workout.fromEmpty(),
+                        thisWorkout: LiveWorkout(), //makes a new blank workout
                       ),
                     ),
                   );
@@ -115,7 +118,7 @@ class _DashboardState extends State<Dashboard> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => WorkoutBuilderScreen(
-                        thisWorkout: Workout.fromEmpty(),
+                        thisWorkout: FutureWorkout(),
                       ),
                     ),
                   );

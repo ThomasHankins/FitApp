@@ -1,12 +1,12 @@
+import 'package:fit_app/UI/components/clock_converter.dart';
+import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
-
-import '../../../workout-tracker/data_structures/workout.dart';
 
 /*
 Takes a Workout class and will display the information
  */
 class HistoryDetailScreen extends StatefulWidget {
-  Workout thisWorkout;
+  HistoricWorkout thisWorkout;
 
   HistoryDetailScreen({Key? key, required this.thisWorkout}) : super(key: key);
 
@@ -16,9 +16,10 @@ class HistoryDetailScreen extends StatefulWidget {
 
 class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   bool loaded = false;
-  late Workout thisWorkout;
+  late HistoricWorkout thisWorkout;
 
   Future<void> loadWorkout() async {
+    //TODO investigate why this exists and maybe delete
     thisWorkout = widget.thisWorkout;
     loaded = true;
     setState(() {});
@@ -49,20 +50,37 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                   itemCount: thisWorkout.exercises.length,
                   itemBuilder: (context, i) {
                     return ListTile(
-                      //TODO add ontap that opens exercise description
                       horizontalTitleGap: 0,
+                      onTap:
+                          () {}, //TODO opens exercise description page (need to create page first)
                       title: Text(thisWorkout.exercises[i].description.name),
                       subtitle: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         itemCount: thisWorkout.exercises[i].sets.length,
                         itemBuilder: (context, j) {
-                          return Text(
-                              thisWorkout.exercises[i].sets[j].reps.toString() +
-                                  ' x ' +
-                                  thisWorkout.exercises[i].sets[j].weight
+                          return (thisWorkout.exercises[i].sets[j]
+                                  is HistoricSet)
+                              ? Text((thisWorkout.exercises[i].sets[j]
+                                          as HistoricSet)
+                                      .reps
                                       .toString() +
-                                  'lbs');
+                                  ' x ' +
+                                  (thisWorkout.exercises[i].sets[j]
+                                          as HistoricSet)
+                                      .weight
+                                      .toString() +
+                                  'lbs')
+                              : Text((thisWorkout.exercises[i].sets[j]
+                                          as HistoricCardio)
+                                      .distance
+                                      .toString() +
+                                  ' in ' +
+                                  ClockConverter()
+                                      .convert((thisWorkout.exercises[i].sets[j]
+                                              as HistoricCardio)
+                                          .length)
+                                      .toString());
                         },
                       ),
                     );

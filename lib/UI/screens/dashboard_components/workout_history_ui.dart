@@ -1,5 +1,5 @@
 import 'package:fit_app/UI/components/clock_converter.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout.dart';
+import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +7,7 @@ import 'history_detail.dart';
 
 class HistoryWidget extends StatelessWidget {
   final Function setState;
-  List<Workout> history;
+  List<HistoricWorkout> history;
   HistoryWidget({Key? key, required this.setState, required this.history})
       : super(key: key);
 
@@ -32,7 +32,8 @@ class HistoryWidget extends StatelessWidget {
                     IconButton(
                       //TODO format so that button is hidden unless long press
                       onPressed: () {
-                        DatabaseManager().deleteWorkout(history[i].getID);
+                        DatabaseManager().deleteHistoricWorkout(
+                            history[i].id); //TODO add a delete confirmation
                         history.removeAt(i);
                         setState(() {});
                       },

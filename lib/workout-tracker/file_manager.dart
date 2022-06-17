@@ -1,15 +1,12 @@
 import 'dart:async';
 
-import 'package:fit_app/workout-tracker/data_structures/exercise_set.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout_plan.dart';
+import 'package:fit_app/UI/screens/saved_workouts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'data_structures/exercise.dart';
-import 'data_structures/exercise_description.dart';
-import 'data_structures/workout.dart';
+import 'data_structures/structures.dart';
 import 'databases/dbv1.dart';
 
 class DatabaseManager {
@@ -66,9 +63,9 @@ class DatabaseManager {
       _insertItem(workout.toMap(), "workout_history");
   void insertHistoricExercise(LiveExercise exercise) =>
       _insertItem(exercise.toMap(), "exercise_history");
-  void insertHistoricSet(HistoricSet set) =>
+  void insertHistoricSet(LiveSet set) =>
       _insertItem(set.toMap(), "set_history");
-  void insertHistoricCardio(HistoricCardio cardio) =>
+  void insertHistoricCardio(LiveCardio cardio) =>
       _insertItem(cardio.toMap(), "cardio_history");
   void insertSavedWorkout(FutureWorkout workout) =>
       _insertItem(workout.toMap(), "saved_workouts");
@@ -109,9 +106,9 @@ class DatabaseManager {
 
   void deleteExerciseDescription(int id) =>
       _deleteItem(id, "exercise_descriptions");
-  void deleteHistoricWorkout(int id) => _insertItem(id, "workout_history");
-  void deleteSavedWorkout(int id) => _insertItem(id, "saved_workouts");
-  void deletePlan(int id) => _insertItem(id, "workout_plans");
+  void deleteHistoricWorkout(int id) => _deleteItem(id, "workout_history");
+  void deleteSavedWorkout(int id) => _deleteItem(id, "saved_workouts");
+  void deletePlan(int id) => _deleteItem(id, "workout_plans");
 
   Future<void> _deleteItem(int id, String table) async {
     final db = await _database;
@@ -168,84 +165,83 @@ class DatabaseManager {
 
     return Future.wait(List.generate(maps.length, (index) async {
       return ExerciseDescription.fromDatabase(
-          id: maps[index]['id'],
-          name: maps[index]['name'],
-          description: maps[index]['description'],
-          muscleGroup: maps[index]['muscle_group'],
-          isCompound: maps[index]['is_compound'],
-          isMachine: maps[index]['is_machine']);
+        id: maps[index]['id'],
+        name: maps[index]['name'],
+        description: maps[index]['description'],
+        exerciseType: maps[index]['exercise_type'],
+      );
     }));
   }
 
-  Future<ExerciseDescription> _getExerciseDescription(
-      Database db, int descID) async {
-    List<Map<String, dynamic>> maps = await db.query(
-      'exercise_descriptions',
-      where: 'id = ?',
-      whereArgs: [descID],
-    );
+  // Future<ExerciseDescription> _getExerciseDescription(
+  //     Database db, int descID) async {
+  //   List<Map<String, dynamic>> maps = await db.query(
+  //     'exercise_descriptions',
+  //     where: 'id = ?',
+  //     whereArgs: [descID],
+  //   );
+  //
+  //   return ExerciseDescription.fromDatabase(
+  //     id: maps[0]['id'],
+  //     name: maps[0]['name'],
+  //     description: maps[0]['description'],
+  //     muscleGroup: maps[0]['muscle_group'],
+  //     isCompound: maps[0]['is_compound'],
+  //     isMachine: maps[0]['is_machine'],
+  //   );
+  // }
 
-    return ExerciseDescription.fromDatabase(
-      id: maps[0]['id'],
-      name: maps[0]['name'],
-      description: maps[0]['description'],
-      muscleGroup: maps[0]['muscle_group'],
-      isCompound: maps[0]['is_compound'],
-      isMachine: maps[0]['is_machine'],
-    );
+  // Future<List<Exercise>> _getExercises(Database? db, int workoutID) async {
+  //   db ??= await _database;
+  //   List<Map<String, dynamic>> maps = await db.query(
+  //     'exercise_history',
+  //     where: 'workout_id = ?',
+  //     whereArgs: [workoutID],
+  //   );
+  //
+  //   return Future.wait(List.generate(
+  //     maps.length,
+  //     (index) async {
+  //       List<ExerciseSet> setList =
+  //           await _getExerciseSets(db!, maps[index]['id']);
+  //       ExerciseDescription description =
+  //           await _getExerciseDescription(db, maps[index]['description_id']);
+  //       return Exercise.fromDatabase(
+  //         id: maps[index]['id'],
+  //         workoutID: maps[index]['workout_id'],
+  //         descriptionID: maps[index]['description_id'],
+  //         sets: setList,
+  //         exerciseDescription: description,
+  //       );
+  //     },
+  //   ));
+  // }
+  //
+  // Future<List<Workout>> getWorkouts() async {
+  //   final db = await _database;
+  //   List<Map<String, dynamic>> workoutData = await db.query('workout_history');
+  //   return Future.wait(List.generate(workoutData.length, (index) async {
+  //     List<Exercise> exercises =
+  //         await _getExercises(db, workoutData[index]['id']);
+  //     return Workout.fromHistoric(
+  //         oldID: workoutData[index]['id'],
+  //         oldExercises: exercises,
+  //         oldName: workoutData[index]['name'],
+  //         oldDate: workoutData[index]['date'],
+  //         oldLength: workoutData[index]['length']);
+  //   }));
+  // }
+
+  Future<List<HistoricWorkout>> getHistoricWorkouts() {
+    //TODO implement method
+    //basically returns a list of historic workouts
+    //needs to populate exercises and sets
+    throw UnimplementedError();
   }
 
-  Future<List<Exercise>> _getExercises(Database? db, int workoutID) async {
-    db ??= await _database;
-    List<Map<String, dynamic>> maps = await db.query(
-      'exercise_history',
-      where: 'workout_id = ?',
-      whereArgs: [workoutID],
-    );
-
-    return Future.wait(List.generate(
-      maps.length,
-      (index) async {
-        List<ExerciseSet> setList =
-            await _getExerciseSets(db!, maps[index]['id']);
-        ExerciseDescription description =
-            await _getExerciseDescription(db, maps[index]['description_id']);
-        return Exercise.fromDatabase(
-          id: maps[index]['id'],
-          workoutID: maps[index]['workout_id'],
-          descriptionID: maps[index]['description_id'],
-          sets: setList,
-          exerciseDescription: description,
-        );
-      },
-    ));
-  }
-
-  Future<List<Workout>> getWorkouts() async {
-    final db = await _database;
-    List<Map<String, dynamic>> workoutData = await db.query('workout_history');
-    return Future.wait(List.generate(workoutData.length, (index) async {
-      List<Exercise> exercises =
-          await _getExercises(db, workoutData[index]['id']);
-      return Workout.fromHistoric(
-          oldID: workoutData[index]['id'],
-          oldExercises: exercises,
-          oldName: workoutData[index]['name'],
-          oldDate: workoutData[index]['date'],
-          oldLength: workoutData[index]['length']);
-    }));
-  }
-
-  //TODO ADD GET PLANS USING ID
-
-  //Accessing the database to find ID values
-  Future<int> _generateWorkoutID() async {
-    final db = await _database;
-    final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
-        'FROM workout_history;');
-
-    int? tempID = int.tryParse(id.first.values.first.toString());
-    tempID ??= 0;
-    return tempID;
+  Future<List<SavedWorkouts>> getSavedWorkouts() {
+    //TODO implement
+    //returns a list of saved workouts use the fromDatabase Constructor
+    throw UnimplementedError();
   }
 }

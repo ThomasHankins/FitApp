@@ -47,12 +47,12 @@ class LiveWorkout extends Workout {
   set name(String nm) => _name = nm;
 
   void deleteExercise(int position) => _exercises.removeAt(position);
-  void addExercise(ExerciseDescription description, [int? position]) =>
+  /*void addExercise(ExerciseDescription description, [int? position]) =>
       _exercises.insert(position ?? _exercises.length,
           LiveExercise(description: description));
   void reorderExercises(int oldPosition, int newPosition) =>
       _exercises.insert(newPosition, _exercises.removeAt(oldPosition));
-
+  */
   @override
   Map<String, dynamic> toMap() {
     return {
@@ -71,7 +71,8 @@ class LiveWorkout extends Workout {
     //todo, review once other data structures are complete
     timer.stop();
 
-    _exercises.removeWhere((element) => !element.finished);
+    _exercises.removeWhere(
+        (element) => !element.finished(_id, _exercises.indexOf(element)));
 
     if (exercises.isNotEmpty) {
       DatabaseManager dbm = DatabaseManager();
@@ -91,6 +92,17 @@ class FutureWorkout implements Workout {
   FutureWorkout()
       : _id = DatabaseManager().nextSavedWorkoutID,
         _exercises = [];
+
+  FutureWorkout.fromDatabase(
+      {required int id,
+      required String name,
+      required List<ExerciseDescription> exercises,
+      required String? description})
+      : _id = id,
+        _name = name,
+        _exercises = exercises,
+        _description = description;
+
   @override
   int get id => _id;
   @override
@@ -139,11 +151,12 @@ class HistoricWorkout implements Workout {
   HistoricWorkout(
       {required int id,
       required String name,
+      required List<HistoricExercise> exercises,
       required String date,
       required int length})
       : _id = id,
         _name = name,
-        _exercises = [],
+        _exercises = exercises,
         _date = DateTime.parse(date),
         _length = length {
     //TODO add db query using WHERE id = _id to get the exercise list
@@ -157,6 +170,8 @@ class HistoricWorkout implements Workout {
   List<HistoricExercise> get exercises => _exercises;
   @override
   set name(String nm) => _name = nm;
+  DateTime get date => _date;
+  int get length => _length;
 
   @override
   Map<String, dynamic> toMap() {
