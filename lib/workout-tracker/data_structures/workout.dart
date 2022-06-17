@@ -12,9 +12,6 @@ abstract class Workout {
   List<void> get exercises;
 
   Map<String, dynamic> toMap();
-
-  @override
-  String toString();
 }
 
 class LiveWorkout extends Workout {
@@ -36,7 +33,7 @@ class LiveWorkout extends Workout {
         _exercises = [],
         timer = Stopwatch() {
     for (ExerciseDescription exercise in fw.exercises) {
-      _exercises.add(LiveExercise(workoutID: _id, description: exercise));
+      _exercises.add(LiveExercise(exercise));
     }
   }
 
@@ -52,7 +49,7 @@ class LiveWorkout extends Workout {
   void deleteExercise(int position) => _exercises.removeAt(position);
   void addExercise(ExerciseDescription description, [int? position]) =>
       _exercises.insert(position ?? _exercises.length,
-          LiveExercise(workoutID: _id, description: description));
+          LiveExercise(description: description));
   void reorderExercises(int oldPosition, int newPosition) =>
       _exercises.insert(newPosition, _exercises.removeAt(oldPosition));
 
@@ -71,16 +68,16 @@ class LiveWorkout extends Workout {
   }
 
   Future<void> endWorkout() async {
-    //todo, would be nice to review once other data strucutres are complete
+    //todo, review once other data structures are complete
     timer.stop();
-    for (LiveExercise exercise in exercises) {
-      exercise.sets.removeWhere((element) => !element.isComplete);
-    }
-    exercises.removeWhere((element) => element.sets.isEmpty);
+
+    _exercises.removeWhere((element) => !element.finished);
 
     if (exercises.isNotEmpty) {
-      DatabaseManager().insertHistoricWorkout(this);
-      //TODO for excercise in exercises ... save to db
+      DatabaseManager dbm = DatabaseManager();
+      dbm.insertHistoricWorkout(this);
+
+      for (LiveExercise exercise in _exercises) {}
     }
   }
 }
@@ -109,7 +106,8 @@ class FutureWorkout implements Workout {
   void deleteExercise(int position) => _exercises.removeAt(position);
   void addExercise(ExerciseDescription description, [int? position]) =>
       _exercises.insert(position ?? _exercises.length, description);
-  void reorderExercises(int oldPosition, int newPosition) =>
+  void reorderExercises(int oldPosition,
+          int newPosition) => //TODO: make this immutable if a set has been completed in an exercise
       _exercises.insert(newPosition, _exercises.removeAt(oldPosition));
 
   @override
@@ -122,8 +120,12 @@ class FutureWorkout implements Workout {
   }
 
   void save() {
-    // TODO: implement save - don't forget to save info on saved_workouts and saved_exercises
-    throw UnimplementedError();
+    DatabaseManager dbm = DatabaseManager();
+
+    dbm.insertSavedWorkout(this);
+    for (int i = 0; i < _exercises.length; i++) {
+      dbm.insertSavedExercise(_id, _exercises[i].id, i);
+    }
   }
 }
 

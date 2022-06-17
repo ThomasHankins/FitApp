@@ -3,79 +3,52 @@ import 'exercise_set.dart';
 import 'exercise_description.dart';
 
 abstract class Exercise{
+  List<void> get sets;
+  ExerciseDescription get description;
 
 }
 class LiveExercise extends Exercise {
-  final int _id;
-  final int _workoutID;
   final ExerciseDescription _exerciseDescription;
-  List<ExerciseSet> sets = [];
+  List<LiveAction> _sets;
 
-  void giveSetsID() async {
-    int i = 0;
-    for (ExerciseSet exSet in sets) {
-      exSet.position = i;
-      i++;
-    }
+  LiveExercise(
+      this._exerciseDescription, [this._sets = const []]); //TODO: when more advanced, we will change this to not init empty
+
+
+  bool get finished {
+    _sets.removeWhere((element) => !element.isComplete);
+    return sets.isNotEmpty;
   }
 
-  Exercise(
-      {required int workoutID,
-      required ExerciseDescription description})
-      : _id = DatabaseManager().exerciseID,
-        _workoutID = workoutID,
-        _exerciseDescription = description;
-
-  Exercise.blank(
-      {required int workoutID, required ExerciseDescription description})
-      : _id = DatabaseManager().exerciseID,
-        _workoutID = workoutID,
-        _exerciseDescription = description;
-
-  Exercise.fromDatabase(
-      {required int id,
-      required int workoutID,
-      required ExerciseDescription exerciseDescription,
-      required int descriptionID,
-      required this.sets})
-      : _id = id,
-        _workoutID = workoutID,
-        _exerciseDescription = exerciseDescription;
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': _id,
-      'workout_id': _workoutID,
-      'description_id': _exerciseDescription.getID,
-    };
-  }
 
   @override
-  String toString() {
-    int desID = _exerciseDescription.getID;
-    return 'Exercise(id: $_id, workout_id: $_workoutID, description_id: $desID)';
-  }
-
-  get id {
-    return _id;
-  }
-
-  bool get isAllDone {
-    if (sets.isEmpty) {
-      return false;
-    }
-    for (ExerciseSet exSet in sets) {
-      if (exSet._complete == false) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   ExerciseDescription get description {
     return _exerciseDescription;
   }
+  @override
+  List<LiveAction> get sets => _sets;
+
+  void addAction()=> (_sets.last is LiveSet) ? _sets.add(LiveSet()) : _sets.add(LiveCardio()); //TODO need to find a way to get values from the last set
+  void deleteAction(int position) => _sets.removeAt(position);
+
 }
 
-class HistoricExercise implements Exercise {}
+class HistoricExercise implements Exercise {
+  final ExerciseDescription _exerciseDescription;
+  final List<HistoricAction> _sets;
+  final int _position;
+
+  HistoricExercise({required int position, required List<HistoricAction> sets, required ExerciseDescription description,}):
+      _position = position,
+      _exerciseDescription = description,
+      _sets = sets;
+
+  @override
+  ExerciseDescription get description => _exerciseDescription;
+  @override
+  List<HistoricAction> get sets => _sets;
+
+  }
+
+}
 

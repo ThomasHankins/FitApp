@@ -22,9 +22,10 @@ void createDatabase1(db, version) {
       'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'
       'position INTEGER'
       'description_id INTEGER REFERENCES exercise_description(id) ON DELETE SET NULL'
-      'PRIMARY KEY(workout_id, position)');
+      'PRIMARY KEY(workout_id, position))');
   db.execute('CREATE TABLE set_history('
-      'exercise_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
+      'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'
+      'exercise_position INTEGER,'
       'position INTEGER,'
       'weight REAL,' //assumed in kg, round to nearest 5 lbs
       'reps INTEGER,'
@@ -33,11 +34,14 @@ void createDatabase1(db, version) {
       'note TEXT,'
       'PRIMARY KEY(exercise_id, position))');
   db.execute('CREATE TABLE cardio_history('
-      'exercise_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
-      'position INTEGER'
-      'length INT,'
-      'calories INT,'
-      'distance INT,'
+      'workout_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
+      'exercise_position INTEGER,'
+      'position INTEGER,'
+      'length INTEGER,'
+      'distance INTEGER,'
+      'rest_time INTEGER'
+      'calories INTEGER,'
+      'note TEXT,'
       'PRIMARY KEY(exercise_ID, position))');
   db.execute('CREATE TABLE saved_workouts('
       'id INT PRIMARY KEY,'
@@ -48,8 +52,8 @@ void createDatabase1(db, version) {
       'CREATE TABLE saved_exercises(' //appropriate weight will be determined by model weighted on most recent weeks
       'workout_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
       'description_id INT REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
-      'order INT,'
-      'PRIMARY KEY(workout_id, order))');
+      'position INT,'
+      'PRIMARY KEY(workout_id, position))');
   db.execute('CREATE TABLE workout_plans('
       'id INT PRIMARY KEY,'
       'name TEXT,'
@@ -58,5 +62,6 @@ void createDatabase1(db, version) {
   db.execute('CREATE TABLE plans_to_saved_workouts('
       'plan_id INT REFERENCES workout_plans(id) ON DELETE CASCADE,'
       'workout_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
+      'order INT,'
       'PRIMARY KEY(plan_id, workout_id))');
 }

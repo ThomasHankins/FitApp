@@ -1,85 +1,208 @@
-abstract class ExerciseSet {
-  bool get isComplete => null;
-
+abstract class LiveAction {
+  bool get isComplete;
+  set note(String note);
+  String get note;
+  Map<String, dynamic> toMap();
+  void complete(int position, int parentPosition, int workoutID);
 }
 
-class LiveSet implements ExerciseSet {
-  final int _exerciseID;
-  int? _position; //workout ID and position form primary key
-  double _weight = 0;
-  int _reps = 0;
-  int _rpe = 10;
-  String? _note = '';
-  bool _inKG = false;
+abstract class HistoricAction {
+  int get position;
+}
+
+mixin ExerciseSet {
+  double get weight;
+  int get reps;
+  int get restTime;
+  int? get rpe;
+  String get note;
+}
+
+mixin Cardio {
+  int get length;
+  int get distance;
+  int get restTime;
+  int? get calories;
+  String get note;
+}
+
+class LiveSet extends LiveAction with ExerciseSet {
+  @override
+  double weight;
+  @override
+  int reps;
+  @override
+  int restTime;
+  @override
+  int? rpe;
+  String _note = '';
+  late int _parentPosition;
+  late int _position;
+  late int _workoutID;
   bool _complete = false;
 
-  ExerciseSet.fromDatabase(int exerciseID, int position, double weight,
-      int reps, int rpe, String note, int inKG)
-      : _exerciseID = exerciseID,
-        _position = position,
-        _weight = weight,
-        _reps = reps,
-        _rpe = rpe,
-        _note = note,
-        _inKG = (inKG == 1),
-        _complete = true;
+  LiveSet({required this.weight, required this.reps, required this.restTime});
 
-  ExerciseSet.fromBlank(this._exerciseID, [this._position]);
-
+  @override
   Map<String, dynamic> toMap() {
     return {
-      'exercise_id': _exerciseID,
+      'workout_id': _workoutID,
+      'exercise_position': _parentPosition,
       'position': _position,
-      'weight': _weight,
-      'reps': _reps,
-      'RPE': _rpe,
-      'note':
-      _note, //TODO need data validation to ensure less than 30 characters
-      'in_KG': _inKG ? 1 : 0,
+      'weight': weight,
+      'reps': reps,
+      'rest_time': restTime,
+      'RPE': rpe,
+      'note': _note,
     };
   }
 
   @override
-  String toString() {
-    //can remove later if necessary
-    return 'Set(exercise_id: $_exerciseID, position: $_position, weight: $_weight, reps: $_reps, RPE: $_rpe, note: $_note, in_KG: $_inKG)'; //might want to add complete bool if necessary
-  }
+  bool get isComplete => _complete;
 
-  set position(int pos) {
-    _position = pos;
-  }
+  @override
+  String get note => _note;
+  @override
+  set note(String note) =>
+      note.length < 30 ? _note = note : _note = note.substring(0, 30);
 
-  set selectWeight(double weightChosen) {
-    _weight = weightChosen;
-  }
-
-  double get weight {
-    return _weight;
-  }
-
-  set selectReps(int repsChosen) {
-    _reps = repsChosen;
-  }
-
-  get reps {
-    return _reps;
-  }
-
-  void completeSet() {
+  @override
+  void complete(int position, int parentPosition, int workoutID) {
     _complete = true;
-  }
-
-  bool get isComplete {
-    return _complete;
+    _position = position;
+    _parentPosition = parentPosition;
+    _workoutID = workoutID;
   }
 }
 
-class LiveCardio implements ExerciseSet {}
+class LiveCardio extends LiveAction with Cardio {
+  @override
+  int length;
+  @override
+  int distance;
+  @override
+  int restTime;
+  @override
+  int? calories;
+  String _note = '';
+  late int _parentPosition;
+  late int _position;
+  late int _workoutID;
+  bool _complete = false;
 
-class HistoricSet implements ExerciseSet {
-  toMap() {}
+  LiveCardio(
+      {required this.length, required this.distance, required this.restTime});
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'workout_id': _workoutID,
+      'exercise_position': _parentPosition,
+      'position': _position,
+      'length': length,
+      'distance': distance,
+      'rest_time': restTime,
+      'calories': calories,
+      'note': _note,
+    };
+  }
+
+  @override
+  bool get isComplete => _complete;
+
+  @override
+  String get note => _note;
+  @override
+  set note(String note) =>
+      note.length < 30 ? _note = note : _note = note.substring(0, 30);
+
+  @override
+  void complete(int position, int parentPosition, int workoutID) {
+    _complete = true;
+    _position = position;
+    _parentPosition = parentPosition;
+    _workoutID = workoutID;
+  }
 }
 
-class HistoricCardio implements ExerciseSet{
-  toMap() {}
+class HistoricSet extends HistoricAction with ExerciseSet {
+  final int _position;
+  final double _weight;
+  final int _reps;
+  final int _restTime;
+  final int? _rpe;
+  final String _note;
+
+  HistoricSet({
+    required int position,
+    required double weight,
+    required int reps,
+    required int restTime,
+    required int? rpe,
+    required String note,
+  })  : _position = position,
+        _weight = weight,
+        _reps = reps,
+        _restTime = restTime,
+        _rpe = rpe,
+        _note = note;
+
+  @override
+  int get position => _position;
+
+  @override
+  double get weight => _weight;
+
+  @override
+  int get reps => _reps;
+
+  @override
+  int get restTime => _restTime;
+
+  @override
+  int? get rpe => _rpe;
+
+  @override
+  String get note => _note;
+}
+
+class HistoricCardio extends HistoricAction with Cardio {
+  final int _position;
+  final int _length;
+  final int _distance;
+  final int _restTime;
+  final int? _calories;
+  final String _note;
+
+  HistoricCardio({
+    required int position,
+    required int length,
+    required int distance,
+    required int restTime,
+    required int? calories,
+    required String note,
+  })  : _position = position,
+        _length = length,
+        _distance = distance,
+        _restTime = restTime,
+        _calories = calories,
+        _note = note;
+
+  @override
+  int get position => _position;
+
+  @override
+  int get length => _length;
+
+  @override
+  int get distance => _distance;
+
+  @override
+  int get restTime => _restTime;
+
+  @override
+  int? get calories => _calories;
+
+  @override
+  String get note => _note;
 }

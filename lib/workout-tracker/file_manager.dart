@@ -123,6 +123,22 @@ class DatabaseManager {
   }
 
   //Data Retrieval
+
+  Future<ExerciseDescription> getExerciseDescription(
+      Database db, int descID) async {
+    List<Map<String, dynamic>> maps = await db.query(
+      'exercise_descriptions',
+      where: 'id = ?',
+      whereArgs: [descID],
+    );
+
+    return ExerciseDescription.fromDatabase(
+        id: maps[0]['id'],
+        name: maps[0]['name'],
+        description: maps[0]['description'],
+        exerciseType: maps[0]['exercise_type']);
+  }
+
   Future<List<ExerciseSet>> _getExerciseSets(
       Database db, int exerciseID) async {
     final List<Map<String, dynamic>> maps = await db.query(
