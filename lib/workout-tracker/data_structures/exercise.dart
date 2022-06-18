@@ -23,6 +23,8 @@ class LiveExercise extends Exercise {
     return sets.isNotEmpty;
   }
 
+  bool get isPartiallyFinished => _sets.first.isComplete;
+
   @override
   ExerciseDescription get description {
     return _exerciseDescription;
@@ -31,9 +33,17 @@ class LiveExercise extends Exercise {
   @override
   List<LiveAction> get sets => _sets;
 
-  //TODO need to find a way to get values from the last set
-  //void addSet()=> (_sets.last is LiveSet) ? _sets.add(LiveSet()) : _sets.add(LiveCardio());
-
+  void addSet() => (_sets.last is LiveSet)
+      ? _sets.add(LiveSet(
+          weight: (_sets.last as LiveSet).weight,
+          reps: (_sets.last as LiveSet).reps,
+          restTime: (_sets.last as LiveSet).restTime,
+        ))
+      : _sets.add(LiveCardio(
+          restTime: (_sets.last as LiveCardio).restTime,
+          distance: (_sets.last as LiveCardio).distance,
+          length: (_sets.last as LiveCardio).length,
+        ));
   void deleteSet(int position) => _sets.removeAt(position);
 
   Map<String, dynamic> toMap() {

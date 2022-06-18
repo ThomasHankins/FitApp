@@ -1,26 +1,30 @@
 import 'package:fit_app/UI/screens/workout_builder.dart';
 import 'package:fit_app/UI/screens/workout_screen.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout.dart';
+import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
 class SavedWorkouts extends StatefulWidget {
-  const SavedWorkouts({Key? key}) : super(key: key);
+  //TODO change class name to eliminate confusion
+  List<FutureWorkout> plans;
+
+  SavedWorkouts({Key? key, required this.plans}) : super(key: key);
   @override
   _SavedWorkoutsState createState() => _SavedWorkoutsState();
 }
 
 class _SavedWorkoutsState extends State<SavedWorkouts> {
-  List<dynamic> plans = [];
+  bool loaded = false;
+  late List<FutureWorkout> plans;
 
   @override
   void initState() {
+    plans = widget.plans;
     loadFiles();
     super.initState();
   }
 
-  bool loaded = false;
   Future<void> loadFiles() async {
-    //TODO implement a plans variable
+    //TODO review if needed
     loaded = true;
     setState(() {});
   }
@@ -46,8 +50,8 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
                                   return WorkoutBuilderScreen(
-                                    thisWorkout: Workout
-                                        .fromEmpty(), //replace with saved
+                                    thisWorkout:
+                                        FutureWorkout(), //replace with saved
 
                                     //TODO open workout builder screen with saved plan
                                   );
@@ -75,7 +79,7 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                         Navigator.pushReplacement(context, MaterialPageRoute(
                           builder: (context) {
                             return WorkoutScreen(
-                              thisWorkout: Workout.fromEmpty(),
+                              thisWorkout: LiveWorkout(),
                               //TODO change to saved workout plan
                             );
                           },

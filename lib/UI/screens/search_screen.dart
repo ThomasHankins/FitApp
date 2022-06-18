@@ -1,10 +1,9 @@
-import 'package:fit_app/workout-tracker/data_structures/exercise.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout.dart';
+import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseSearch extends StatefulWidget {
-  final Workout currentWorkout;
+  final AdjustableWorkout currentWorkout;
   final Function() notifyParent;
 
   const ExerciseSearch(
@@ -179,12 +178,8 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                 setState(() {
                   for (SearchEntry entry in searchList.list) {
                     if (entry.selected) {
-                      widget.currentWorkout.exercises.add(
-                        Exercise.blank(
-                          workoutID: widget.currentWorkout.getID,
-                          description: entry.desc,
-                          //TODO change to last time's effort
-                        ),
+                      widget.currentWorkout.addExercise(
+                        entry.desc,
                       );
                     }
                   }
@@ -217,7 +212,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                           });
                         },
                         onLongPress: () {
-                          //TODO Open Description Page
+                          //TODO Open Description Page (when made)
                         },
                       ),
                     );

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:fit_app/UI/screens/saved_workouts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
@@ -33,17 +32,20 @@ class DatabaseManager {
   static int? _currentSavedWorkoutID;
   static int? _currentWorkoutPlan;
 
-  get nextExerciseDescriptionID =>
-      _generateID(_currentExerciseDescriptionID, "exercise_descriptions");
+  get nextExerciseDescriptionID async =>
+      await _generateID(_currentExerciseDescriptionID, "exercise_descriptions");
   //TODO eventually add equipment lists/equipment ID
-  get nextWorkoutID => _generateID(_currentWorkoutID, "workout_history");
-  get nextExerciseID => _generateID(_currentExerciseID, "exercise_history");
-  get nextSavedWorkoutID =>
-      _generateID(_currentSavedWorkoutID, "saved_workouts");
-  get nextWorkoutPlanID => _generateID(_currentWorkoutPlan, "workout_plans");
+  get nextWorkoutID async =>
+      await _generateID(_currentWorkoutID, "workout_history");
+  get nextExerciseID async =>
+      await _generateID(_currentExerciseID, "exercise_history");
+  get nextSavedWorkoutID async =>
+      await _generateID(_currentSavedWorkoutID, "saved_workouts");
+  get nextWorkoutPlanID async =>
+      await _generateID(_currentWorkoutPlan, "workout_plans");
 
-  int _generateID(int? tableID, String tableName) {
-    tableID ??= () async {
+  Future<int> _generateID(int? tableID, String tableName) async {
+    Future<int> getID() async {
       final db = await _database;
       final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
           'FROM $tableName;');
@@ -51,8 +53,10 @@ class DatabaseManager {
       int? tempID = int.tryParse(id.first.values.first.toString());
       tempID ??= 0;
       return tempID;
-    } as int?;
-    tableID = tableID! + 1;
+    }
+
+    tableID ??= await getID();
+    tableID++;
     return tableID;
   }
 
@@ -136,28 +140,28 @@ class DatabaseManager {
         exerciseType: maps[0]['exercise_type']);
   }
 
-  Future<List<ExerciseSet>> _getExerciseSets(
-      Database db, int exerciseID) async {
-    final List<Map<String, dynamic>> maps = await db.query(
-      'set_history',
-      where: 'exercise_id = ?', //referencing the specific exercise instance
-      whereArgs: [exerciseID],
-    );
-    return List.generate(
-      maps.length,
-      (index) {
-        return ExerciseSet.fromDatabase(
-          maps[index]['exercise_id'],
-          maps[index]['position'],
-          maps[index]['weight'],
-          maps[index]['reps'],
-          maps[index]['RPE'],
-          maps[index]['note'],
-          maps[index]['in_KG'],
-        );
-      },
-    );
-  }
+  // Future<List<ExerciseSet>> _getExerciseSets(
+  //     Database db, int exerciseID) async {
+  //   final List<Map<String, dynamic>> maps = await db.query(
+  //     'set_history',
+  //     where: 'exercise_id = ?', //referencing the specific exercise instance
+  //     whereArgs: [exerciseID],
+  //   );
+  //   return List.generate(
+  //     maps.length,
+  //     (index) {
+  //       return ExerciseSet.fromDatabase(
+  //         maps[index]['exercise_id'],
+  //         maps[index]['position'],
+  //         maps[index]['weight'],
+  //         maps[index]['reps'],
+  //         maps[index]['RPE'],
+  //         maps[index]['note'],
+  //         maps[index]['in_KG'],
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<List<ExerciseDescription>> getExerciseDescriptionList() async {
     final db = await _database;
@@ -239,7 +243,7 @@ class DatabaseManager {
     throw UnimplementedError();
   }
 
-  Future<List<SavedWorkouts>> getSavedWorkouts() {
+  Future<List<FutureWorkout>> getSavedWorkouts() {
     //TODO implement
     //returns a list of saved workouts use the fromDatabase Constructor
     throw UnimplementedError();

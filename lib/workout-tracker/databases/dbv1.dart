@@ -32,7 +32,7 @@ void createDatabase1(db, version) {
       'rest_time INTEGER'
       'RPE INTEGER,'
       'note TEXT,'
-      'PRIMARY KEY(exercise_id, position))');
+      'PRIMARY KEY(workout_id, exercise_position, position))');
   db.execute('CREATE TABLE cardio_history('
       'workout_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
       'exercise_position INTEGER,'
@@ -42,7 +42,7 @@ void createDatabase1(db, version) {
       'rest_time INTEGER'
       'calories INTEGER,'
       'note TEXT,'
-      'PRIMARY KEY(exercise_ID, position))');
+      'PRIMARY KEY(workout_id, exercise_position, position))');
   db.execute('CREATE TABLE saved_workouts('
       'id INT PRIMARY KEY,'
       'name TEXT,'

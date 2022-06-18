@@ -4,8 +4,7 @@ import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/data_structures/exercise.dart';
-import '../../workout-tracker/data_structures/workout.dart';
+import '../../workout-tracker/data_structures/structures.dart';
 import '../components/exercise_widget.dart';
 import 'dashboard.dart';
 import 'search_screen.dart';
@@ -42,8 +41,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (mounted) {
         return setState(() {
-          int? time = thisWorkout.timer.elapsed.inSeconds;
-          time ??= 0;
+          int time = thisWorkout.timer.elapsed.inSeconds;
           clock = time;
         });
       }
@@ -134,7 +132,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0, vertical: .2),
                           child: ExerciseWidget(
-                              thisExercise: thisWorkout.exercises[i])),
+                            index: i,
+                            thisWorkout: thisWorkout,
+                          )),
                     );
                   },
                   //TODO block reorder on completed sets
@@ -143,9 +143,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       if (oldIndex < newIndex) {
                         newIndex -= 1;
                       }
-                      final Exercise item =
-                          thisWorkout.exercises.removeAt(oldIndex);
-                      thisWorkout.exercises.insert(newIndex, item);
+                      thisWorkout.reorderExercises(oldIndex, newIndex);
                     });
                   },
                 ),
@@ -192,7 +190,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     context: context,
                     barrierDismissible: true,
                     builder: (BuildContext context) {
-                      thisWorkout.timer?.stop();
+                      thisWorkout.timer.stop();
                       return AlertDialog(
                           title: const Center(
                             child: Text(
@@ -220,7 +218,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               child: const Text('Cancel'),
                               onPressed: () async {
                                 Navigator.pop(context, 'Cancel');
-                                thisWorkout.timer?.start();
+                                thisWorkout.timer.start();
                               },
                             )
                           ]);

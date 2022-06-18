@@ -14,18 +14,29 @@ abstract class Workout {
   Map<String, dynamic> toMap();
 }
 
-class LiveWorkout extends Workout {
-  final int _id;
+abstract class AdjustableWorkout extends Workout {
+  void addExercise(ExerciseDescription desc, [int? position]);
+  void deleteExercise(int position);
+  void reorderExercises(int oldPosition, int newPosition);
+}
+
+class LiveWorkout extends AdjustableWorkout {
+  late final int _id;
   String _name;
   List<LiveExercise> _exercises;
   Stopwatch timer;
 
   LiveWorkout()
-      : _id = DatabaseManager().nextWorkoutID(),
-        _name =
+      : _name =
             DateFormat.yMMMMd('en_us').format(DateTime.now()) + " - Workout",
         _exercises = [],
-        timer = Stopwatch();
+        timer = Stopwatch() {
+    loadNextID();
+  }
+
+  void loadNextID() async {
+    _id = await DatabaseManager().nextWorkoutID();
+  }
 
   LiveWorkout.convertFromSaved(FutureWorkout fw)
       : _id = DatabaseManager().nextWorkoutID(),
@@ -40,19 +51,21 @@ class LiveWorkout extends Workout {
   @override
   int get id => _id;
   @override
-  String get name => _name ?? "";
+  String get name => _name;
   @override
   List<LiveExercise> get exercises => _exercises;
   @override
   set name(String nm) => _name = nm;
 
+  @override
   void deleteExercise(int position) => _exercises.removeAt(position);
-  /*void addExercise(ExerciseDescription description, [int? position]) =>
-      _exercises.insert(position ?? _exercises.length,
-          LiveExercise(description: description));
+  @override
+  void addExercise(ExerciseDescription desc, [int? position]) =>
+      _exercises.insert(position ?? _exercises.length, LiveExercise(desc));
+  @override
   void reorderExercises(int oldPosition, int newPosition) =>
       _exercises.insert(newPosition, _exercises.removeAt(oldPosition));
-  */
+
   @override
   Map<String, dynamic> toMap() {
     return {
@@ -78,20 +91,26 @@ class LiveWorkout extends Workout {
       DatabaseManager dbm = DatabaseManager();
       dbm.insertHistoricWorkout(this);
 
-      for (LiveExercise exercise in _exercises) {}
+      for (LiveExercise exercise in _exercises) {
+        //TODO implement
+      }
     }
   }
 }
 
-class FutureWorkout implements Workout {
-  final int _id;
+class FutureWorkout implements AdjustableWorkout {
+  late final int _id;
   String? _name;
   List<ExerciseDescription> _exercises;
   String? _description;
 
-  FutureWorkout()
-      : _id = DatabaseManager().nextSavedWorkoutID,
-        _exercises = [];
+  FutureWorkout() : _exercises = [] {
+    loadNextID();
+  }
+
+  void loadNextID() async {
+    _id = await DatabaseManager().nextSavedWorkoutID;
+  }
 
   FutureWorkout.fromDatabase(
       {required int id,
@@ -115,9 +134,12 @@ class FutureWorkout implements Workout {
   set name(String nm) => _name = nm;
   set description(String desc) => _description = desc;
 
+  @override
   void deleteExercise(int position) => _exercises.removeAt(position);
-  void addExercise(ExerciseDescription description, [int? position]) =>
-      _exercises.insert(position ?? _exercises.length, description);
+  @override
+  void addExercise(ExerciseDescription desc, [int? position]) =>
+      _exercises.insert(position ?? _exercises.length, desc);
+  @override
   void reorderExercises(int oldPosition,
           int newPosition) => //TODO: make this immutable if a set has been completed in an exercise
       _exercises.insert(newPosition, _exercises.removeAt(oldPosition));
@@ -165,7 +187,7 @@ class HistoricWorkout implements Workout {
   @override
   int get id => _id;
   @override
-  String get name => _name ?? "";
+  String get name => _name;
   @override
   List<HistoricExercise> get exercises => _exercises;
   @override

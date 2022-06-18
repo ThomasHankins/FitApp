@@ -1,13 +1,12 @@
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/data_structures/exercise.dart';
 import '../../workout-tracker/data_structures/workout.dart';
 import 'dashboard.dart';
 import 'search_screen.dart';
 
 class WorkoutBuilderScreen extends StatefulWidget {
-  Workout thisWorkout;
+  FutureWorkout thisWorkout;
   int? planID;
   WorkoutBuilderScreen({Key? key, required this.thisWorkout, this.planID})
       : super(key: key);
@@ -17,7 +16,7 @@ class WorkoutBuilderScreen extends StatefulWidget {
 }
 
 class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
-  late Workout thisWorkout;
+  late FutureWorkout thisWorkout;
   bool loaded = false;
 
   Future<void> loadWorkout() async {
@@ -33,7 +32,6 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
     super.initState();
   }
 
-  late Exercise currentExercise = thisWorkout.exercises.first;
   @override
   Widget build(BuildContext context) {
     return loaded
@@ -106,8 +104,7 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0, vertical: .2),
                           child: ListTile(
-                            title:
-                                Text(thisWorkout.exercises[i].description.name),
+                            title: Text(thisWorkout.exercises[i].name),
                           )),
                     );
                   },
@@ -116,9 +113,7 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
                       if (oldIndex < newIndex) {
                         newIndex -= 1;
                       }
-                      final Exercise item =
-                          thisWorkout.exercises.removeAt(oldIndex);
-                      thisWorkout.exercises.insert(newIndex, item);
+                      thisWorkout.reorderExercises(oldIndex, newIndex);
                     });
                   },
                 ),
@@ -161,7 +156,7 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
               label: const Text("Save Workout"),
               icon: const Icon(Icons.save_outlined),
               onPressed: () {
-                thisWorkout.endWorkout();
+                thisWorkout.save();
                 //end workout
                 Navigator.push(
                   context,

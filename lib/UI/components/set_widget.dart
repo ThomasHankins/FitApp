@@ -1,10 +1,12 @@
-import 'package:fit_app/workout-tracker/data_structures/exercise.dart';
+import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SetWidget extends StatelessWidget {
-  const SetWidget({Key? key, required this.thisSet}) : super(key: key);
-  final ExerciseSet thisSet;
+  const SetWidget({Key? key, required LiveAction inheritSet})
+      : thisSet = inheritSet as LiveSet,
+        super(key: key);
+  final LiveSet thisSet; //TODO make a separate widget for cardio exercises
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class SetWidget extends StatelessWidget {
               ],
               keyboardType: TextInputType.number,
               onChanged: (changes) {
-                thisSet.selectWeight = double.parse(changes);
+                thisSet.weight = double.parse(changes);
               },
             ),
           ),
@@ -54,7 +56,7 @@ class SetWidget extends StatelessWidget {
               ],
               keyboardType: TextInputType.number,
               onChanged: (changes) {
-                thisSet.selectReps = int.parse(changes);
+                thisSet.reps = int.parse(changes);
               },
             ),
           ),

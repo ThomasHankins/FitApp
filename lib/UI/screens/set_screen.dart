@@ -1,21 +1,25 @@
 import 'package:fit_app/UI/components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/data_structures/exercise.dart';
+import '../../workout-tracker/data_structures/structures.dart';
 import '../components/set_widget.dart';
 
 class SetScreen extends StatefulWidget {
-  final Exercise thisExercise;
+  final LiveWorkout thisWorkout;
+  final int index;
 
-  const SetScreen({Key? key, required this.thisExercise}) : super(key: key);
+  const SetScreen({Key? key, required this.thisWorkout, required this.index})
+      : super(key: key);
 
   @override
   _SetScreenState createState() => _SetScreenState();
 }
 
 class _SetScreenState extends State<SetScreen> {
+  late final LiveExercise thisExercise;
   @override
   void initState() {
+    thisExercise = widget.thisWorkout.exercises[widget.index];
     super.initState();
   }
 
@@ -26,7 +30,7 @@ class _SetScreenState extends State<SetScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Row(children: [
-            Text(widget.thisExercise.description.name),
+            Text(thisExercise.description.name),
             const Spacer(),
             IconButton(
               icon: const Icon(
@@ -46,31 +50,30 @@ class _SetScreenState extends State<SetScreen> {
             ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: widget.thisExercise.sets.length,
+              itemCount: thisExercise.sets.length,
               itemBuilder: (context, i) {
                 return DismissibleWidget(
-                  item: widget.thisExercise.sets[i],
+                  item: thisExercise.sets[i],
                   key: Key('$i'),
                   onDismissed: (dismissDirection) {
                     setState(() {
                       if (currentSetIndex > i) {
                         currentSetIndex -= 1;
-                        widget.thisExercise.sets.removeAt(i);
+                        thisExercise.deleteSet(i);
                       } else if (currentSetIndex == i) {
-                        if (currentSetIndex !=
-                            widget.thisExercise.sets.length) {
-                          widget.thisExercise.sets.removeAt(i);
+                        if (currentSetIndex != thisExercise.sets.length) {
+                          thisExercise.deleteSet(i);
                         } else {
                           currentSetIndex -= 1;
-                          widget.thisExercise.sets.removeAt(i);
+                          thisExercise.deleteSet(i);
                           Navigator.pop(context);
                         }
                       } else {
-                        widget.thisExercise.sets.removeAt(i);
+                        thisExercise.deleteSet(i);
                       }
                     });
                   },
-                  child: SetWidget(thisSet: widget.thisExercise.sets[i]),
+                  child: SetWidget(inheritSet: thisExercise.sets[i]),
                 );
               },
             ),
@@ -87,10 +90,7 @@ class _SetScreenState extends State<SetScreen> {
                   child: MaterialButton(
                     onPressed: () {
                       setState(() {
-                        widget.thisExercise.sets.add(
-                          ExerciseSet.fromBlank(widget.thisExercise.id,
-                              widget.thisExercise.sets.length),
-                        );
+                        thisExercise.addSet();
                       });
                     },
                     minWidth: 50.0,
@@ -110,9 +110,10 @@ class _SetScreenState extends State<SetScreen> {
           onPressed: () {
             setState(() {
               //mark "finished set"
-              if (widget.thisExercise.sets.isNotEmpty) {
-                widget.thisExercise.sets[currentSetIndex].completeSet();
-                if (currentSetIndex < widget.thisExercise.sets.length - 1) {
+              if (thisExercise.sets.isNotEmpty) {
+                thisExercise.sets[currentSetIndex].complete(
+                    currentSetIndex, widget.index, widget.thisWorkout.id);
+                if (currentSetIndex < thisExercise.sets.length - 1) {
                   currentSetIndex++;
                 } else {
                   Navigator.pop(context);

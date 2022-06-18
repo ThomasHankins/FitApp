@@ -17,7 +17,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List<HistoricWorkout> history = [];
-  //List<SavedWorkouts> savedWorkouts = [];
+  List<FutureWorkout> savedWorkouts = [];
   bool showHistory = false;
 
   @override
@@ -30,7 +30,7 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> loadFiles() async {
     history = await DatabaseManager().getHistoricWorkouts();
-    //savedWorkouts = await DatabaseManager().getSavedWorkouts();
+    savedWorkouts = await DatabaseManager().getSavedWorkouts();
     loaded = true;
     setState(() {});
   }
@@ -130,8 +130,9 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SavedWorkouts(),
-                    ),
+                        builder: (context) => SavedWorkouts(
+                              plans: savedWorkouts,
+                            )),
                   );
                 }),
           ]),
