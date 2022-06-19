@@ -49,7 +49,7 @@ class HistoryWidget extends StatelessWidget {
                     SizedBox(
                       width: 80,
                       child: Text(
-                        history[i].date.toString(),
+                        ClockConverter().iso8601ToFormatted(history[i].date),
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.white38,
@@ -62,7 +62,7 @@ class HistoryWidget extends StatelessWidget {
                       color: Colors.white38,
                     ),
                     Text(
-                      ClockConverter().convert(history[i].length),
+                      ClockConverter().secondsToFormatted(history[i].length),
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.white38,

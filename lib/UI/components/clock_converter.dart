@@ -1,7 +1,6 @@
 class ClockConverter {
   ClockConverter();
-  String convert(int number) {
-    //TODO MAKE THIS THE CONSTRUCTOR!!!!!!!!!!!!!!!!!!!!
+  String secondsToFormatted(int number) {
     if (number < 60) {
       return number.toString() + 's';
     } else if (number % 60 > 10) {
@@ -10,4 +9,16 @@ class ClockConverter {
       return (number ~/ 60).toString() + ':0' + (number % 60).toString();
     }
   }
+
+  String iso8601ToFormatted(DateTime date) =>
+      date.year.toString() +
+      "-" +
+      date.month.toString() +
+      "-" +
+      date.day.toString() +
+      " " +
+      (date.hour % 12).toString() +
+      ":" +
+      date.minute.toString() +
+      (date.hour < 12 ? "AM" : "PM");
 }
