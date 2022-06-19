@@ -45,7 +45,6 @@ class LiveExercise extends Exercise {
           ),
         );
       } else {
-        print("about to add to exercise");
         _sets.add(
           LiveSet(
             //TODO CHANGE THESE PARAMETERS TO LAST TIME'S
@@ -54,7 +53,6 @@ class LiveExercise extends Exercise {
             restTime: 0,
           ),
         );
-        print("added to exercise");
       }
     } else if (description.exerciseType == "cardio") {
       if (_sets.isNotEmpty) {
