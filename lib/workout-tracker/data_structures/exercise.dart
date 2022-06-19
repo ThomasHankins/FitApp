@@ -8,12 +8,12 @@ abstract class Exercise {
 
 class LiveExercise extends Exercise {
   final ExerciseDescription _exerciseDescription;
-  List<LiveAction> _sets;
+  List<LiveAction> _sets = [];
   late int _position;
   late int _workoutID;
 
   LiveExercise(this._exerciseDescription,
-      [this._sets =
+      [List<LiveAction> sets =
           const []]); //TODO: when more advanced, we will change this to not init empty
 
   bool finished(int position, int workoutID) {
@@ -23,7 +23,8 @@ class LiveExercise extends Exercise {
     return sets.isNotEmpty;
   }
 
-  bool get isPartiallyFinished => _sets.first.isComplete;
+  bool get isPartiallyFinished =>
+      _sets.isNotEmpty ? _sets.first.isComplete : false;
 
   @override
   ExerciseDescription get description {
@@ -33,17 +34,50 @@ class LiveExercise extends Exercise {
   @override
   List<LiveAction> get sets => _sets;
 
-  void addSet() => (_sets.last is LiveSet)
-      ? _sets.add(LiveSet(
-          weight: (_sets.last as LiveSet).weight,
-          reps: (_sets.last as LiveSet).reps,
-          restTime: (_sets.last as LiveSet).restTime,
-        ))
-      : _sets.add(LiveCardio(
-          restTime: (_sets.last as LiveCardio).restTime,
-          distance: (_sets.last as LiveCardio).distance,
-          length: (_sets.last as LiveCardio).length,
-        ));
+  void addSet() {
+    if (description.exerciseType == "strength") {
+      if (_sets.isNotEmpty) {
+        _sets.add(
+          LiveSet(
+            weight: (_sets.last as LiveSet).weight,
+            reps: (_sets.last as LiveSet).reps,
+            restTime: (_sets.last as LiveSet).restTime,
+          ),
+        );
+      } else {
+        print("about to add to exercise");
+        _sets.add(
+          LiveSet(
+            //TODO CHANGE THESE PARAMETERS TO LAST TIME'S
+            weight: 0,
+            reps: 0,
+            restTime: 0,
+          ),
+        );
+        print("added to exercise");
+      }
+    } else if (description.exerciseType == "cardio") {
+      if (_sets.isNotEmpty) {
+        _sets.add(
+          LiveCardio(
+            restTime: (_sets.last as LiveCardio).restTime,
+            distance: (_sets.last as LiveCardio).distance,
+            length: (_sets.last as LiveCardio).length,
+          ),
+        );
+      } else {
+        _sets.add(
+          LiveCardio(
+            //TODO CHANGE THESE PARAMETERS TO LAST TIME'S
+            restTime: 0,
+            distance: 0,
+            length: 0,
+          ),
+        );
+      }
+    }
+  }
+
   void deleteSet(int position) => _sets.removeAt(position);
 
   Map<String, dynamic> toMap() {

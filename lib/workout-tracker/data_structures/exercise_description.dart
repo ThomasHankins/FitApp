@@ -1,7 +1,7 @@
 import '../file_manager.dart';
 
 class ExerciseDescription {
-  final int _id;
+  late final int _id;
   String _name;
   String? _description;
   String? _exerciseType; //eventually will reference "cardio or strength"
@@ -31,8 +31,22 @@ class ExerciseDescription {
     this._name, [
     this._description,
     this._exerciseType,
-  ]) : _id = DatabaseManager().nextExerciseDescriptionID {
+  ]) {
+    getNextExerciseDescription();
     DatabaseManager().insertExerciseDescription(this); //insert ED
+  }
+
+  ExerciseDescription.test(
+    //to make test ED's without inserting into the DB
+    this._name, [
+    this._description,
+    this._exerciseType,
+  ]) {
+    getNextExerciseDescription();
+  }
+
+  void getNextExerciseDescription() async {
+    _id = await DatabaseManager().nextExerciseDescriptionID;
   }
 
   //constructor from db imports

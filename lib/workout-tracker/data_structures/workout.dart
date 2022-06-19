@@ -26,6 +26,13 @@ class LiveWorkout extends AdjustableWorkout {
   List<LiveExercise> _exercises;
   Stopwatch timer;
 
+  void loadNextID() async {
+    /*not really the best solution to asynchronously load the id
+    it would be better to defer the creation of the object with a private constructor that is called by a public async method
+     */
+    _id = await DatabaseManager().nextWorkoutID;
+  }
+
   LiveWorkout()
       : _name =
             DateFormat.yMMMMd('en_us').format(DateTime.now()) + " - Workout",
@@ -34,16 +41,12 @@ class LiveWorkout extends AdjustableWorkout {
     loadNextID();
   }
 
-  void loadNextID() async {
-    _id = await DatabaseManager().nextWorkoutID();
-  }
-
   LiveWorkout.convertFromSaved(FutureWorkout fw)
-      : _id = DatabaseManager().nextWorkoutID(),
-        _name = fw.name,
+      : _name = fw.name,
         _exercises = [],
         timer = Stopwatch() {
     for (ExerciseDescription exercise in fw.exercises) {
+      loadNextID();
       _exercises.add(LiveExercise(exercise));
     }
   }

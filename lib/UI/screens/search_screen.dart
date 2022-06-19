@@ -32,13 +32,12 @@ class SearchList {
   SearchList();
 
   int get length {
-    return _list.where((element) => element.visible == true).length;
+    return _list.where((element) => element.visible).length;
   }
 
   List<SearchEntry> get list {
     List<SearchEntry> returnList = [];
-    for (SearchEntry element
-        in _list.where((element) => element.visible == true)) {
+    for (SearchEntry element in _list.where((element) => element.visible)) {
       returnList.add(element);
     }
     return returnList;
@@ -59,7 +58,7 @@ class SearchList {
 
   void _resetSearchList() {
     for (SearchEntry entry in _list) {
-      entry.visible = false;
+      entry.visible = true;
       entry.selected = false;
     }
   }
@@ -84,6 +83,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
 
   Future<void> loadData() async {
     searchList.loadSearchList();
+    print("loaded state with search list of length ${searchList.length}");
     loaded = true;
     setState(() {});
   }
@@ -190,35 +190,31 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
             )
           : null,
       body: loaded
-          ? Column(
-              children: [
-                ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: searchList.length,
-                  itemExtent: 50,
-                  itemBuilder: (context, i) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: .2),
-                      child: ListTile(
-                        textColor: Colors.white,
-                        title: Text(searchList.list[i].name),
-                        selected: searchList.list[i].selected,
-                        onTap: () {
-                          setState(() {
-                            searchList.list[i].selected =
-                                !searchList.list[i].selected;
-                          });
-                        },
-                        onLongPress: () {
-                          //TODO Open Description Page (when made)
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ],
+          ? ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: searchList.length,
+              itemExtent: 50,
+              itemBuilder: (context, i) {
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: .2),
+                  child: ListTile(
+                    textColor: Colors.white,
+                    title: Text(searchList.list[i].name),
+                    selected: searchList.list[i].selected,
+                    onTap: () {
+                      setState(() {
+                        searchList.list[i].selected =
+                            !searchList.list[i].selected;
+                      });
+                    },
+                    onLongPress: () {
+                      //TODO Open Description Page (when made)
+                    },
+                  ),
+                );
+              },
             )
           : const CircularProgressIndicator(),
     );
