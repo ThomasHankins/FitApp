@@ -3,16 +3,17 @@ import 'package:fit_app/UI/screens/workout_screen.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
-class SavedWorkouts extends StatefulWidget {
-  //TODO change class name to eliminate confusion
+import '../../workout-tracker/file_manager.dart';
+
+class SavedWorkoutsScreen extends StatefulWidget {
   List<FutureWorkout> plans;
 
-  SavedWorkouts({Key? key, required this.plans}) : super(key: key);
+  SavedWorkoutsScreen({Key? key, required this.plans}) : super(key: key);
   @override
-  _SavedWorkoutsState createState() => _SavedWorkoutsState();
+  _SavedWorkoutsScreenState createState() => _SavedWorkoutsScreenState();
 }
 
-class _SavedWorkoutsState extends State<SavedWorkouts> {
+class _SavedWorkoutsScreenState extends State<SavedWorkoutsScreen> {
   bool loaded = false;
   late List<FutureWorkout> plans;
 
@@ -38,22 +39,19 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                 ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: 0, //TODO replace with plans.length
+                  itemCount: plans.length,
                   itemBuilder: (context, i) {
                     return ListTile(
                       title: Row(
                         children: [
-                          Text(""), //TODO replace with plans[i].name
+                          Text(plans[i].name),
                           const Spacer(),
                           IconButton(
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
                                   return WorkoutBuilderScreen(
-                                    thisWorkout:
-                                        FutureWorkout(), //replace with saved
-
-                                    //TODO open workout builder screen with saved plan
+                                    thisWorkout: plans[i],
                                   );
                                 },
                               ));
@@ -65,7 +63,8 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                           ),
                           IconButton(
                             onPressed: () {
-                              //TODO call delete plan in file manager - for this plan
+                              DatabaseManager().deleteSavedWorkout(plans[i].id);
+                              plans.removeAt(i);
                               setState(() {});
                             },
                             icon: const Icon(
@@ -79,8 +78,8 @@ class _SavedWorkoutsState extends State<SavedWorkouts> {
                         Navigator.pushReplacement(context, MaterialPageRoute(
                           builder: (context) {
                             return WorkoutScreen(
-                              thisWorkout: LiveWorkout(),
-                              //TODO change to saved workout plan
+                              thisWorkout:
+                                  LiveWorkout.convertFromSaved(plans[i]),
                             );
                           },
                         ));

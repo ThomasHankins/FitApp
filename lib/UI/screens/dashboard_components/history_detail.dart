@@ -39,7 +39,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
             ? Row(children: [
                 Text(thisWorkout.name),
               ])
-            : null, //TODO add length information and total volume also extend height of app bar
+            : null, //TODO add length information and total volume also extend height of app bar - future feature idea to add analytics
       ),
       body: loaded
           ? Column(
@@ -77,9 +77,10 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                                       .toString() +
                                   ' in ' +
                                   ClockConverter()
-                                      .convert((thisWorkout.exercises[i].sets[j]
-                                              as HistoricCardio)
-                                          .length)
+                                      .secondsToFormatted((thisWorkout
+                                              .exercises[i]
+                                              .sets[j] as HistoricCardio)
+                                          .duration)
                                       .toString());
                         },
                       ),

@@ -10,6 +10,13 @@ import 'data_structures/structures.dart';
 import 'databases/dbv1.dart';
 
 class DatabaseManager {
+  Future<List<Map<String, dynamic>>> testFunc() async {
+    final db = await _database;
+    return await db.query(
+      'workout_history',
+    );
+  }
+
   //init database
   Future<Database> get _database async {
     return openDatabase(
@@ -18,6 +25,7 @@ class DatabaseManager {
         createDatabase1(db, version);
         addExercises(db);
       },
+      onOpen: (db) => db.execute("PRAGMA foreign_keys=ON"),
       version: 1, //INITIAL VERSION
     );
   }
@@ -75,11 +83,11 @@ class DatabaseManager {
       _insertItem(cardio.toMap(), "cardio_history");
   void insertSavedWorkout(FutureWorkout workout) =>
       _insertItem(workout.toMap(), "saved_workouts");
-  void insertSavedExercise(int workoutId, int descriptionId, int order) =>
+  void insertSavedExercise(int workoutId, int descriptionId, int position) =>
       _insertItem({
         'workout_id': workoutId,
         "description_id": descriptionId,
-        "order": order,
+        "position": position,
       }, "saved_exercises");
   void insertPlan(WorkoutPlan plan) => _insertItem(plan, "workout_plans");
   void insertPlanMap(int planId, int workoutId) => _insertItem({
@@ -196,7 +204,7 @@ class DatabaseManager {
           calories: maps[index]['calories'],
           distance: maps[index]['distance'],
           restTime: maps[index]['rest_time'],
-          length: maps[index]['length'],
+          duration: maps[index]['length'],
         );
       },
     );
@@ -210,14 +218,16 @@ class DatabaseManager {
       where: 'workout_id = ?',
       whereArgs: [workoutID],
     );
-
     return Future.wait(List.generate(
       maps.length,
       (index) async {
         List<HistoricSet> setList = await _getHistoricSets(
-            db!, maps[index]['id'], maps[index]['position']);
-        List<HistoricCardio> cardioList = await _getHistoricCardio(
-            db, maps[index]['id'], maps[index]['position']);
+            //TODO reorder so that get exercise description is first, then choose based on exercise type
+            db!,
+            workoutID,
+            maps[index]['position']);
+        List<HistoricCardio> cardioList =
+            await _getHistoricCardio(db, workoutID, maps[index]['position']);
         ExerciseDescription description =
             await getExerciseDescription(db, maps[index]['description_id']);
         return HistoricExercise(

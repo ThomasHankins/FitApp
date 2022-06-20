@@ -23,7 +23,7 @@ void createDatabase1(db, version) {
   db.execute('CREATE TABLE exercise_history('
       'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'
       'position INTEGER,'
-      'description_id INTEGER REFERENCES exercise_description(id) ON DELETE SET NULL,'
+      'description_id INTEGER REFERENCES exercise_descriptions(id) ON DELETE SET NULL,'
       'PRIMARY KEY(workout_id, position));');
   db.execute('CREATE TABLE set_history('
       'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'

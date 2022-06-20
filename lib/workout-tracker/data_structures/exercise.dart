@@ -60,7 +60,7 @@ class LiveExercise extends Exercise {
           LiveCardio(
             restTime: (_sets.last as LiveCardio).restTime,
             distance: (_sets.last as LiveCardio).distance,
-            length: (_sets.last as LiveCardio).length,
+            duration: (_sets.last as LiveCardio).duration,
           ),
         );
       } else {
@@ -69,7 +69,7 @@ class LiveExercise extends Exercise {
             //TODO CHANGE THESE PARAMETERS TO LAST TIME'S
             restTime: 0,
             distance: 0,
-            length: 0,
+            duration: 0,
           ),
         );
       }
@@ -82,7 +82,7 @@ class LiveExercise extends Exercise {
     return {
       'workout_id': _workoutID,
       'position': _position,
-      'description': _exerciseDescription.id,
+      'description_id': _exerciseDescription.id,
     };
   }
 }

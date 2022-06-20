@@ -1,8 +1,7 @@
 import 'package:intl/intl.dart';
 
 import '../file_manager.dart';
-import 'exercise.dart';
-import 'exercise_description.dart';
+import 'structures.dart';
 
 abstract class Workout {
   set name(String nm);
@@ -66,8 +65,12 @@ class LiveWorkout extends AdjustableWorkout {
   void addExercise(ExerciseDescription desc, [int? position]) =>
       _exercises.insert(position ?? _exercises.length, LiveExercise(desc));
   @override
-  void reorderExercises(int oldPosition, int newPosition) =>
+  void reorderExercises(int oldPosition, int newPosition) {
+    if (!_exercises[oldPosition].isPartiallyFinished &&
+        !_exercises[newPosition].isPartiallyFinished) {
       _exercises.insert(newPosition, _exercises.removeAt(oldPosition));
+    }
+  }
 
   @override
   Map<String, dynamic> toMap() {
@@ -84,18 +87,24 @@ class LiveWorkout extends AdjustableWorkout {
   }
 
   Future<void> endWorkout() async {
-    //todo, review once other data structures are complete
     timer.stop();
 
     _exercises.removeWhere(
-        (element) => !element.finished(_id, _exercises.indexOf(element)));
+        (element) => !element.finished(_exercises.indexOf(element), _id));
 
     if (exercises.isNotEmpty) {
       DatabaseManager dbm = DatabaseManager();
       dbm.insertHistoricWorkout(this);
 
-      for (LiveExercise exercise in _exercises) {
-        //TODO implement
+      for (int i = 0; i < _exercises.length; i++) {
+        dbm.insertHistoricExercise(_exercises[i]);
+        for (int j = 0; j < _exercises[i].sets.length; j++) {
+          if (_exercises[i].description.exerciseType == "strength") {
+            dbm.insertHistoricSet(_exercises[i].sets[j] as LiveSet);
+          } else if (_exercises[i].description.exerciseType == "cardio") {
+            dbm.insertHistoricCardio(_exercises[i].sets[j] as LiveCardio);
+          }
+        }
       }
     }
   }
@@ -143,8 +152,7 @@ class FutureWorkout implements AdjustableWorkout {
   void addExercise(ExerciseDescription desc, [int? position]) =>
       _exercises.insert(position ?? _exercises.length, desc);
   @override
-  void reorderExercises(int oldPosition,
-          int newPosition) => //TODO: make this immutable if a set has been completed in an exercise
+  void reorderExercises(int oldPosition, int newPosition) =>
       _exercises.insert(newPosition, _exercises.removeAt(oldPosition));
 
   @override
@@ -183,9 +191,7 @@ class HistoricWorkout implements Workout {
         _name = name,
         _exercises = exercises,
         _date = DateTime.parse(date),
-        _length = length {
-    //TODO add db query using WHERE id = _id to get the exercise list
-  }
+        _length = length;
 
   @override
   int get id => _id;

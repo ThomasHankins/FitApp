@@ -19,7 +19,7 @@ mixin ExerciseSet {
 }
 
 mixin Cardio {
-  int get length;
+  int get duration;
   int get distance;
   int get restTime;
   int? get calories;
@@ -77,7 +77,7 @@ class LiveSet extends LiveAction with ExerciseSet {
 
 class LiveCardio extends LiveAction with Cardio {
   @override
-  int length;
+  int duration;
   @override
   int distance;
   @override
@@ -91,7 +91,7 @@ class LiveCardio extends LiveAction with Cardio {
   bool _complete = false;
 
   LiveCardio(
-      {required this.length, required this.distance, required this.restTime});
+      {required this.duration, required this.distance, required this.restTime});
 
   @override
   Map<String, dynamic> toMap() {
@@ -99,7 +99,7 @@ class LiveCardio extends LiveAction with Cardio {
       'workout_id': _workoutID,
       'exercise_position': _parentPosition,
       'position': _position,
-      'length': length,
+      'length': duration,
       'distance': distance,
       'rest_time': restTime,
       'calories': calories,
@@ -168,7 +168,7 @@ class HistoricSet extends HistoricAction with ExerciseSet {
 
 class HistoricCardio extends HistoricAction with Cardio {
   final int _position;
-  final int _length;
+  final int _duration;
   final int _distance;
   final int _restTime;
   final int? _calories;
@@ -176,13 +176,13 @@ class HistoricCardio extends HistoricAction with Cardio {
 
   HistoricCardio({
     required int position,
-    required int length,
+    required int duration,
     required int distance,
     required int restTime,
     required int? calories,
     required String note,
   })  : _position = position,
-        _length = length,
+        _duration = duration,
         _distance = distance,
         _restTime = restTime,
         _calories = calories,
@@ -192,7 +192,7 @@ class HistoricCardio extends HistoricAction with Cardio {
   int get position => _position;
 
   @override
-  int get length => _length;
+  int get duration => _duration;
 
   @override
   int get distance => _distance;

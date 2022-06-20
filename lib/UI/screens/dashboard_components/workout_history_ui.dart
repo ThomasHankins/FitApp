@@ -29,6 +29,7 @@ class HistoryWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(history[i].name),
+                    Text(history[i].id.toString()),
                     IconButton(
                       //TODO format so that button is hidden unless long press
                       onPressed: () {

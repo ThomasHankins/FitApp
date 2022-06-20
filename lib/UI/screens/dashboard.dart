@@ -4,7 +4,6 @@ import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-import 'dashboard_components/dashboard_ui.dart';
 import 'dashboard_components/workout_history_ui.dart';
 import 'workout_builder.dart';
 import 'workout_screen.dart';
@@ -19,7 +18,7 @@ class _DashboardState extends State<Dashboard> {
   List<HistoricWorkout> history = [];
   List<FutureWorkout> savedWorkouts = [];
   bool showHistory = false;
-
+  late List<Map<String, dynamic>> stuff;
   @override
   void initState() {
     loadFiles();
@@ -30,6 +29,7 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> loadFiles() async {
     history = await DatabaseManager().getHistoricWorkouts();
+    stuff = await DatabaseManager().testFunc();
     //savedWorkouts = await DatabaseManager().getSavedWorkouts();
     loaded = true;
     setState(() {});
@@ -49,9 +49,10 @@ class _DashboardState extends State<Dashboard> {
                   history:
                       history, //TODO add a refresh which refreshes this list
                 )
-              : DashboardWidget(
-                  setState: updateState,
-                ))
+              : Center(child: Text(stuff.toString())))
+          // DashboardWidget(
+          //             setState: updateState,
+          //           ))
           : const Center(
               child: CircularProgressIndicator(),
             ),
@@ -130,7 +131,7 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SavedWorkouts(
+                        builder: (context) => SavedWorkoutsScreen(
                               plans: savedWorkouts,
                             )),
                   );

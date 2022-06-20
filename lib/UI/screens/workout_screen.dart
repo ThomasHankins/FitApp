@@ -110,7 +110,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     },
                   ),
                 ),
-                Text(ClockConverter().convert(clock)),
+                Text(ClockConverter().secondsToFormatted(clock)),
               ]),
             ),
             body: Column(
