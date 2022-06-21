@@ -13,7 +13,7 @@ class DatabaseManager {
   Future<List<Map<String, dynamic>>> testFunc() async {
     final db = await _database;
     return await db.query(
-      'workout_history',
+      'saved_exercises',
     );
   }
 
@@ -254,9 +254,36 @@ class DatabaseManager {
     }));
   }
 
-  Future<List<FutureWorkout>> getSavedWorkouts() {
-    //TODO implement
-    //returns a list of saved workouts use the fromDatabase Constructor
-    throw UnimplementedError();
+  Future<List<ExerciseDescription>> _getSavedExercises(
+      Database? db, int workoutID) async {
+    db ??= await _database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'saved_exercises',
+      columns: ['description_id'],
+      where: 'workout_id = ?',
+      whereArgs: [workoutID],
+      orderBy: 'position',
+    );
+    return Future.wait(List.generate(
+      maps.length,
+      (index) async {
+        return getExerciseDescription(db!, maps[index]['description_id']);
+      },
+    ));
+  }
+
+  Future<List<FutureWorkout>> getSavedWorkouts() async {
+    final db = await _database;
+    List<Map<String, dynamic>> workoutData = await db.query('saved_workouts');
+    return Future.wait(List.generate(workoutData.length, (index) async {
+      List<ExerciseDescription> exercises =
+          await _getSavedExercises(db, workoutData[index]['id']);
+      return FutureWorkout.fromDatabase(
+        id: workoutData[index]['id'],
+        exercises: exercises,
+        name: workoutData[index]['name'],
+        description: workoutData[index]['description'],
+      );
+    }));
   }
 }

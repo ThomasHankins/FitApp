@@ -44,8 +44,8 @@ class LiveWorkout extends AdjustableWorkout {
       : _name = fw.name,
         _exercises = [],
         timer = Stopwatch() {
+    loadNextID();
     for (ExerciseDescription exercise in fw.exercises) {
-      loadNextID();
       _exercises.add(LiveExercise(exercise));
     }
   }
@@ -165,6 +165,12 @@ class FutureWorkout implements AdjustableWorkout {
   }
 
   void save() {
+    //TODO if it has been edited we get an issue when trying to save again - need to investiagte
+    /*
+    on duplicate abort might work - but if we reorder it won't delete the old entries and will cause issues
+    on duplicate replace might work - but then if we delete there will be hanging
+    best bet might just be to delete the old entry and save again
+    */
     DatabaseManager dbm = DatabaseManager();
 
     dbm.insertSavedWorkout(this);

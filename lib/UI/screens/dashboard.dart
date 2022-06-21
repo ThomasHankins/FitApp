@@ -30,7 +30,7 @@ class _DashboardState extends State<Dashboard> {
   Future<void> loadFiles() async {
     history = await DatabaseManager().getHistoricWorkouts();
     stuff = await DatabaseManager().testFunc();
-    //savedWorkouts = await DatabaseManager().getSavedWorkouts();
+    savedWorkouts = await DatabaseManager().getSavedWorkouts();
     loaded = true;
     setState(() {});
   }
