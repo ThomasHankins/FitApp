@@ -14,8 +14,7 @@ class HistoryWidget extends StatefulWidget {
 }
 
 class _HistoryWidgetState extends State<HistoryWidget> {
-  // final Function updateState;
-
+  bool _deleteMode = false;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -30,29 +29,19 @@ class _HistoryWidgetState extends State<HistoryWidget> {
             itemBuilder: (context, i) {
               i = widget.history.length - i - 1; //flip indicies
               return ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(widget.history[i].name),
-                    IconButton(
-                      //TODO format so that button is hidden unless long press
-                      onPressed: () {
-                        DatabaseManager().deleteHistoricWorkout(widget
-                            .history[i].id); //TODO add a delete confirmation
-                        widget.history.removeAt(i);
-                        setState(() => Null);
-                      },
-                      icon: const Icon(
-                        Icons.delete_forever,
-                        color: Colors.redAccent,
-                      ),
-                    ),
-                  ],
+                title: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(widget.history[i].name),
+                    ],
+                  ),
                 ),
                 subtitle: Row(
                   children: [
                     SizedBox(
-                      width: 80,
+                      width: 100,
                       child: Text(
                         ClockConverter()
                             .iso8601ToFormatted(widget.history[i].date),
@@ -62,6 +51,7 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                         ),
                       ),
                     ),
+                    Spacer(),
                     const Icon(
                       Icons.timelapse_outlined,
                       size: 12,
@@ -77,14 +67,66 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                     ),
                   ],
                 ),
+                trailing: _deleteMode
+                    ? IconButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                      'Are you sure you want to delete this workout?'),
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30))),
+                                  actionsAlignment: MainAxisAlignment.center,
+                                  actions: <Widget>[
+                                    MaterialButton(
+                                      child: const Text('Yes'),
+                                      onPressed: () async {
+                                        Navigator.pop(context, 'Yes');
+                                        DatabaseManager().deleteHistoricWorkout(
+                                            widget.history[i].id);
+                                        widget.history.removeAt(i);
+                                        setState(() => Null);
+                                      },
+                                    ),
+                                    MaterialButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () async {
+                                        Navigator.pop(context, 'Cancel');
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        },
+                        icon: const Icon(
+                          Icons.delete_forever,
+                          color: Colors.redAccent,
+                        ),
+                      )
+                    : null,
+                visualDensity: VisualDensity.comfortable,
+                onLongPress: () {
+                  setState(() {
+                    _deleteMode = true;
+                  });
+                },
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return HistoryDetailScreen(
-                        thisWorkout: widget.history[i],
-                      );
-                    },
-                  ));
+                  if (_deleteMode) {
+                    _deleteMode = false;
+                    setState(() {});
+                  } else {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return HistoryDetailScreen(
+                          thisWorkout: widget.history[i],
+                        );
+                      },
+                    ));
+                  }
                 },
               );
             },
