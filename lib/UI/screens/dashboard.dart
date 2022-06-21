@@ -35,9 +35,7 @@ class _DashboardState extends State<Dashboard> {
     setState(() {});
   }
 
-  void updateState() {
-    setState(() {});
-  }
+  // void updateState() => setState(() => Null);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +43,7 @@ class _DashboardState extends State<Dashboard> {
       body: loaded
           ? (showHistory //TODO highlight dashboard/history whatever is being shown
               ? HistoryWidget(
-                  setState: updateState,
+                  // updateState: updateState,
                   history:
                       history, //TODO add a refresh which refreshes this list
                 )
