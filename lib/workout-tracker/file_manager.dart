@@ -210,7 +210,7 @@ class DatabaseManager {
     );
   }
 
-  Future<List<HistoricExercise>> _getExercises(
+  Future<List<HistoricExercise>> _getExercisesFromWorkout(
       Database? db, int workoutID) async {
     db ??= await _database;
     List<Map<String, dynamic>> maps = await db.query(
@@ -244,7 +244,7 @@ class DatabaseManager {
     List<Map<String, dynamic>> workoutData = await db.query('workout_history');
     return Future.wait(List.generate(workoutData.length, (index) async {
       List<HistoricExercise> exercises =
-          await _getExercises(db, workoutData[index]['id']);
+          await _getExercisesFromWorkout(db, workoutData[index]['id']);
       return HistoricWorkout(
           id: workoutData[index]['id'],
           exercises: exercises,
@@ -285,5 +285,39 @@ class DatabaseManager {
         description: workoutData[index]['description'],
       );
     }));
+  }
+
+  Future<List<Map<DateTime, HistoricExercise>>> getExercisesFromDescription(
+      ExerciseDescription description) async {
+    final db = await _database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'exercise_history, workout_history',
+      columns: ['workout_id', 'date', 'position'],
+      where:
+          'description_ID = ? AND exercise_history.workout_id = workout_history.id',
+      whereArgs: [description.id],
+    );
+    return Future.wait(List.generate(
+      maps.length,
+      (index) async {
+        List<HistoricSet> setList = await _getHistoricSets(
+            //TODO reorder so that get exercise description is first, then choose based on exercise type
+            db,
+            maps[index]['workout_id'],
+            maps[index]['position']);
+        List<HistoricCardio> cardioList = await _getHistoricCardio(
+          db,
+          maps[index]['workout_id'],
+          maps[index]['position'],
+        );
+        return {
+          DateTime.parse(maps[index]['date']): HistoricExercise(
+            position: maps[index]['position'],
+            description: description,
+            sets: setList.isNotEmpty ? setList : cardioList,
+          )
+        };
+      },
+    ));
   }
 }

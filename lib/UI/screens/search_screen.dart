@@ -2,6 +2,8 @@ import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:flutter/material.dart';
 
+import 'exercise_description_screen.dart';
+
 class ExerciseSearch extends StatefulWidget {
   final AdjustableWorkout currentWorkout;
   final Function() notifyParent;
@@ -210,7 +212,13 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                       });
                     },
                     onLongPress: () {
-                      //TODO Open Description Page (when made)
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return ExerciseDescriptionScreen(
+                            thisExercise: searchList.list[i].desc,
+                          );
+                        },
+                      ));
                     },
                   ),
                 );

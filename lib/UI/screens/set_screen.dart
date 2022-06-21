@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../workout-tracker/data_structures/structures.dart';
 import '../components/set_widget.dart';
+import 'exercise_description_screen.dart';
 
 class SetScreen extends StatefulWidget {
   final LiveWorkout thisWorkout;
@@ -38,7 +39,13 @@ class _SetScreenState extends State<SetScreen> {
               ),
               onPressed: () async {
                 setState(() {
-//TODO go to exercise description screen
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return ExerciseDescriptionScreen(
+                        thisExercise: thisExercise.description,
+                      );
+                    },
+                  ));
                 });
               },
             ),

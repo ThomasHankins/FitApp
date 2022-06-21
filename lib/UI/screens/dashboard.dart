@@ -44,8 +44,7 @@ class _DashboardState extends State<Dashboard> {
           ? (showHistory //TODO highlight dashboard/history whatever is being shown
               ? HistoryWidget(
                   // updateState: updateState,
-                  history:
-                      history, //TODO add a refresh which refreshes this list
+                  history: history,
                 )
               : Center(child: Text(stuff.toString())))
           // DashboardWidget(

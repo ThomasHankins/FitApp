@@ -34,7 +34,6 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(widget.history[i].name),
-                    Text(widget.history[i].id.toString()),
                     IconButton(
                       //TODO format so that button is hidden unless long press
                       onPressed: () {

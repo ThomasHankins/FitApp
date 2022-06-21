@@ -6,7 +6,7 @@ class SetWidget extends StatelessWidget {
   const SetWidget({Key? key, required LiveAction inheritSet})
       : thisSet = inheritSet as LiveSet,
         super(key: key);
-  final LiveSet thisSet; //TODO make a separate widget for cardio exercises
+  final LiveSet thisSet;
 
   @override
   Widget build(BuildContext context) {
