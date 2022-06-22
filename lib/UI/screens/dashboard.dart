@@ -4,7 +4,8 @@ import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-import 'dashboard_components/workout_history_ui.dart';
+import 'main_screen_components/dashboard_ui.dart';
+import 'main_screen_components/workout_history_ui.dart';
 import 'workout_builder.dart';
 import 'workout_screen.dart';
 
@@ -41,24 +42,29 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: loaded
-          ? (showHistory //TODO highlight dashboard/history whatever is being shown
+          ? (showHistory
               ? HistoryWidget(
-                  // updateState: updateState,
                   history: history,
                 )
-              : Center(child: Text(stuff.toString())))
-          // DashboardWidget(
-          //             setState: updateState,
-          //           ))
+              : DashboardWidget(
+                  history: history,
+                ))
           : const Center(
               child: CircularProgressIndicator(),
             ),
       bottomNavigationBar: Material(
         child: BottomAppBar(
+          color: Theme.of(context).bottomAppBarColor,
           shape: const CircularNotchedRectangle(),
           child: Row(
             children: <Widget>[
               MaterialButton(
+                color: showHistory
+                    ? Theme.of(context).bottomAppBarColor
+                    : Theme.of(context).focusColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)),
+                elevation: 0,
                 child: const Text('Dashboard'),
                 onPressed: () {
                   setState(() {
@@ -68,6 +74,12 @@ class _DashboardState extends State<Dashboard> {
               ),
               const Spacer(),
               MaterialButton(
+                color: showHistory
+                    ? Theme.of(context).focusColor
+                    : Theme.of(context).bottomAppBarColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)),
+                elevation: 0,
                 child: const Text('History'),
                 onPressed: () {
                   setState(() {

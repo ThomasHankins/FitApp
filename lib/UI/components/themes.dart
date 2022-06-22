@@ -12,6 +12,17 @@ class AppThemes {
       backgroundColor: Colors.grey[800],
       canvasColor: Colors.grey[900],
 
+      textTheme: const TextTheme(
+        headline1: TextStyle(
+            fontSize: 72.0, fontWeight: FontWeight.bold, color: Colors.white),
+        headline2: TextStyle(
+            fontSize: 60.0, fontWeight: FontWeight.w300, color: Colors.white),
+        headline6: TextStyle(
+            fontSize: 36.0, fontStyle: FontStyle.italic, color: Colors.white),
+        bodyText2:
+            TextStyle(fontSize: 14.0, fontFamily: 'Hind', color: Colors.white),
+      ),
+
       appBarTheme: AppBarTheme(
         color: Colors.grey[850],
       ),
