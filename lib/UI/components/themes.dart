@@ -17,8 +17,16 @@ class AppThemes {
             fontSize: 72.0, fontWeight: FontWeight.bold, color: Colors.white),
         headline2: TextStyle(
             fontSize: 60.0, fontWeight: FontWeight.w300, color: Colors.white),
+        headline5: TextStyle(
+            fontSize: 21,
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.normal,
+            color: Colors.white),
         headline6: TextStyle(
-            fontSize: 36.0, fontStyle: FontStyle.italic, color: Colors.white),
+            fontSize: 17,
+            fontWeight: FontWeight.w400,
+            fontStyle: FontStyle.normal,
+            color: Colors.white),
         bodyText2:
             TextStyle(fontSize: 14.0, fontFamily: 'Hind', color: Colors.white),
       ),

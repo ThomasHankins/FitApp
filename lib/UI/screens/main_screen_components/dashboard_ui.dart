@@ -23,7 +23,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 "Your Daily Dashboard",
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline2, //maybe make headline 1
               ),
             )),
         ComponentTile(

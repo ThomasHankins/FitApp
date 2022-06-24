@@ -1,3 +1,5 @@
+import 'package:fit_app/workout-tracker/data_structures/set_builder.dart';
+
 import 'exercise_description.dart';
 import 'exercise_set.dart';
 
@@ -12,9 +14,13 @@ class LiveExercise extends Exercise {
   late int _position;
   late int _workoutID;
 
-  LiveExercise(this._exerciseDescription,
-      [List<LiveAction> sets =
-          const []]); //TODO: when more advanced, we will change this to not init empty
+  LiveExercise(this._exerciseDescription, SetBuilder setBuilder) {
+    buildSets(setBuilder);
+  }
+
+  void buildSets(setBuilder) async {
+    _sets = await setBuilder.buildSet(_exerciseDescription);
+  }
 
   bool finished(int position, int workoutID) {
     _position = position;

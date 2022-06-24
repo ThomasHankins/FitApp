@@ -105,12 +105,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     decoration: const InputDecoration(
                         counterText: "", border: InputBorder.none),
                     keyboardType: TextInputType.text,
+                    style: Theme.of(context).textTheme.headline5,
                     onChanged: (changes) {
                       thisWorkout.name = changes;
                     },
                   ),
                 ),
-                Text(ClockConverter().secondsToFormatted(clock)),
+                Text(
+                  ClockConverter().secondsToFormatted(clock),
+                  style: Theme.of(context).textTheme.headline6,
+                ),
               ]),
             ),
             body: Column(

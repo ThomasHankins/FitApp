@@ -1,3 +1,4 @@
+import 'package:fit_app/workout-tracker/data_structures/set_builder.dart';
 import 'package:intl/intl.dart';
 
 import '../file_manager.dart';
@@ -46,7 +47,8 @@ class LiveWorkout extends AdjustableWorkout {
         timer = Stopwatch() {
     loadNextID();
     for (ExerciseDescription exercise in fw.exercises) {
-      _exercises.add(LiveExercise(exercise));
+      _exercises.add(LiveExercise(exercise,
+          HistoricSetBuilder())); //in the future I would like this to have different options in the settings screen
     }
   }
 
@@ -63,7 +65,8 @@ class LiveWorkout extends AdjustableWorkout {
   void deleteExercise(int position) => _exercises.removeAt(position);
   @override
   void addExercise(ExerciseDescription desc, [int? position]) =>
-      _exercises.insert(position ?? _exercises.length, LiveExercise(desc));
+      _exercises.insert(position ?? _exercises.length,
+          LiveExercise(desc, HistoricSetBuilder()));
   @override
   void reorderExercises(int oldPosition, int newPosition) {
     if (!_exercises[oldPosition].isPartiallyFinished &&
