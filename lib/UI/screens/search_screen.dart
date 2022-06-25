@@ -149,6 +149,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
           : AppBar(
               title: Row(children: [
                 const Text("Choose Exercises to Add"),
+                const Spacer(),
                 IconButton(
                   icon: const Icon(
                     Icons.search,
@@ -159,16 +160,17 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                     });
                   },
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.filter_alt_outlined,
-                  ),
-                  onPressed: () async {
-                    setState(() {
-                      filters = true; //TODO enable filter functionality
-                    });
-                  },
-                ),
+                // IconButton(
+                //   icon: const Icon(
+                //     Icons.filter_alt_outlined,
+                //   ),
+                //
+                //   onPressed: () async {
+                //     setState(() {
+                //       filters = true; //TODO enable filter functionality
+                //     });
+                //   },
+                // ),
               ]),
             ),
       floatingActionButton: loaded
