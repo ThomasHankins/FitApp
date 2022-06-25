@@ -18,7 +18,7 @@ class HistoricSetBuilder extends SetBuilder {
     List<LiveSet> tempSets = [];
     List<Map<DateTime, HistoricExercise>> historicExercises =
         await DatabaseManager().getExercisesFromDescription(description);
-    if (historicExercises == []) return [];
+    if (historicExercises.isEmpty) return [];
     List<HistoricAction> lastExercise =
         historicExercises.first.values.first.sets;
     for (HistoricAction action in lastExercise) {
