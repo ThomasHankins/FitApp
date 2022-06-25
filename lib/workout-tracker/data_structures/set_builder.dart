@@ -16,12 +16,11 @@ class HistoricSetBuilder extends SetBuilder {
   @override
   Future<List<LiveAction>> buildSet(ExerciseDescription description) async {
     List<LiveSet> tempSets = [];
+    List<Map<DateTime, HistoricExercise>> historicExercises =
+        await DatabaseManager().getExercisesFromDescription(description);
+    if (historicExercises == []) return [];
     List<HistoricAction> lastExercise =
-        (await DatabaseManager().getExercisesFromDescription(description))
-            .first
-            .values
-            .first
-            .sets;
+        historicExercises.first.values.first.sets;
     for (HistoricAction action in lastExercise) {
       //obviously won't work for cardio will need to fix
       tempSets.add(LiveSet(

@@ -288,6 +288,7 @@ class DatabaseManager {
   }
 
   Future<List<Map<DateTime, HistoricExercise>>> getExercisesFromDescription(
+      //might want to add the mapping later so that I can return this list without it
       ExerciseDescription description) async {
     final db = await _database;
     List<Map<String, dynamic>> maps = await db.query(
