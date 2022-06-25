@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarWidget extends StatefulWidget {
-  List<HistoricWorkout> history;
-  CalendarWidget({Key? key, required this.history}) : super(key: key);
+  final List<HistoricWorkout> history;
+  const CalendarWidget({Key? key, required this.history}) : super(key: key);
   @override
   _CalendarWidgetState createState() => _CalendarWidgetState();
 }
@@ -22,7 +22,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       lastDay: DateTime.now().add(const Duration(days: 31)),
       focusedDay: DateTime.now(),
       calendarFormat: CalendarFormat.week,
-      weekendDays: [],
+      weekendDays: const [],
       startingDayOfWeek: StartingDayOfWeek
           .values[DateTime.now().subtract(const Duration(days: 7)).weekday],
       headerStyle: const HeaderStyle(

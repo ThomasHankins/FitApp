@@ -24,6 +24,10 @@ class _SetScreenState extends State<SetScreen> {
     super.initState();
   }
 
+  void refresh() {
+    setState(() {});
+  }
+
   int currentSetIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -80,7 +84,11 @@ class _SetScreenState extends State<SetScreen> {
                       }
                     });
                   },
-                  child: SetWidget(inheritSet: thisExercise.sets[i]),
+                  child: SetWidget(
+                    inheritSet: thisExercise.sets[i],
+                    exercise: thisExercise,
+                    notifyParent: refresh,
+                  ),
                 );
               },
             ),

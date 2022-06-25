@@ -8,9 +8,10 @@ import '../exercise_description_screen.dart';
 Takes a Workout class and will display the information
  */
 class HistoryDetailScreen extends StatefulWidget {
-  HistoricWorkout thisWorkout;
+  final HistoricWorkout thisWorkout;
 
-  HistoryDetailScreen({Key? key, required this.thisWorkout}) : super(key: key);
+  const HistoryDetailScreen({Key? key, required this.thisWorkout})
+      : super(key: key);
 
   @override
   _HistoryDetailScreenState createState() => _HistoryDetailScreenState();

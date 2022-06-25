@@ -6,9 +6,9 @@ import 'dashboard.dart';
 import 'search_screen.dart';
 
 class WorkoutBuilderScreen extends StatefulWidget {
-  FutureWorkout thisWorkout;
-  int? planID;
-  WorkoutBuilderScreen({Key? key, required this.thisWorkout, this.planID})
+  final FutureWorkout thisWorkout;
+  final int? planID;
+  const WorkoutBuilderScreen({Key? key, required this.thisWorkout, this.planID})
       : super(key: key);
 
   @override

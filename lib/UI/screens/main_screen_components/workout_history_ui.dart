@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'history_detail.dart';
 
 class HistoryWidget extends StatefulWidget {
-  List<HistoricWorkout> history;
+  final List<HistoricWorkout> history;
   // Function updateState;
-  HistoryWidget({Key? key, required this.history}) : super(key: key);
+  const HistoryWidget({Key? key, required this.history}) : super(key: key);
   @override
   _HistoryWidgetState createState() => _HistoryWidgetState();
 }
@@ -51,7 +51,7 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                         ),
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     const Icon(
                       Icons.timelapse_outlined,
                       size: 12,

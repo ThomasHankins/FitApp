@@ -1,6 +1,7 @@
 abstract class LiveAction {
   bool get isComplete;
   set note(String note);
+  set restTime(int restTime);
   String get note;
   Map<String, dynamic> toMap();
   void complete(int position, int parentPosition, int workoutID);

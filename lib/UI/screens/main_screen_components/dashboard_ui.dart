@@ -5,9 +5,10 @@ import 'dashboard_components/component_tile.dart';
 import 'dashboard_components/workout_calendar_widget.dart';
 
 class DashboardWidget extends StatefulWidget {
-  List<HistoricWorkout> history; //will probably need more than this eventually
+  final List<HistoricWorkout>
+      history; //will probably need more than this eventually
 
-  DashboardWidget({Key? key, required this.history}) : super(key: key);
+  const DashboardWidget({Key? key, required this.history}) : super(key: key);
   @override
   _DashboardWidgetState createState() => _DashboardWidgetState();
 }

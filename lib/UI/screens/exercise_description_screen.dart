@@ -9,9 +9,9 @@ import '../components/clock_converter.dart';
 Takes a Workout class and will display the information
  */
 class ExerciseDescriptionScreen extends StatefulWidget {
-  ExerciseDescription thisExercise;
+  final ExerciseDescription thisExercise;
 
-  ExerciseDescriptionScreen({Key? key, required this.thisExercise})
+  const ExerciseDescriptionScreen({Key? key, required this.thisExercise})
       : super(key: key);
 
   @override

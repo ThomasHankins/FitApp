@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import '../../workout-tracker/file_manager.dart';
 
 class SavedWorkoutsScreen extends StatefulWidget {
-  List<FutureWorkout> plans;
+  final List<FutureWorkout> plans;
 
-  SavedWorkoutsScreen({Key? key, required this.plans}) : super(key: key);
+  const SavedWorkoutsScreen({Key? key, required this.plans}) : super(key: key);
   @override
   _SavedWorkoutsScreenState createState() => _SavedWorkoutsScreenState();
 }

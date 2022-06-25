@@ -82,6 +82,26 @@ class LiveExercise extends Exercise {
 
   void deleteSet(int position) => _sets.removeAt(position);
 
+  set restTime(int time) {
+    for (LiveAction thisSet in _sets) {
+      if (!thisSet.isComplete) thisSet.restTime = time;
+    }
+  }
+
+  set weight(double weight) {
+    if (description.exerciseType == "cardio") throw "Wrong exercise type";
+    for (LiveAction thisSet in _sets) {
+      if (!thisSet.isComplete) (thisSet as LiveSet).weight = weight;
+    }
+  }
+
+  set reps(int reps) {
+    if (description.exerciseType == "cardio") throw "Wrong exercise type";
+    for (LiveAction thisSet in _sets) {
+      if (!thisSet.isComplete) (thisSet as LiveSet).reps = reps;
+    }
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'workout_id': _workoutID,
@@ -94,7 +114,7 @@ class LiveExercise extends Exercise {
 class HistoricExercise implements Exercise {
   final ExerciseDescription _exerciseDescription;
   final List<HistoricAction> _sets;
-  final int _position;
+  final int _position; //use if we ever need to sort
 
   HistoricExercise({
     required int position,
