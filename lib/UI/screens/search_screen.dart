@@ -101,7 +101,6 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
       appBar: search
           ? AppBar(
               title: TextFormField(
-                //TODO add x to clear search
                 autofocus: true,
                 autocorrect: false,
                 enableSuggestions: false,
@@ -167,7 +166,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                 //
                 //   onPressed: () async {
                 //     setState(() {
-                //       filters = true; //TODO enable filter functionality
+                //       filters = true;
                 //     });
                 //   },
                 // ),

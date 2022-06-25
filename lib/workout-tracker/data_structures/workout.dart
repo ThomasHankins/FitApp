@@ -61,6 +61,14 @@ class LiveWorkout extends AdjustableWorkout {
   @override
   set name(String nm) => _name = nm;
 
+  bool get hasStarted {
+    if (_exercises.isEmpty) return false;
+    for (LiveExercise exercise in _exercises) {
+      if (exercise.isPartiallyFinished) return true;
+    }
+    return false;
+  }
+
   @override
   void deleteExercise(int position) => _exercises.removeAt(position);
   @override

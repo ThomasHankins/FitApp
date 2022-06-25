@@ -10,8 +10,8 @@ import 'dashboard.dart';
 import 'search_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
-  LiveWorkout thisWorkout;
-  WorkoutScreen({
+  final LiveWorkout thisWorkout;
+  const WorkoutScreen({
     Key? key,
     required this.thisWorkout,
   }) : super(key: key);
@@ -60,39 +60,48 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   color: Colors.redAccent,
                 ),
                 onPressed: () async {
-                  return showDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text(
-                              'Are you sure you want to cancel workout?'),
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30))),
-                          actionsAlignment: MainAxisAlignment.center,
-                          actions: <Widget>[
-                            MaterialButton(
-                              child: const Text('Yes'),
-                              onPressed: () async {
-                                Navigator.pop(context, 'Yes');
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const Dashboard(),
-                                  ),
-                                );
-                              },
-                            ),
-                            MaterialButton(
-                              child: const Text('Cancel'),
-                              onPressed: () async {
-                                Navigator.pop(context, 'Cancel');
-                              },
-                            ),
-                          ],
-                        );
-                      });
+                  if (!thisWorkout.hasStarted) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Dashboard(),
+                      ),
+                    );
+                  } else {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text(
+                                'Are you sure you want to cancel workout?'),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30))),
+                            actionsAlignment: MainAxisAlignment.center,
+                            actions: <Widget>[
+                              MaterialButton(
+                                child: const Text('Yes'),
+                                onPressed: () async {
+                                  Navigator.pop(context, 'Yes');
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Dashboard(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              MaterialButton(
+                                child: const Text('Cancel'),
+                                onPressed: () async {
+                                  Navigator.pop(context, 'Cancel');
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  }
                 },
               ),
               title: Row(children: [
@@ -141,7 +150,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           )),
                     );
                   },
-                  //TODO block reorder on completed sets
                   onReorder: (int oldIndex, int newIndex) {
                     setState(() {
                       if (oldIndex < newIndex) {

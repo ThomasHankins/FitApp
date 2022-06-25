@@ -20,7 +20,7 @@ class HistoricSetBuilder extends SetBuilder {
         await DatabaseManager().getExercisesFromDescription(description);
     if (historicExercises.isEmpty) return [];
     List<HistoricAction> lastExercise =
-        historicExercises.first.values.first.sets;
+        historicExercises.last.values.first.sets;
     for (HistoricAction action in lastExercise) {
       //obviously won't work for cardio will need to fix
       tempSets.add(LiveSet(
