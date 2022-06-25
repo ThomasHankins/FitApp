@@ -169,7 +169,11 @@ class FutureWorkout implements AdjustableWorkout {
 
   void save() {
     DatabaseManager dbm = DatabaseManager();
-    dbm.deleteSavedWorkout(_id);
+    try {
+      dbm.deleteSavedWorkout(_id);
+    } catch (e) {
+      //no issue just means this isn't new
+    }
     dbm.insertSavedWorkout(this);
     for (int i = 0; i < _exercises.length; i++) {
       dbm.insertSavedExercise(_id, _exercises[i].id, i);
