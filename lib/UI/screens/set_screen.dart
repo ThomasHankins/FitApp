@@ -117,6 +117,8 @@ class _SetScreenState extends State<SetScreen> {
           onPressed: () {
             setState(() {
               //mark "finished set"
+
+              //TODO refactor this code to bring it inside the execise widget
               if (thisExercise.sets.isNotEmpty) {
                 thisExercise.sets[currentSetIndex].complete(
                     currentSetIndex, widget.index, widget.thisWorkout.id);

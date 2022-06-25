@@ -68,10 +68,12 @@ class LiveSet extends LiveAction with ExerciseSet {
 
   @override
   void complete(int position, int parentPosition, int workoutID) {
-    _complete = true;
-    _position = position;
-    _parentPosition = parentPosition;
-    _workoutID = workoutID;
+    if (reps > 0) {
+      _complete = true;
+      _position = position;
+      _parentPosition = parentPosition;
+      _workoutID = workoutID;
+    }
   }
 }
 
@@ -118,10 +120,12 @@ class LiveCardio extends LiveAction with Cardio {
 
   @override
   void complete(int position, int parentPosition, int workoutID) {
-    _complete = true;
-    _position = position;
-    _parentPosition = parentPosition;
-    _workoutID = workoutID;
+    if (distance > 0 && duration > 0) {
+      _complete = true;
+      _position = position;
+      _parentPosition = parentPosition;
+      _workoutID = workoutID;
+    }
   }
 }
 

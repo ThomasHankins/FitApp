@@ -61,16 +61,19 @@ class _ExerciseDescriptionScreenState extends State<ExerciseDescriptionScreen> {
                       HistoricAction thisSet =
                           history.elementAt(i).values.first.sets[j];
                       return (thisSet is HistoricSet)
-                          ? Text((thisSet as HistoricSet).reps.toString() +
+                          ? Text(thisSet.reps.toString() +
                               ' x ' +
-                              (thisSet as HistoricSet).weight.toString() +
+                              thisSet.weight.toStringAsFixed(
+                                  thisSet.weight.truncateToDouble() ==
+                                          thisSet.weight
+                                      ? 0
+                                      : 1) +
                               'lbs')
                           : Text(
                               (thisSet as HistoricCardio).distance.toString() +
                                   ' in ' +
                                   ClockConverter()
-                                      .secondsToFormatted(
-                                          (thisSet as HistoricCardio).duration)
+                                      .secondsToFormatted(thisSet.duration)
                                       .toString());
                     },
                   ),

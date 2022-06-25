@@ -53,7 +53,6 @@ class LiveExercise extends Exercise {
       } else {
         _sets.add(
           LiveSet(
-            //TODO CHANGE THESE PARAMETERS TO LAST TIME'S
             weight: 0,
             reps: 0,
             restTime: 0,
@@ -72,7 +71,6 @@ class LiveExercise extends Exercise {
       } else {
         _sets.add(
           LiveCardio(
-            //TODO CHANGE THESE PARAMETERS TO LAST TIME'S
             restTime: 0,
             distance: 0,
             duration: 0,

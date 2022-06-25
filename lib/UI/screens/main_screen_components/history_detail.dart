@@ -59,25 +59,26 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                   itemCount: thisWorkout.exercises[i].sets.length,
                   itemBuilder: (context, j) {
                     return (thisWorkout.exercises[i].sets[j] is HistoricSet)
-                        ? Text((thisWorkout.exercises[i].sets[j] as HistoricSet)
-                                .reps
-                                .toString() +
+                        ? Text((thisWorkout.exercises[i].sets[j] as HistoricSet).reps.toString() +
                             ' x ' +
                             (thisWorkout.exercises[i].sets[j] as HistoricSet)
                                 .weight
-                                .toString() +
+                                .toStringAsFixed(
+                                    (thisWorkout.exercises[i].sets[j] as HistoricSet)
+                                                .weight
+                                                .truncateToDouble() ==
+                                            (thisWorkout.exercises[i].sets[j] as HistoricSet)
+                                                .weight
+                                        ? 0
+                                        : 1) +
                             'lbs')
-                        : Text(
-                            (thisWorkout.exercises[i].sets[j] as HistoricCardio)
-                                    .distance
-                                    .toString() +
-                                ' in ' +
-                                ClockConverter()
-                                    .secondsToFormatted((thisWorkout
-                                            .exercises[i]
-                                            .sets[j] as HistoricCardio)
-                                        .duration)
-                                    .toString());
+                        : Text((thisWorkout.exercises[i].sets[j] as HistoricCardio)
+                                .distance
+                                .toString() +
+                            ' in ' +
+                            ClockConverter()
+                                .secondsToFormatted((thisWorkout.exercises[i].sets[j] as HistoricCardio).duration)
+                                .toString());
                   },
                 ),
               );

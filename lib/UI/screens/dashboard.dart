@@ -99,7 +99,7 @@ class _DashboardState extends State<Dashboard> {
               MaterialPageRoute(
                 builder: (context) => WorkoutScreen(
                   thisWorkout: LiveWorkout(),
-                ), //TODO will change to plan workout if available
+                ),
               ),
             );
           },
