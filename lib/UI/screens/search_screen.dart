@@ -78,14 +78,13 @@ class SearchList {
 }
 
 class _ExerciseSearchState extends State<ExerciseSearch> {
-  bool search = true;
+  bool search = false;
   bool filters = false;
   bool loaded = false;
   SearchList searchList = SearchList();
 
   Future<void> loadData() async {
     searchList.loadSearchList();
-    print("loaded state with search list of length ${searchList.length}");
     loaded = true;
     setState(() {});
   }
@@ -124,7 +123,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                     letterSpacing: .5,
                   ),
                 ),
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.visiblePassword,
                 onEditingComplete: () {
                   setState(() {
                     search = false;
