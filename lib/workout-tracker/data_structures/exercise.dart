@@ -55,7 +55,7 @@ class LiveExercise extends Exercise {
           LiveSet(
             weight: 0,
             reps: 0,
-            restTime: 0,
+            restTime: 60,
           ),
         );
       }

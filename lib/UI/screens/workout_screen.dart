@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:fit_app/UI/components/clock_converter.dart';
-import 'package:fit_app/UI/components/dissmissible_widget.dart';
+import 'package:fit_app/UI/screens/workout_screen_components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../workout-tracker/data_structures/structures.dart';
-import '../components/exercise_widget.dart';
 import 'dashboard.dart';
 import 'search_screen.dart';
+import 'workout_screen_components/exercise_widget.dart';
 
 class WorkoutScreen extends StatefulWidget {
   final LiveWorkout thisWorkout;

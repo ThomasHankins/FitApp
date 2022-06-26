@@ -23,8 +23,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       focusedDay: DateTime.now(),
       calendarFormat: CalendarFormat.week,
       weekendDays: const [],
-      startingDayOfWeek: StartingDayOfWeek
-          .values[DateTime.now().subtract(const Duration(days: 7)).weekday],
+      startingDayOfWeek: StartingDayOfWeek.values[DateTime.now().weekday - 7],
       headerStyle: const HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,

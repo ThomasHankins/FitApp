@@ -2,7 +2,7 @@ import 'package:fit_app/UI/screens/set_screen.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/set_screen.dart';
+import '../set_screen.dart';
 
 class ExerciseWidget extends StatelessWidget {
   final LiveWorkout thisWorkout;

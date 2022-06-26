@@ -1,9 +1,11 @@
-import 'package:fit_app/UI/components/dissmissible_widget.dart';
+import 'dart:async';
+
+import 'package:fit_app/UI/screens/workout_screen_components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../workout-tracker/data_structures/structures.dart';
-import '../components/set_widget.dart';
 import 'exercise_description_screen.dart';
+import 'workout_screen_components/set_widget.dart';
 
 class SetScreen extends StatefulWidget {
   final LiveWorkout thisWorkout;
@@ -21,6 +23,11 @@ class _SetScreenState extends State<SetScreen> {
   @override
   void initState() {
     thisExercise = widget.thisWorkout.exercises[widget.index];
+    Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      if (mounted) {
+        return setState(() {});
+      }
+    });
     super.initState();
   }
 
@@ -29,6 +36,7 @@ class _SetScreenState extends State<SetScreen> {
   }
 
   int currentSetIndex = 0;
+  bool timerVisible = true;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -58,6 +66,34 @@ class _SetScreenState extends State<SetScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            (thisExercise.sets.isNotEmpty)
+                ? SizedBox(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () => setState(() {
+                            thisExercise.sets[currentSetIndex].removeTime = 15;
+                          }),
+                          icon: const Icon(Icons.remove),
+                        ),
+                        const SizedBox(width: 60),
+                        Text(thisExercise.sets[currentSetIndex].restTimeLeft
+                            .toString()),
+                        const SizedBox(width: 60),
+                        IconButton(
+                          onPressed: () => setState(() {
+                            thisExercise.sets[currentSetIndex].addTime = 15;
+                            thisExercise.sets[currentSetIndex]
+                                .startTimer(); //only starts it if it's 0
+                          }),
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox(),
             ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
@@ -125,13 +161,14 @@ class _SetScreenState extends State<SetScreen> {
           onPressed: () {
             setState(() {
               //mark "finished set"
-
-              //TODO refactor this code to bring it inside the execise widget
               if (thisExercise.sets.isNotEmpty) {
                 thisExercise.sets[currentSetIndex].complete(
                     currentSetIndex, widget.index, widget.thisWorkout.id);
                 if (currentSetIndex < thisExercise.sets.length - 1) {
                   currentSetIndex++;
+                  setState(() {
+                    thisExercise.sets[currentSetIndex].startTimer();
+                  });
                 } else {
                   Navigator.pop(context);
                 }

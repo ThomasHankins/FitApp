@@ -61,6 +61,7 @@ class _SetWidgetState extends State<SetWidget> {
     //
     return ListTile(
       selected: _thisSet.isComplete,
+      style: Theme.of(context).listTileTheme.style,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

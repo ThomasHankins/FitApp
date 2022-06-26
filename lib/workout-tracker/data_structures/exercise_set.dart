@@ -1,3 +1,5 @@
+import 'dart:async';
+
 abstract class LiveAction {
   bool get isComplete;
   set note(String note);
@@ -5,6 +7,10 @@ abstract class LiveAction {
   String get note;
   Map<String, dynamic> toMap();
   void complete(int position, int parentPosition, int workoutID);
+  int get restTimeLeft;
+  set addTime(int time);
+  set removeTime(int time);
+  void startTimer();
 }
 
 abstract class HistoricAction {
@@ -41,6 +47,9 @@ class LiveSet extends LiveAction with ExerciseSet {
   late int _position;
   late int _workoutID;
   bool _complete = false;
+  //temp variables for the timer
+  Timer? _countdownTimer;
+  Duration _timerDurationRemaining = const Duration(seconds: 0);
 
   LiveSet({required this.weight, required this.reps, required this.restTime});
 
@@ -75,6 +84,39 @@ class LiveSet extends LiveAction with ExerciseSet {
       _parentPosition = parentPosition;
       _workoutID = workoutID;
     }
+    _countdownTimer?.cancel();
+  }
+
+  @override
+  void startTimer() {
+    if (_timerDurationRemaining.inSeconds == 0) {
+      _timerDurationRemaining = Duration(seconds: restTime);
+
+      _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (_timerDurationRemaining <= const Duration(seconds: 0)) {
+          _countdownTimer!.cancel();
+        } else {
+          _timerDurationRemaining -= const Duration(seconds: 1);
+        }
+      });
+    }
+  }
+
+  @override
+  int get restTimeLeft => _timerDurationRemaining.inSeconds;
+
+  @override
+  set addTime(int time) {
+    restTime += time;
+    _timerDurationRemaining =
+        Duration(seconds: _timerDurationRemaining.inSeconds + time);
+  }
+
+  @override
+  set removeTime(int time) {
+    restTime -= time;
+    _timerDurationRemaining =
+        Duration(seconds: _timerDurationRemaining.inSeconds - time);
   }
 }
 
@@ -127,6 +169,25 @@ class LiveCardio extends LiveAction with Cardio {
       _parentPosition = parentPosition;
       _workoutID = workoutID;
     }
+  }
+
+  @override
+  // TODO: implement restTimeLeft
+  int get restTimeLeft => throw UnimplementedError();
+
+  @override
+  set addTime(int time) {
+    // TODO: implement addTime
+  }
+
+  @override
+  set removeTime(int time) {
+    // TODO: implement removeTime
+  }
+
+  @override
+  void startTimer() {
+    // TODO: implement startTimer
   }
 }
 
