@@ -50,6 +50,7 @@ class SearchList {
       int i = 0;
       List<ExerciseDescription> dbList =
           await DatabaseManager().getExerciseDescriptionList();
+      dbList.sort((a, b) => a.name.compareTo(b.name));
       for (ExerciseDescription desc in dbList) {
         _list.add(SearchEntry(position: i, desc: desc));
         i++;
