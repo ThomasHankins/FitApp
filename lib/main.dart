@@ -13,10 +13,10 @@ class FitApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Fit App",
-      darkTheme: AppThemes().dark(),
-      themeMode: ThemeMode.dark,
-      home: const Dashboard(),
-    );
+        title: "Fit App",
+        darkTheme: AppThemes().dark(),
+        themeMode: ThemeMode.dark,
+        home: const Dashboard(),
+        debugShowCheckedModeBanner: false);
   }
 }
