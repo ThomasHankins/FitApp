@@ -1,7 +1,7 @@
 import 'package:fit_app/UI/screens/workout_screen_components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/data_structures/workout.dart';
+import '../../workout-tracker/data_structures/workout/workout.dart';
 import 'dashboard.dart';
 import 'search_screen.dart';
 

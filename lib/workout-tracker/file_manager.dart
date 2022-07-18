@@ -9,6 +9,8 @@ import 'package:sqflite/sqflite.dart';
 import 'data_structures/structures.dart';
 import 'databases/dbv1.dart';
 
+/*import 'object';*/
+
 class DatabaseManager {
   Future<List<Map<String, dynamic>>> testFunc() async {
     final db = await _database;
@@ -322,3 +324,8 @@ class DatabaseManager {
     ));
   }
 }
+
+// class ObjectBox {
+//   late final Store _store
+//   late final Box<>
+// }

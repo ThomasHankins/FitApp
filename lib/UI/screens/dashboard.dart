@@ -1,5 +1,5 @@
 import 'package:fit_app/UI/screens/saved_workouts.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout/workout.dart';
 import 'package:fit_app/workout-tracker/file_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';

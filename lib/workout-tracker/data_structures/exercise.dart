@@ -1,7 +1,7 @@
-import 'package:fit_app/workout-tracker/data_structures/set_builder.dart';
+import 'package:fit_app/workout-tracker/data_structures/set_builders/set_builder.dart';
 
-import 'exercise_description.dart';
-import 'exercise_set.dart';
+import 'sets/exercise_description.dart';
+import 'sets/exercise_set.dart';
 
 abstract class Exercise {
   List<void> get sets;

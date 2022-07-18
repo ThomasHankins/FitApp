@@ -48,7 +48,7 @@ android {
 
     defaultConfig {
         applicationId "thomashankins.com.fit_app"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21 //aka lollipop or android 5
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
