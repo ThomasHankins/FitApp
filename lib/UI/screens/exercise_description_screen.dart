@@ -2,7 +2,7 @@ import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/file_manager.dart';
+import '../../workout-tracker/database/database.dart';
 import '../components/clock_converter.dart';
 
 /*

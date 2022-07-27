@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'data_structures/structures.dart';
-import 'databases/dbv1.dart';
+import '../data_structures/structures.dart';
+import '../databases/databse_versions/dbv1.dart';
 
 /*import 'object';*/
 

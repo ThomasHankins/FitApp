@@ -3,7 +3,7 @@ import 'package:fit_app/UI/screens/workout_screen.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/file_manager.dart';
+import '../../workout-tracker/database/database.dart';
 
 class SavedWorkoutsScreen extends StatefulWidget {
   final List<FutureWorkout> plans;

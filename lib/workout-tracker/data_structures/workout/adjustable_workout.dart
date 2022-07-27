@@ -4,7 +4,7 @@ import 'package:fit_app/workout-tracker/data_structures/sets/exercise_descriptio
 import 'package:fit_app/workout-tracker/data_structures/workout/workout.dart';
 
 abstract class AdjustableWorkout extends Workout {
-  void addExercise(ExerciseDescription desc, [int? position]);
-  void deleteExercise(int position);
-  void reorderExercises(int oldPosition, int newPosition);
+  void addSet(ExerciseDescription desc, [int? position]);
+  void deleteSet(int position);
+  void reorderSet(int oldPosition, int newPosition);
 }

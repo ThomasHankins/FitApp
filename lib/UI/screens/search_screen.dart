@@ -1,5 +1,5 @@
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
-import 'package:fit_app/workout-tracker/file_manager.dart';
+import 'package:fit_app/workout-tracker/database/database.dart';
 import 'package:flutter/material.dart';
 
 import 'exercise_description_screen.dart';

@@ -1,4 +1,4 @@
-import '../../file_manager.dart';
+import '../../database/database.dart';
 
 class ExerciseDescription {
   late final int _id;

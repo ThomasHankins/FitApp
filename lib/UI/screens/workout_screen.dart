@@ -28,7 +28,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   Future<void> loadWorkout() async {
     //this might be redundant since thisWorkout is not longer a future, need to check with synchronization issues before deleting
     thisWorkout = widget.thisWorkout;
-    thisWorkout.timer.start(); // start workout clock
+    thisWorkout.workoutTimer.start(); // start workout clock
     loaded = true;
     setState(() {});
   }
@@ -41,7 +41,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (mounted) {
         return setState(() {
-          int time = thisWorkout.timer.elapsed.inSeconds;
+          int time = thisWorkout.workoutTimer.elapsed.inSeconds;
           clock = time;
         });
       }
@@ -202,7 +202,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     context: context,
                     barrierDismissible: true,
                     builder: (BuildContext context) {
-                      thisWorkout.timer.stop();
+                      thisWorkout.workoutTimer.stop();
                       return AlertDialog(
                           title: const Center(
                             child: Text(
@@ -230,7 +230,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               child: const Text('Cancel'),
                               onPressed: () async {
                                 Navigator.pop(context, 'Cancel');
-                                thisWorkout.timer.start();
+                                thisWorkout.workoutTimer.start();
                               },
                             )
                           ]);
