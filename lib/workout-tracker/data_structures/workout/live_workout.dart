@@ -175,7 +175,6 @@ class LiveWorkout extends AdjustableWorkout {
   Map<String, dynamic> toMap() {
     //TODO verify correctness
     return {
-      'id': _id,
       'name': name,
       'date': DateTime.now().toIso8601String(),
       'length': workoutTimer.elapsed.inSeconds,

@@ -1,15 +1,18 @@
 import 'dart:async';
 
-import 'package:fit_app/workout-tracker/db_transactions/add_exercises.dart';
+import 'package:fit_app/workout-tracker/data_structures/sets/details/details_cardio.dart';
+import 'package:fit_app/workout-tracker/data_structures/sets/details/details_strength.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout/future_workout.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout/live_workout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../data_structures/structures.dart';
-import '../databases/databse_versions/dbv1.dart';
-
-/*import 'object';*/
+import 'database_versions/dbv1.dart';
+import 'database_versions/dbv2.dart';
+import 'db_transactions/add_exercises.dart';
 
 class DatabaseManager {
   Future<List<Map<String, dynamic>>> testFunc() async {
@@ -20,15 +23,18 @@ class DatabaseManager {
   }
 
   //init database
-  Future<Database> get _database async {
+  static Future<Database> get _database async {
     return openDatabase(
       join(await getDatabasesPath(), 'workout_database.db'),
       onCreate: (db, version) {
-        createDatabase1(db, version);
+        createDatabase2(db, version);
         addExercises(db);
       },
       onOpen: (db) => db.execute("PRAGMA foreign_keys=ON"),
-      version: 1, //INITIAL VERSION
+      onUpgrade: (db, v1, v2) =>
+          throw UnimplementedError("Implement DB Update"),
+      version: 2,
+      singleInstance: true, //is true by default, just specifying this
     );
   }
 
@@ -37,51 +43,18 @@ class DatabaseManager {
     WidgetsFlutterBinding.ensureInitialized();
   }
 
-  //exercise IDs
-  static int? _currentExerciseDescriptionID;
-  static int? _currentWorkoutID;
-  static int? _currentExerciseID;
-  static int? _currentSavedWorkoutID;
-  static int? _currentWorkoutPlan;
-
-  Future<int> get nextExerciseDescriptionID async =>
-      await _generateID(_currentExerciseDescriptionID, "exercise_descriptions");
-  //TODO eventually add equipment lists/equipment ID
-  Future<int> get nextWorkoutID async =>
-      await _generateID(_currentWorkoutID, "workout_history");
-  Future<int> get nextExerciseID async =>
-      await _generateID(_currentExerciseID, "exercise_history");
-  Future<int> get nextSavedWorkoutID async =>
-      await _generateID(_currentSavedWorkoutID, "saved_workouts");
-  Future<int> get nextWorkoutPlanID async =>
-      await _generateID(_currentWorkoutPlan, "workout_plans");
-
-  Future<int> _generateID(int? tableID, String tableName) async {
-    Future<int> getID() async {
-      final db = await _database;
-      final List<Map<String, Object?>> id = await db.rawQuery('SELECT MAX(id)'
-          'FROM $tableName;');
-
-      int? tempID = int.tryParse(id.first.values.first.toString());
-      tempID ??= 0;
-      return tempID;
-    }
-
-    tableID ??= await getID();
-    tableID++;
-    return tableID;
-  }
-
   //Inserting
+  //TODO ensure that the map has been inserted for each of these below
   void insertExerciseDescription(ExerciseDescription ed) =>
       _insertItem(ed.toMap(), "exercise_descriptions");
   void insertHistoricWorkout(LiveWorkout workout) =>
       _insertItem(workout.toMap(), "workout_history");
-  void insertHistoricExercise(LiveExercise exercise) =>
-      _insertItem(exercise.toMap(), "exercise_history");
-  void insertHistoricSet(LiveSet set) =>
+  //TODO figure out how to get id for the next three if we use autoincrement
+  void insertHistoricSet(ExerciseSet set) =>
       _insertItem(set.toMap(), "set_history");
-  void insertHistoricCardio(LiveCardio cardio) =>
+  void insertHistoricStrength(StrengthDetails set) =>
+      _insertItem(set.toMap(), "strength_history");
+  void insertHistoricCardio(CardioDetails cardio) =>
       _insertItem(cardio.toMap(), "cardio_history");
   void insertSavedWorkout(FutureWorkout workout) =>
       _insertItem(workout.toMap(), "saved_workouts");
@@ -91,11 +64,7 @@ class DatabaseManager {
         "description_id": descriptionId,
         "position": position,
       }, "saved_exercises");
-  void insertPlan(WorkoutPlan plan) => _insertItem(plan, "workout_plans");
-  void insertPlanMap(int planId, int workoutId) => _insertItem({
-        'plan_id': planId,
-        'workout_id': workoutId,
-      }, "plans_to_saved_workouts");
+
   Future<void> _insertItem(var item, String table) async {
     final db = await _database;
     await db.insert(

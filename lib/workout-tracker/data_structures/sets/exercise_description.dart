@@ -1,12 +1,10 @@
 import '../../database/database.dart';
 
 class ExerciseDescription {
-  late final int _id;
   String _name;
   String? _description;
   String? _exerciseType; //eventually will reference "cardio or strength"
 
-  int get id => _id;
   String get name => _name;
   String get description => _description ?? "";
   String get exerciseType => _exerciseType ?? "";
@@ -32,7 +30,6 @@ class ExerciseDescription {
     this._description,
     this._exerciseType,
   ]) {
-    getNextExerciseDescription();
     DatabaseManager().insertExerciseDescription(this); //insert ED
   }
 
@@ -41,35 +38,23 @@ class ExerciseDescription {
     this._name, [
     this._description,
     this._exerciseType,
-  ]) {
-    getNextExerciseDescription();
-  }
-
-  void getNextExerciseDescription() async {
-    _id = await DatabaseManager().nextExerciseDescriptionID;
-  }
+  ]);
 
   //constructor from db imports
   ExerciseDescription.fromDatabase({
-    required int id,
     required String name,
     required String? description,
     required String? exerciseType,
-  })  : _id = id,
-        _name = name,
+  })  : _name = name,
         _description = description,
         _exerciseType = exerciseType;
 
   Map<String, dynamic> toMap() {
+    //TODO update to reflect DBv2
     return {
-      'id': _id,
       'name': _name,
       'description': _description,
       'exercise_type': _exerciseType,
     };
   }
-
-  @override
-  String toString() =>
-      'ExerciseDescription(id: $_id, name: $_name, description: $_description, exercise_type: $_exerciseType)';
 }

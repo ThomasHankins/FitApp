@@ -1,50 +1,72 @@
 [
     {
-        "name" : "Squat",
-        "description" : "brief description here",
-        "muscle group" : "Legs",
-        "previous efforts" : [
-            {
-                "workout id": 1234,
-                "sets": [
-                    {
-                        "weight" : 100,
-                        "reps" : 10
-                    }
-                ]
-            }
-        ]
+        "name": "Squat",
+        "description": "",
+        "exercise_type": "strength"
     },
     {
-        "name" : "Bench press",
-        "description" : "brief description here",
-        "muscle group" : "Chest",
-        "previous efforts" : [
-            {
-                "workout id": 1235,
-                "sets": [
-                    {
-                        "weight" : 100,
-                        "reps" : 10
-                    }
-                ]
-            }
-        ]
+        "name": "Bench Press",
+        "description": "",
+        "exercise_type": "strength"
     },
     {
-        "name" : "Deadlift",
-        "description" : "brief description here",
-        "muscle group" : "Legs",
-        "previous efforts" : [
-            {
-                "workout id" : 1234,
-                "sets": [
-                    {
-                        "weight" : 100,
-                        "reps" : 10
-                    }
-                ]
-            }
-        ]
+        "name": "Shoulder Press",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Deadlift",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Tricep Dip",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Preacher Curl",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Skull Crusher",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Cable Tricep Pushdown",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Pull-Up",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Machine Shoulder Press",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Machine Fly",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Machine Reverse Fly",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Machine Curl",
+        "description": "",
+        "exercise_type": "strength"
+    },
+    {
+        "name": "Overhead Tricep Press",
+        "description": "",
+        "exercise_type": "strength"
     }
 ]

@@ -28,4 +28,6 @@ abstract class SetDetails {
       logicSet(description);
   factory SetDetails.plan(ExerciseDescription description) =>
       planSet(description);
+
+  Map<String, dynamic> toMap();
 }

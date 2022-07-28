@@ -4,21 +4,36 @@ import 'details/details.dart';
 // import 'package:objectbox/objectbox.dart';
 
 class ExerciseSet {
-  SetDetails _details;
-  ExerciseDescription _description;
+  SetDetails details;
+  final ExerciseDescription _description;
+  final int _workoutId;
+  late final int _time;
+  late final int _position;
 
   bool _complete = false;
   bool get isComplete => _complete;
 
-  void complete() {
+  void complete(int timestamp, int position) {
     _complete = true;
+    _time = timestamp;
+    _position = position;
   }
 
   ExerciseSet(
-      {required SetDetails details, required ExerciseDescription description})
-      : _details = details,
-        _description = description;
+      {required this.details,
+      required ExerciseDescription description,
+      required int workoutId})
+      : _description = description,
+        _workoutId = workoutId;
 
   get description => _description;
-  get details => _details;
+
+  Map<String, dynamic> toMap() {
+    //TODO verify correctness
+    return {
+      'workout_id': _workoutId,
+      'position': _position,
+      'time_marker': _time,
+    };
+  }
 }

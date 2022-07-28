@@ -15,4 +15,10 @@ class CardioDetails extends SetDetails {
           restTime: restTime,
           note: note,
         );
+
+  @override
+  Map<String, dynamic> toMap() {
+    // TODO: implement toMap
+    throw UnimplementedError();
+  }
 }
