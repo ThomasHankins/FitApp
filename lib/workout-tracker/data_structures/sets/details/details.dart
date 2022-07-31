@@ -7,7 +7,7 @@ import 'package:fit_app/workout-tracker/data_structures/sets/details/set_builder
 import '../../structures.dart';
 
 abstract class SetDetails {
-  Duration restedTime; //actual time
+  Duration restedTime;
   String _note;
 
   String get note => _note;
@@ -30,4 +30,5 @@ abstract class SetDetails {
       planSet(description);
 
   Map<String, dynamic> toMap();
+  void saveToDatabase(int setId);
 }

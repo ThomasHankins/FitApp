@@ -12,7 +12,7 @@ import 'future_workout.dart';
 
 class LiveWorkout extends AdjustableWorkout {
   String name;
-  int _id;
+  late final int _id;
   List<ExerciseSet> _sets;
   int _currentSetIndex = -1;
 
@@ -20,6 +20,7 @@ class LiveWorkout extends AdjustableWorkout {
   late Timer _restTimer;
   Duration _restTimeRemaining = const Duration(seconds: 0);
 
+  int get id => _id;
   //constructors
 
   //state functions
@@ -29,8 +30,9 @@ class LiveWorkout extends AdjustableWorkout {
     return _sets[_currentSetIndex];
   }
 
-  void start() {
+  void start() async {
     workoutTimer.start();
+    _id = await DatabaseManager().insertLiveWorkout(this);
   }
 
   bool get hasStarted {
@@ -48,11 +50,11 @@ class LiveWorkout extends AdjustableWorkout {
 
     if (_sets.isNotEmpty) {
       DatabaseManager dbm = DatabaseManager();
-      dbm.insertHistoricWorkout(this);
+      dbm.insertLiveWorkout(this);
 
       for (int i = 0; i < _sets.length; i++) {
         if (_sets[i].description.exerciseType == "strength") {
-          dbm.insertHistoricSet(_sets[i].details as StrengthDetails);
+          dbm.insertHistoricStrength(_sets[i].details as StrengthDetails);
         } else if (_sets[i].description.exerciseType == "cardio") {
           dbm.insertHistoricCardio(_sets[i].details as CardioDetails);
         }
@@ -63,9 +65,9 @@ class LiveWorkout extends AdjustableWorkout {
   //set functions
   @override
   void addSet(ExerciseDescription desc, [int? position]) {
-    //requirement that position is after or equal to current set
-    if (position! < _currentSetIndex) position = _currentSetIndex;
-    _sets.insert(position ?? _sets.length,
+    position ??= _sets.length;
+    if (position < _currentSetIndex) position = _currentSetIndex;
+    _sets.insert(position,
         ExerciseSet(description: desc, details: SetDetails.blank(desc)));
   }
 
@@ -79,30 +81,33 @@ class LiveWorkout extends AdjustableWorkout {
 
   @override
   void deleteSet(int position) {
+    if (_sets[position].isComplete)
+      DatabaseManager().deleteSet(_sets[position]);
     _sets.removeAt(position);
     //requirement that current set is between 0 and set length
     if (position < _currentSetIndex) _currentSetIndex--;
   }
 
   void logSet() {
+    hasStarted ? start() : null;
     //requirement that current set is between 0 and set length + 1
     if (_currentSet != null) return;
-    _sets[_currentSetIndex].complete();
+    _currentSet!
+        .complete(_id, workoutTimer.elapsed.inSeconds, _currentSetIndex);
+    DatabaseManager().updateLiveWorkout(this);
     _currentSetIndex++;
 
     if (_currentSet != null) {
-      _startRestTimer(_currentSet?.details.restTime);
+      _startRestTimer(_currentSet!.details.restedTime);
     }
   }
-
-  //functions for the workout timer
 
   //functions for the rest timer
   Duration get restTime => _restTimeRemaining;
 
   set restTime(Duration time) {
     if (!_currentSet!.isComplete) {
-      _currentSet!.details.restTime = time;
+      _currentSet!.details.restedTime = time;
       _restTimeRemaining += time;
     }
   }
@@ -123,7 +128,7 @@ class LiveWorkout extends AdjustableWorkout {
   }
 
   set addTime(Duration time) {
-    _currentSet!.details.restTime += time;
+    _currentSet!.details.restedTime += time;
     if (_restTimeRemaining.inSeconds <= 0) {
       _startRestTimer(time);
     } else {
@@ -135,23 +140,21 @@ class LiveWorkout extends AdjustableWorkout {
     addTime = -time;
   }
 
-  LiveWorkout(
-      {required this.name, required int id, required List<ExerciseSet> sets})
-      : _id = id,
-        _sets = sets,
+  LiveWorkout({required this.name, required List<ExerciseSet> sets})
+      : _sets = sets,
         workoutTimer = Stopwatch();
 
   static Future<LiveWorkout> blank() async {
-    int id = await DatabaseManager().nextWorkoutID;
+    //DB insert workout or something and return id
     return LiveWorkout(
       name: DateFormat.yMMMMd('en_us').format(DateTime.now()) + " - Workout",
-      id: id,
       sets: [],
     );
   }
 
   static Future<LiveWorkout> fromSaved(FutureWorkout fw) async {
-    int id = await DatabaseManager().nextWorkoutID;
+    //DB insert workout or something and return id
+
     List<ExerciseSet> sets = [];
     Map<ExerciseDescription, int> _exercises =
         {}; //used to map how many sets are at each exercise desc
@@ -164,22 +167,17 @@ class LiveWorkout extends AdjustableWorkout {
         _exercises.addEntries([MapEntry(setDesc, 0)]);
       }
       sets.add(ExerciseSet(
-          details: lastSet(setDesc, position),
-          description:
-              setDesc)); //in the future I would like this to have different options in the settings screen
+          details: lastSet(setDesc, position), description: setDesc));
     }
-    return LiveWorkout(id: id, name: fw.name, sets: sets);
+    return LiveWorkout(name: fw.name, sets: sets);
   }
 
   @override
   Map<String, dynamic> toMap() {
-    //TODO verify correctness
     return {
       'name': name,
       'date': DateTime.now().toIso8601String(),
       'length': workoutTimer.elapsed.inSeconds,
     };
   }
-
-  //TODO save workout on creation and after every update (addSet/deleteSet/rearrangeSet/logSet)
 }

@@ -1,6 +1,9 @@
+import 'package:fit_app/workout-tracker/database/database.dart';
+
 import 'details.dart';
 
 class StrengthDetails extends SetDetails {
+  late final int _setId;
   double weight;
   int reps;
   int? _rpe;
@@ -22,7 +25,19 @@ class StrengthDetails extends SetDetails {
 
   @override
   Map<String, dynamic> toMap() {
-    // TODO: implement toMap
-    throw UnimplementedError();
+    return {
+      'set_id': _setId,
+      'weight': weight,
+      'reps': reps,
+      'RPE': _rpe,
+      'rest_time': restedTime,
+      'note': note,
+    };
+  }
+
+  @override
+  void saveToDatabase(int setId) {
+    _setId = setId;
+    DatabaseManager().insertHistoricStrength(this);
   }
 }

@@ -4,7 +4,7 @@ import '../../database/database.dart';
 import 'adjustable_workout.dart';
 
 class FutureWorkout implements AdjustableWorkout {
-  late final int _id;
+  int? _id;
   String name;
   final List<ExerciseDescription> _sets;
   String description;
@@ -12,14 +12,7 @@ class FutureWorkout implements AdjustableWorkout {
   FutureWorkout()
       : _sets = [],
         name = "Untitled Workout",
-        description = "" {
-    loadNextID();
-  }
-
-  void loadNextID() async {
-    _id = await DatabaseManager()
-        .nextSavedWorkoutID; //TODO we'll redo this similar to the live workout later
-  }
+        description = "";
 
   FutureWorkout.fromDatabase(
       {required int id,
@@ -30,8 +23,6 @@ class FutureWorkout implements AdjustableWorkout {
         _sets = sets,
         name = name ?? "Untitled Workout",
         description = description ?? "";
-
-  int get id => _id;
 
   List<ExerciseDescription> get sets => _sets;
 
@@ -47,22 +38,23 @@ class FutureWorkout implements AdjustableWorkout {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': _id,
       'name': name,
       'description': description,
     };
   }
 
-  void save() {
+  void save() async {
     DatabaseManager dbm = DatabaseManager();
-    try {
-      dbm.deleteSavedWorkout(_id);
-    } catch (e) {
-      //no issue just means this isn't new
+
+    if (_id != null) {
+      dbm.deleteSavedWorkout(_id!);
+      dbm.insertSavedWorkout(this);
+    } else {
+      _id = await dbm.insertSavedWorkout(this);
     }
-    dbm.insertSavedWorkout(this);
+
     for (int i = 0; i < _sets.length; i++) {
-      dbm.insertSavedExercise(_id, _sets[i].id, i);
+      dbm.insertSavedExercise(_id!, _sets[i].name, i);
     }
   }
 }

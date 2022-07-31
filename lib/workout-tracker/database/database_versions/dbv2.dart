@@ -10,10 +10,12 @@ void createDatabase2(db, version) {
       'name TEXT PRIMARY KEY,'
       'description TEXT);');
 
-  db.execute('CREATE TABLE equipment_list_exercise_map('
+  db.execute(
+      'CREATE TABLE equipment_list_exercise_map(' //one-to-many relationship
       'equipment_id REFERENCES equipment_list(id) ON DELETE CASCADE,'
-      'exercise_id REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
+      'exercise_name REFERENCES exercise_descriptions(name) ON DELETE CASCADE,'
       'PRIMARY KEY(equipment_id, exercise_id))');
+
   //TODO when adding the brain add a "muscles" table and mapping table for exercises to muscle groups
 
   db.execute('CREATE TABLE workout_history('
@@ -25,6 +27,7 @@ void createDatabase2(db, version) {
 
   db.execute('CREATE TABLE set_history('
       'id INTEGER PRIMARY KEY AUTOINCREMENT'
+      'exercise_name TEXT REFERENCES exercise_descriptions(name)'
       'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'
       'position INTEGER,'
       'time_marker INTEGER,' //in seconds since start of workout
@@ -35,12 +38,14 @@ void createDatabase2(db, version) {
       'weight REAL,' //assumed in lb (for now)
       'reps INTEGER,'
       'RPE INTEGER,'
+      'rest_time INTEGER,'
       'note TEXT);');
   db.execute('CREATE TABLE cardio_history('
       'set_id INTEGER PRIMARY KEY REFERENCES set_history(id) ON DELETE CASCADE,'
       'duration INTEGER,'
       'distance INTEGER,'
       'calories INTEGER,'
+      'rest_time INTEGER'
       'note TEXT);');
 
   db.execute('CREATE TABLE saved_workouts('
@@ -51,7 +56,7 @@ void createDatabase2(db, version) {
   db.execute(
       'CREATE TABLE saved_exercises(' //appropriate weight will be determined by model weighted on most recent weeks
       'workout_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
-      'description_id INT REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
+      'description_name INT REFERENCES exercise_descriptions(name) ON DELETE CASCADE,'
       'position INT,'
       'PRIMARY KEY(workout_id, position));');
 

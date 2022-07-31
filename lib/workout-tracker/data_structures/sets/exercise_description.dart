@@ -1,13 +1,16 @@
 import '../../database/database.dart';
+import 'details/detail_types.dart';
 
 class ExerciseDescription {
   String _name;
   String? _description;
-  String? _exerciseType; //eventually will reference "cardio or strength"
+  DetailType _exerciseType;
+  ExerciseDescription? _parentExercise;
+  String _descriptor = '';
 
   String get name => _name;
   String get description => _description ?? "";
-  String get exerciseType => _exerciseType ?? "";
+  DetailType get exerciseType => _exerciseType;
 
   set name(String nm) {
     _name = nm;
@@ -19,42 +22,48 @@ class ExerciseDescription {
     DatabaseManager().updateExerciseDescription(this);
   }
 
-  set exerciseType(String et) {
+  set exerciseType(DetailType et) {
     _exerciseType = et;
     DatabaseManager().updateExerciseDescription(this);
   }
 
   //constructor for new descriptions
   ExerciseDescription(
-    this._name, [
+    this._name,
+    DetailType exerciseType, [
     this._description,
-    this._exerciseType,
-  ]) {
-    DatabaseManager().insertExerciseDescription(this); //insert ED
+  ]) : _exerciseType = exerciseType {
+    DatabaseManager().insertExerciseDescription(
+        this); //TODO: review - seems like a bad idea to insert into db without any kind of user response (eg on fail)
   }
 
   ExerciseDescription.test(
     //to make test ED's without inserting into the DB
-    this._name, [
+    this._name,
+    this._exerciseType, [
     this._description,
-    this._exerciseType,
   ]);
 
   //constructor from db imports
   ExerciseDescription.fromDatabase({
     required String name,
     required String? description,
-    required String? exerciseType,
+    required DetailType exerciseType,
+    required ExerciseDescription? parentExercise,
+    required String? descriptor,
   })  : _name = name,
         _description = description,
-        _exerciseType = exerciseType;
+        _exerciseType = exerciseType,
+        _parentExercise = parentExercise,
+        _descriptor = descriptor ?? '';
 
   Map<String, dynamic> toMap() {
-    //TODO update to reflect DBv2
     return {
       'name': _name,
       'description': _description,
       'exercise_type': _exerciseType,
+      'parent_exercise': _parentExercise?.name,
+      'descriptor': _descriptor,
     };
   }
 }

@@ -1,6 +1,9 @@
+import 'package:fit_app/workout-tracker/database/database.dart';
+
 import 'details.dart';
 
 class CardioDetails extends SetDetails {
+  late final int _setId;
   int duration;
   int distance;
   int? calories;
@@ -18,7 +21,19 @@ class CardioDetails extends SetDetails {
 
   @override
   Map<String, dynamic> toMap() {
-    // TODO: implement toMap
-    throw UnimplementedError();
+    return {
+      'set_id': _setId,
+      'duration': duration,
+      'distance': distance,
+      'calories': calories,
+      'rest_time': restedTime,
+      'note': note,
+    };
+  }
+
+  @override
+  void saveToDatabase(int setId) {
+    _setId = setId;
+    DatabaseManager().insertHistoricCardio(this);
   }
 }
