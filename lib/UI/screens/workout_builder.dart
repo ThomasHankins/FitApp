@@ -1,7 +1,7 @@
 import 'package:fit_app/UI/screens/workout_screen_components/dissmissible_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/data_structures/workout/workout.dart';
+import '../../workout-tracker/data_structures/structures.dart';
 import 'dashboard.dart';
 import 'search_screen.dart';
 
@@ -90,21 +90,21 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
                 ReorderableListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: thisWorkout.exercises.length,
+                  itemCount: thisWorkout.sets.length,
                   itemBuilder: (context, i) {
                     return DismissibleWidget(
-                      item: thisWorkout.exercises[i],
+                      item: thisWorkout.sets[i],
                       key: Key('$i'),
                       onDismissed: (dismissDirection) {
                         setState(() {
-                          thisWorkout.exercises.removeAt(i);
+                          thisWorkout.sets.removeAt(i);
                         });
                       },
                       child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0, vertical: .2),
                           child: ListTile(
-                            title: Text(thisWorkout.exercises[i].name),
+                            title: Text(thisWorkout.sets[i].name),
                           )),
                     );
                   },
@@ -113,7 +113,7 @@ class _WorkoutBuilderScreenState extends State<WorkoutBuilderScreen> {
                       if (oldIndex < newIndex) {
                         newIndex -= 1;
                       }
-                      thisWorkout.reorderExercises(oldIndex, newIndex);
+                      thisWorkout.reorderSet(oldIndex, newIndex);
                     });
                   },
                 ),

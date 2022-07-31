@@ -10,7 +10,7 @@ import 'search_screen.dart';
 import 'workout_screen_components/exercise_widget.dart';
 
 class WorkoutScreen extends StatefulWidget {
-  final LiveWorkout thisWorkout;
+  final Future<LiveWorkout> thisWorkout;
   const WorkoutScreen({
     Key? key,
     required this.thisWorkout,
@@ -27,8 +27,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   Future<void> loadWorkout() async {
     //this might be redundant since thisWorkout is not longer a future, need to check with synchronization issues before deleting
-    thisWorkout = widget.thisWorkout;
-    thisWorkout.workoutTimer.start(); // start workout clock
+    thisWorkout = await widget.thisWorkout;
+    thisWorkout.start(); // start workout clock
     loaded = true;
     setState(() {});
   }
@@ -48,7 +48,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     });
   }
 
-  late Exercise currentExercise = thisWorkout.exercises.first;
   @override
   Widget build(BuildContext context) {
     return loaded
@@ -131,14 +130,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ReorderableListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: thisWorkout.exercises.length,
+                  itemCount: thisWorkout.sets.length,
                   itemBuilder: (context, i) {
                     return DismissibleWidget(
-                      item: thisWorkout.exercises[i],
+                      item: thisWorkout.sets[i],
                       key: Key('$i'),
                       onDismissed: (dismissDirection) {
                         setState(() {
-                          thisWorkout.exercises.removeAt(i);
+                          thisWorkout.deleteSet(i);
                         });
                       },
                       child: Container(
@@ -155,7 +154,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       if (oldIndex < newIndex) {
                         newIndex -= 1;
                       }
-                      thisWorkout.reorderExercises(oldIndex, newIndex);
+                      thisWorkout.reorderSet(oldIndex, newIndex);
                     });
                   },
                 ),

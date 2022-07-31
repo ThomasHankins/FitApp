@@ -55,7 +55,7 @@ class _SavedWorkoutsScreenState extends State<SavedWorkoutsScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                        DatabaseManager().deleteSavedWorkout(plans[i].id);
+                        DatabaseManager().deleteSavedWorkout(plans[i].id!);
                         plans.removeAt(i);
                         setState(() {});
                       },
@@ -70,7 +70,7 @@ class _SavedWorkoutsScreenState extends State<SavedWorkoutsScreen> {
                   Navigator.pushReplacement(context, MaterialPageRoute(
                     builder: (context) {
                       return WorkoutScreen(
-                        thisWorkout: LiveWorkout.convertFromSaved(plans[i]),
+                        thisWorkout: LiveWorkout.fromSaved(plans[i]),
                       );
                     },
                   ));

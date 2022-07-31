@@ -22,11 +22,11 @@ class ExerciseDescriptionScreen extends StatefulWidget {
 class _ExerciseDescriptionScreenState extends State<ExerciseDescriptionScreen> {
   bool loaded = false;
   late ExerciseDescription thisExercise;
-  late List<Map<DateTime, HistoricExercise>> history;
+  late List<Map<DateTime, ExerciseSet>> history;
 
   Future<void> loadExercise() async {
     thisExercise = widget.thisExercise;
-    history = await DatabaseManager().getExercisesFromDescription(thisExercise);
+    history = await DatabaseManager().getSetsFromDescription(thisExercise);
     loaded = true;
     setState(() {});
   }
@@ -58,7 +58,7 @@ class _ExerciseDescriptionScreenState extends State<ExerciseDescriptionScreen> {
                     shrinkWrap: true,
                     itemCount: history.elementAt(i).values.first.sets.length,
                     itemBuilder: (context, j) {
-                      HistoricAction thisSet =
+                      ExerciseSet thisSet =
                           history.elementAt(i).values.first.sets[j];
                       return (thisSet is HistoricSet)
                           ? Text(thisSet.reps.toString() +

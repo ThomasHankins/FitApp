@@ -1,4 +1,5 @@
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout/adjustable_workout.dart';
 import 'package:fit_app/workout-tracker/database/database.dart';
 import 'package:flutter/material.dart';
 
@@ -181,7 +182,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                 setState(() {
                   for (SearchEntry entry in searchList.list) {
                     if (entry.selected) {
-                      widget.currentWorkout.addExercise(
+                      widget.currentWorkout.addSet(
                         entry.desc,
                       );
                     }

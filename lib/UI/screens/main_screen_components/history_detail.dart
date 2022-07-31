@@ -40,7 +40,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
           ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            itemCount: thisWorkout.exercises.length,
+            itemCount: thisWorkout.sets.length,
             itemBuilder: (context, i) {
               return ListTile(
                 horizontalTitleGap: 0,
@@ -48,18 +48,18 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
                       return ExerciseDescriptionScreen(
-                        thisExercise: thisWorkout.exercises[i].description,
+                        thisExercise: thisWorkout.sets[i].description,
                       );
                     },
                   ));
                 },
-                title: Text(thisWorkout.exercises[i].description.name),
+                title: Text(thisWorkout.sets[i].description.name),
                 subtitle: ListView.builder(
                   padding: EdgeInsets.zero,
                   shrinkWrap: true,
-                  itemCount: thisWorkout.exercises[i].sets.length,
+                  itemCount: thisWorkout.sets[i].sets.length,
                   itemBuilder: (context, j) {
-                    return (thisWorkout.exercises[i].sets[j] is HistoricSet)
+                    return (thisWorkout.sets[i].sets[j] is HistoricSet)
                         ? Text((thisWorkout.exercises[i].sets[j] as HistoricSet).reps.toString() +
                             ' x ' +
                             (thisWorkout.exercises[i].sets[j] as HistoricSet)

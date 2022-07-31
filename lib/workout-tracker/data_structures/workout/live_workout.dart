@@ -1,14 +1,11 @@
 import 'dart:async';
 
-import 'package:fit_app/workout-tracker/data_structures/sets/details/details_cardio.dart';
-import 'package:fit_app/workout-tracker/data_structures/sets/details/details_strength.dart';
 import 'package:fit_app/workout-tracker/data_structures/sets/details/set_builders/last_workout_set_builder.dart';
 import 'package:intl/intl.dart';
 
 import '../../database/database.dart';
 import '../structures.dart';
 import 'adjustable_workout.dart';
-import 'future_workout.dart';
 
 class LiveWorkout extends AdjustableWorkout {
   String name;
@@ -21,6 +18,8 @@ class LiveWorkout extends AdjustableWorkout {
   Duration _restTimeRemaining = const Duration(seconds: 0);
 
   int get id => _id;
+
+  List<ExerciseSet> get sets => _sets;
   //constructors
 
   //state functions
@@ -81,8 +80,9 @@ class LiveWorkout extends AdjustableWorkout {
 
   @override
   void deleteSet(int position) {
-    if (_sets[position].isComplete)
+    if (_sets[position].isComplete) {
       DatabaseManager().deleteSet(_sets[position]);
+    }
     _sets.removeAt(position);
     //requirement that current set is between 0 and set length
     if (position < _currentSetIndex) _currentSetIndex--;

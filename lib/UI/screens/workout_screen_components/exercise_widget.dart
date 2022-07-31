@@ -1,9 +1,7 @@
-import 'package:fit_app/UI/screens/set_screen.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
-import '../set_screen.dart';
-
+//TODO this needs a complete overhaul
 class ExerciseWidget extends StatelessWidget {
   final LiveWorkout thisWorkout;
   final int index;
@@ -14,22 +12,13 @@ class ExerciseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      selected: thisWorkout.exercises[index].isPartiallyFinished,
       title: Row(
         children: [
-          Text(thisWorkout.exercises[index].description.name),
+          Text(thisWorkout.sets[index].description.name),
         ],
       ),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SetScreen(
-              index: index,
-              thisWorkout: thisWorkout,
-            ),
-          ),
-        );
+        throw UnimplementedError();
       },
     );
   }

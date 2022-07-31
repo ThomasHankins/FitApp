@@ -9,6 +9,8 @@ class FutureWorkout implements AdjustableWorkout {
   final List<ExerciseDescription> _sets;
   String description;
 
+  int? get id => _id;
+
   FutureWorkout()
       : _sets = [],
         name = "Untitled Workout",

@@ -1,4 +1,5 @@
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
+import 'package:fit_app/workout-tracker/data_structures/workout/historic_workout.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 

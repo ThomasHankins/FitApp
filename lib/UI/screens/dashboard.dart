@@ -1,5 +1,5 @@
 import 'package:fit_app/UI/screens/saved_workouts.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout/workout.dart';
+import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:fit_app/workout-tracker/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -98,7 +98,7 @@ class _DashboardState extends State<Dashboard> {
               context,
               MaterialPageRoute(
                 builder: (context) => WorkoutScreen(
-                  thisWorkout: LiveWorkout(),
+                  thisWorkout: LiveWorkout.blank(),
                 ),
               ),
             );
