@@ -2,36 +2,32 @@ import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class SetWidget extends StatefulWidget {
-  const SetWidget({
+class StrengthSetWidget extends StatefulWidget {
+  const StrengthSetWidget({
     Key? key,
-    required LiveAction inheritSet,
-    required LiveExercise exercise,
+    required ExerciseSet inheritSet,
     required Function() notifyParent,
-  })  : _thisSet = inheritSet as LiveSet,
-        _thisExercise = exercise,
+  })  : _thisSet = inheritSet,
         _notifyParent = notifyParent,
         super(key: key);
-  final LiveSet _thisSet;
-  final LiveExercise _thisExercise;
+  final ExerciseSet _thisSet;
   final Function() _notifyParent;
 
   @override
-  _SetWidgetState createState() => _SetWidgetState();
+  _StrengthSetWidgetState createState() => _StrengthSetWidgetState();
 }
 
 //TODO completely overhaul
-class _SetWidgetState extends State<SetWidget> {
-  late LiveSet _thisSet;
-  late LiveExercise _thisExercise;
-
+class _StrengthSetWidgetState extends State<StrengthSetWidget> {
+  late ExerciseSet _thisSet;
+  late StrengthDetails _details;
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _repsController = TextEditingController();
 
   String _thisWeightToString() {
     //TODO bring this into the set as a getter
-    return _thisSet.weight.toStringAsFixed(
-        _thisSet.weight.truncateToDouble() == _thisSet.weight ? 0 : 1);
+    return _details.weight.toStringAsFixed(
+        _details.weight.truncateToDouble() == _details.weight ? 0 : 1);
   }
 
   TextSelection _endOfSelection(TextEditingController controller) {
@@ -44,16 +40,16 @@ class _SetWidgetState extends State<SetWidget> {
   @override
   void initState() {
     _thisSet = widget._thisSet;
-    _thisExercise = widget._thisExercise;
+    _details = _thisSet.details as StrengthDetails;
     _weightController.text = _thisWeightToString();
-    _repsController.text = _thisSet.reps.toString();
+    _repsController.text = _details.reps.toString();
     super.initState();
   }
 
   @override
   void setState(VoidCallback fn) {
     _weightController.text = _thisWeightToString();
-    _repsController.text = _thisSet.reps.toString();
+    _repsController.text = _details.reps.toString();
     super.setState(fn);
   }
 
@@ -104,7 +100,7 @@ class _SetWidgetState extends State<SetWidget> {
                       _endOfSelection(_weightController);
                 }
                 try {
-                  _thisExercise.weight = double.parse(changes);
+                  _details.weight = double.parse(changes);
                 } catch (e) {
                   if (changes != "-" && changes != ".") {
                     _weightController.text = _thisWeightToString();
@@ -129,7 +125,7 @@ class _SetWidgetState extends State<SetWidget> {
               decoration: InputDecoration(
                 counterText: "",
                 border: InputBorder.none,
-                hintText: _thisSet.reps.toString(),
+                hintText: _details.reps.toString(),
               ),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
@@ -137,7 +133,7 @@ class _SetWidgetState extends State<SetWidget> {
               keyboardType: TextInputType.number,
               onTap: () => _repsController.text = "",
               onFieldSubmitted: (changes) {
-                _repsController.text = _thisSet.reps.toString();
+                _repsController.text = _details.reps.toString();
                 _repsController.selection = _endOfSelection(_repsController);
                 widget._notifyParent;
               },
@@ -151,10 +147,10 @@ class _SetWidgetState extends State<SetWidget> {
                   _repsController.selection = _endOfSelection(_repsController);
                 }
                 try {
-                  _thisExercise.reps = int.parse(changes);
+                  _details.reps = int.parse(changes);
                 } catch (e) {
                   if (changes != "-" && changes != ".") {
-                    _repsController.text = _thisSet.reps.toString();
+                    _repsController.text = _details.reps.toString();
                     _repsController.selection =
                         _endOfSelection(_repsController);
                   }
