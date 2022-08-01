@@ -12,10 +12,10 @@ class ExerciseDescription {
   String get description => _description ?? "";
   DetailType get exerciseType => _exerciseType;
 
-  set name(String nm) {
-    _name = nm;
-    DatabaseManager().updateExerciseDescription(this);
-  }
+  // set name(String nm) {
+  //   _name = nm;
+  //   DatabaseManager().updateExerciseDescription(this);
+  // }
 
   set description(String ds) {
     _description = ds;

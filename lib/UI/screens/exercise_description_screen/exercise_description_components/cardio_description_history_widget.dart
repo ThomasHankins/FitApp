@@ -2,6 +2,7 @@ import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
+//TODO refactor to somewhere that makes more sense
 class CardioDescriptionHistory extends StatelessWidget {
   final CardioDetails details;
   const CardioDescriptionHistory({

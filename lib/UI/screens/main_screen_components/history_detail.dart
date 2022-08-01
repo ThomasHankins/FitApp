@@ -1,4 +1,5 @@
-import 'package:fit_app/UI/components/clock_converter.dart';
+import 'package:fit_app/UI/screens/exercise_description_screen/exercise_description_components/cardio_description_history_widget.dart';
+import 'package:fit_app/UI/screens/exercise_description_screen/exercise_description_components/strength__description_history_widget.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
@@ -19,16 +20,28 @@ class HistoryDetailScreen extends StatefulWidget {
 
 class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   bool loaded = false;
-  late HistoricWorkout thisWorkout;
+  late final HistoricWorkout thisWorkout;
+  late List<ExerciseSet> sets;
 
   @override
   void initState() {
     thisWorkout = widget.thisWorkout;
+    sets = thisWorkout.sets;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    //group by exercises - if there is an intermediate one they will be separated into two different instances of that exercise
+    List<ExerciseDescription> exercises = sets.fold(<ExerciseDescription>[],
+        (List<ExerciseDescription> list, item) {
+      if (list.isEmpty || list.last.name != item.description.name) {
+        //only doing name since I'm not 100% confident the objects will match
+        list.add(item.description);
+      }
+      return list;
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Row(children: [
@@ -40,46 +53,39 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
           ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            itemCount: thisWorkout.sets.length,
+            itemCount: exercises.length,
             itemBuilder: (context, i) {
+              List<ExerciseSet> thisExerciseList = [];
+              while (sets.first.description.name == exercises[i].name) {
+                thisExerciseList.add(sets.first);
+                sets.removeAt(0);
+              }
+
               return ListTile(
                 horizontalTitleGap: 0,
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
                       return ExerciseDescriptionScreen(
-                        thisExercise: thisWorkout.sets[i].description,
+                        thisExercise: exercises[i],
                       );
                     },
                   ));
                 },
-                title: Text(thisWorkout.sets[i].description.name),
+                title: Text(exercises[i].name),
                 subtitle: ListView.builder(
                   padding: EdgeInsets.zero,
                   shrinkWrap: true,
-                  itemCount: thisWorkout.sets[i].sets.length,
+                  itemCount: thisExerciseList.length,
                   itemBuilder: (context, j) {
-                    return (thisWorkout.sets[i].sets[j] is HistoricSet)
-                        ? Text((thisWorkout.exercises[i].sets[j] as HistoricSet).reps.toString() +
-                            ' x ' +
-                            (thisWorkout.exercises[i].sets[j] as HistoricSet)
-                                .weight
-                                .toStringAsFixed(
-                                    (thisWorkout.exercises[i].sets[j] as HistoricSet)
-                                                .weight
-                                                .truncateToDouble() ==
-                                            (thisWorkout.exercises[i].sets[j] as HistoricSet)
-                                                .weight
-                                        ? 0
-                                        : 1) +
-                            'lbs')
-                        : Text((thisWorkout.exercises[i].sets[j] as HistoricCardio)
-                                .distance
-                                .toString() +
-                            ' in ' +
-                            ClockConverter()
-                                .secondsToFormatted((thisWorkout.exercises[i].sets[j] as HistoricCardio).duration)
-                                .toString());
+                    return thisExerciseList[j].description.exerciseType ==
+                            DetailType.strength
+                        ? StrengthDescriptionHistory(
+                            details:
+                                thisExerciseList[j].details as StrengthDetails)
+                        : CardioDescriptionHistory(
+                            details:
+                                thisExerciseList[j].details as CardioDetails);
                   },
                 ),
               );

@@ -115,7 +115,8 @@ class _DashboardState extends State<Dashboard> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => WorkoutScreen(
-                        thisWorkout: LiveWorkout(), //makes a new blank workout
+                        thisWorkout:
+                            LiveWorkout.blank(), //makes a new blank workout
                       ),
                     ),
                   );
