@@ -20,6 +20,7 @@ class SetWidget extends StatefulWidget {
   _SetWidgetState createState() => _SetWidgetState();
 }
 
+//TODO completely overhaul
 class _SetWidgetState extends State<SetWidget> {
   late LiveSet _thisSet;
   late LiveExercise _thisExercise;

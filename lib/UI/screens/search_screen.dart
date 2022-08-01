@@ -3,7 +3,7 @@ import 'package:fit_app/workout-tracker/data_structures/workout/adjustable_worko
 import 'package:fit_app/workout-tracker/database/database.dart';
 import 'package:flutter/material.dart';
 
-import 'exercise_description_screen.dart';
+import 'exercise_description_screen/exercise_description_screen.dart';
 
 class ExerciseSearch extends StatefulWidget {
   final AdjustableWorkout currentWorkout;

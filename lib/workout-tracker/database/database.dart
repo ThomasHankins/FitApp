@@ -1,12 +1,5 @@
 import 'dart:async';
 
-import 'package:fit_app/workout-tracker/data_structures/sets/details/detail_types.dart';
-import 'package:fit_app/workout-tracker/data_structures/sets/details/details_cardio.dart';
-import 'package:fit_app/workout-tracker/data_structures/sets/details/details_strength.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout/future_workout.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout/historic_workout.dart';
-import 'package:fit_app/workout-tracker/data_structures/workout/live_workout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';

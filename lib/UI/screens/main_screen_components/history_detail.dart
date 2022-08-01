@@ -2,7 +2,7 @@ import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 
-import '../exercise_description_screen.dart';
+import '../exercise_description_screen/exercise_description_screen.dart';
 
 /*
 Takes a Workout class and will display the information
