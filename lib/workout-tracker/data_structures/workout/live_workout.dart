@@ -166,8 +166,10 @@ class LiveWorkout extends AdjustableWorkout {
       } else {
         _exercises.addEntries([MapEntry(setDesc, 0)]);
       }
-      sets.add(ExerciseSet(
-          details: lastSet(setDesc, position), description: setDesc));
+
+      ExerciseSet setToAdd = await ExerciseSet.late(
+          futureDetails: lastSet(setDesc, position), description: setDesc);
+      sets.add(setToAdd);
     }
     return LiveWorkout(name: fw.name, sets: sets);
   }

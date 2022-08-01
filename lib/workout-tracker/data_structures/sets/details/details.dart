@@ -22,7 +22,8 @@ abstract class SetDetails {
   factory SetDetails.blank(ExerciseDescription description) =>
       blankSet(description);
   factory SetDetails.copy(SetDetails details) => copySet(details);
-  factory SetDetails.last(ExerciseDescription description, int position) =>
+  static Future<SetDetails> last(
+          ExerciseDescription description, int position) =>
       lastSet(description, position);
   factory SetDetails.logic(ExerciseDescription description) =>
       logicSet(description);

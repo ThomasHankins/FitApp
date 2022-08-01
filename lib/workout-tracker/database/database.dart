@@ -311,6 +311,39 @@ class DatabaseManager {
       },
     ));
   }
+
+  Future<List<ExerciseSet>> getMostRecentSets(
+      //might want to add the mapping later so that I can return this list without it
+      ExerciseDescription description) async {
+    final db = await _database;
+    List<Map<String, dynamic>> maps = await db.query(
+        'set_history, workout_history',
+        columns: ['MAX(workout_id)', 'set_id', 'date', 'position'],
+        where:
+            'exercise_name = ? AND set_history.workout_id = workout_history.id',
+        whereArgs: [description.name],
+        groupBy: 'workout_id');
+
+    return Future.wait(List.generate(
+      maps.length,
+      (index) async {
+        SetDetails? details;
+        if (description.exerciseType == DetailType.strength) {
+          details = await _getStrengthDetails(db, maps[index]['id']);
+        } else if (description.exerciseType == DetailType.cardio) {
+          details = await _getCardioDetails(db, maps[index]['id']);
+        }
+
+        return ExerciseSet.fromDatabase(
+            description: description,
+            details: details!,
+            workoutId: maps[index]['workout_history.id'],
+            id: maps[index]['set_history.id'],
+            time: maps[index]['time'],
+            position: maps[index]['position']);
+      },
+    ));
+  }
 }
 
 // class ObjectBox {

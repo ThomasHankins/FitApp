@@ -31,6 +31,13 @@ class ExerciseSet {
     required ExerciseDescription description,
   }) : _description = description;
 
+  static Future<ExerciseSet> late(
+      {required Future<SetDetails> futureDetails,
+      required ExerciseDescription description}) async {
+    SetDetails details = await futureDetails;
+    return ExerciseSet(details: details, description: description);
+  }
+
   ExerciseSet.fromDatabase({
     required this.details,
     required ExerciseDescription description,
@@ -43,6 +50,7 @@ class ExerciseSet {
         _time = time,
         _position = position,
         _id = id;
+
   get description => _description;
 
   Map<String, dynamic> toMap() {

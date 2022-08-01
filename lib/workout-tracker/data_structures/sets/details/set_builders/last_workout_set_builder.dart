@@ -1,8 +1,13 @@
+import 'package:fit_app/workout-tracker/database/database.dart';
+
 import '../../../structures.dart';
 
-SetDetails lastSet(ExerciseDescription description, int position) {
-  // TODO: implement buildSet
-  //should return the set from the last workout in the appropriate position
-  //have logic that says if the position doesn't exist, take the last one or if negative take less than 1
-  throw UnimplementedError();
+Future<SetDetails> lastSet(
+    ExerciseDescription description, int position) async {
+  List<ExerciseSet> sets =
+      await DatabaseManager().getMostRecentSets(description);
+
+  if (position > sets.length) position = sets.length;
+
+  return sets[position].details;
 }
