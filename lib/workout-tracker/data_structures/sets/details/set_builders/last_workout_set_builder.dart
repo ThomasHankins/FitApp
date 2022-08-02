@@ -7,6 +7,7 @@ Future<SetDetails> lastSet(
   List<ExerciseSet> sets =
       await DatabaseManager().getMostRecentSets(description);
 
+  if (sets.isEmpty) return SetDetails.blank(description);
   if (position > sets.length) position = sets.length;
 
   return sets[position].details;
