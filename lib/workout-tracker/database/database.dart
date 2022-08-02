@@ -24,7 +24,10 @@ class DatabaseManager {
         createDatabase2(db, version);
         addExercises(db);
       },
-      onOpen: (db) => db.execute("PRAGMA foreign_keys=ON"),
+      onOpen: (db) {
+        db.execute("PRAGMA foreign_keys=ON");
+        updateExercises(db);
+      },
       onUpgrade: (db, v1, v2) =>
           throw UnimplementedError("Implement DB Update"),
       version: 2,

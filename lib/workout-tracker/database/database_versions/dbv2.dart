@@ -12,9 +12,9 @@ void createDatabase2(db, version) {
 
   db.execute(
       'CREATE TABLE equipment_list_exercise_map(' //one-to-many relationship
-      'equipment_id REFERENCES equipment_list(id) ON DELETE CASCADE,'
-      'exercise_name REFERENCES exercise_descriptions(name) ON DELETE CASCADE,'
-      'PRIMARY KEY(equipment_id, exercise_id))');
+      'equipment_name TEXT REFERENCES equipment_list(name) ON DELETE CASCADE,'
+      'exercise_name TEXT REFERENCES exercise_descriptions(name) ON DELETE CASCADE,'
+      'PRIMARY KEY(equipment_name, exercise_name))');
 
   //TODO when adding the brain add a "muscles" table and mapping table for exercises to muscle groups
 
@@ -26,8 +26,8 @@ void createDatabase2(db, version) {
       );
 
   db.execute('CREATE TABLE set_history('
-      'id INTEGER PRIMARY KEY AUTOINCREMENT'
-      'exercise_name TEXT REFERENCES exercise_descriptions(name)'
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+      'exercise_name TEXT REFERENCES exercise_descriptions(name),'
       'workout_id INTEGER REFERENCES workout_history(id) ON DELETE CASCADE,'
       'position INTEGER,'
       'time_marker INTEGER,' //in seconds since start of workout
@@ -45,31 +45,31 @@ void createDatabase2(db, version) {
       'duration INTEGER,'
       'distance INTEGER,'
       'calories INTEGER,'
-      'rest_time INTEGER'
+      'rest_time INTEGER,'
       'note TEXT);');
 
   db.execute('CREATE TABLE saved_workouts('
-      'id INT PRIMARY KEY AUTOINCREMENT,'
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,'
       'name TEXT,'
       'description TEXT'
       ');');
   db.execute(
       'CREATE TABLE saved_exercises(' //appropriate weight will be determined by model weighted on most recent weeks
-      'workout_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
-      'description_name INT REFERENCES exercise_descriptions(name) ON DELETE CASCADE,'
-      'position INT,'
+      'workout_id INTEGER REFERENCES saved_workouts(id) ON DELETE CASCADE,'
+      'description_name INTEGER REFERENCES exercise_descriptions(name) ON DELETE CASCADE,'
+      'position INTEGER,'
       'PRIMARY KEY(workout_id, position));');
 
   //TODO implement workout plans as below
 
   // db.execute('CREATE TABLE workout_plans('
-  //     'id INT PRIMARY KEY,'
+  //     'id INTEGER PRIMARY KEY,'
   //     'name TEXT,'
   //     'description TEXT,'
   //     'length INT);');
   // db.execute('CREATE TABLE plans_to_saved_workouts('
-  //     'plan_id INT REFERENCES workout_plans(id) ON DELETE CASCADE,'
-  //     'workout_id INT REFERENCES saved_workouts(id) ON DELETE CASCADE,'
-  //     'position INT,'
+  //     'plan_id INTEGER REFERENCES workout_plans(id) ON DELETE CASCADE,'
+  //     'workout_id INTEGER REFERENCES saved_workouts(id) ON DELETE CASCADE,'
+  //     'position INTEGER,'
   //     'PRIMARY KEY(plan_id, workout_id));');
 }
