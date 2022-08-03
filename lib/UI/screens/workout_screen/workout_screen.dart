@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:fit_app/UI/components/clock_converter.dart';
-import 'package:fit_app/UI/screens/workout_screen_components/dissmissible_widget.dart';
+import 'package:fit_app/UI/components/tuples.dart';
+import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/dissmissible_widget.dart';
+import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/exercise_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../workout-tracker/data_structures/structures.dart';
-import 'dashboard.dart';
-import 'search_screen.dart';
-import 'workout_screen_components/exercise_widget.dart';
+import '../../../workout-tracker/data_structures/structures.dart';
+import '../dashboard.dart';
+import '../search_screen.dart';
 
 class WorkoutScreen extends StatefulWidget {
   final Future<LiveWorkout> thisWorkout;
@@ -22,6 +23,7 @@ class WorkoutScreen extends StatefulWidget {
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
   late LiveWorkout thisWorkout;
+  late List<Tuple<ExerciseDescription, Tuple<int, int>>> _exercises;
   bool loaded = false;
   int clock = 0;
 
@@ -38,6 +40,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     loadWorkout();
     super.initState();
 
+    _exercises = getMapping();
     Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (mounted) {
         return setState(() {
@@ -45,6 +48,21 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           clock = time;
         });
       }
+    });
+  }
+
+  List<Tuple<ExerciseDescription, Tuple<int, int>>> getMapping() {
+    int counter = 0;
+    return thisWorkout.sets
+        .fold(<Tuple<ExerciseDescription, Tuple<int, int>>>[],
+            (List<Tuple<ExerciseDescription, Tuple<int, int>>> list, item) {
+      if (list.isEmpty || list.last.a.name != item.description.name) {
+        list.add(Tuple(item.description, Tuple(counter, counter)));
+      } else {
+        list.last.b.b++;
+      }
+      counter++;
+      return list;
     });
   }
 
@@ -125,46 +143,61 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ),
               ]),
             ),
-            body: Column(
-              children: [
-                ReorderableListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: thisWorkout.sets.length,
+            body: CustomScrollView(
+              slivers: [
+                SliverReorderableList(
+                  itemCount: _exercises.length,
                   itemBuilder: (context, i) {
                     return DismissibleWidget(
-                      item: thisWorkout.sets[i],
-                      key: Key('$i'),
-                      onDismissed: (dismissDirection) {
-                        setState(() {
-                          thisWorkout.deleteSet(i);
-                        });
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: .2),
-                          child: ExerciseWidget(
-                            index: i,
-                            thisWorkout: thisWorkout,
-                          )),
-                    );
+                        item: _exercises[i],
+                        key: Key('$i'),
+                        onDismissed: (dismissDirection) {
+                          setState(() {
+                            for (int index = _exercises[i].b.a;
+                                index < _exercises[i].b.b;
+                                index++) {
+                              thisWorkout.deleteSet(index);
+                            }
+                          });
+                        },
+                        child: ExerciseWidget(
+                          thisWorkout: thisWorkout,
+                          exerciseSets: _exercises[i].b,
+                          ed: _exercises[i].a,
+                        ));
                   },
                   onReorder: (int oldIndex, int newIndex) {
                     setState(() {
+                      int modifier = 0;
                       if (oldIndex < newIndex) {
-                        newIndex -= 1;
+                        modifier =
+                            _exercises[newIndex].b.b - _exercises[newIndex].b.a;
                       }
-                      thisWorkout.reorderSet(oldIndex, newIndex);
+
+                      for (int index = 0;
+                          index <=
+                              _exercises[oldIndex].b.b -
+                                  _exercises[oldIndex].b.a;
+                          index++) {
+                        if (oldIndex < newIndex) {
+                          thisWorkout.reorderSet(_exercises[oldIndex].b.a,
+                              _exercises[newIndex].b.a + modifier);
+                        } else {
+                          thisWorkout.reorderSet(
+                              _exercises[oldIndex].b.a + index,
+                              _exercises[newIndex].b.a + index);
+                        }
+                      }
+
+                      _exercises = getMapping();
                     });
                   },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Material(
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 100),
+                    child: Material(
                       borderRadius: BorderRadius.circular(30),
                       elevation: 10.0,
                       color: Colors.grey[850],
@@ -182,15 +215,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             ),
                           );
                         },
-                        minWidth: 50.0,
+                        minWidth: 10.0,
                         child: const Text(
-                          "Add Exercise",
+                          "Add Set",
                         ),
                         height: 42.0,
                       ),
                     ),
-                  ],
-                )
+                  ),
+                ),
               ],
             ),
             floatingActionButton: FloatingActionButton.extended(
