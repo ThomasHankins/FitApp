@@ -14,7 +14,6 @@ void createDatabase1(db, version) {
       'equipment_id REFERENCES equipment_list(id) ON DELETE CASCADE,'
       'exercise_id REFERENCES exercise_descriptions(id) ON DELETE CASCADE,'
       'PRIMARY KEY(equipment_id, exercise_id))');
-  //TODO when adding the brain add a "muscles" table mapping exercises to muscle groups
   db.execute('CREATE TABLE workout_history('
       'id INTEGER PRIMARY KEY,'
       'name TEXT,'

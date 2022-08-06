@@ -2,8 +2,8 @@ import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class StrengthSetWidget extends StatefulWidget {
-  const StrengthSetWidget({
+class StrengthSetExpandedWidget extends StatefulWidget {
+  const StrengthSetExpandedWidget({
     Key? key,
     required ExerciseSet inheritSet,
     required Function() notifyParent,
@@ -14,11 +14,12 @@ class StrengthSetWidget extends StatefulWidget {
   final Function() _notifyParent;
 
   @override
-  _StrengthSetWidgetState createState() => _StrengthSetWidgetState();
+  _StrengthSetExpandedWidgetState createState() =>
+      _StrengthSetExpandedWidgetState();
 }
 
-//TODO delete - here for legacy for now
-class _StrengthSetWidgetState extends State<StrengthSetWidget> {
+//TODO completely overhaul
+class _StrengthSetExpandedWidgetState extends State<StrengthSetExpandedWidget> {
   late ExerciseSet _thisSet;
   late StrengthDetails _details;
   final TextEditingController _weightController = TextEditingController();
@@ -75,16 +76,13 @@ class _StrengthSetWidgetState extends State<StrengthSetWidget> {
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9/./-]')),
               ],
               keyboardType: TextInputType.number,
-              onTap: () {
-                widget._notifyParent;
-                setState(() {});
-                _weightController.text = "";
-              },
+              onTap: () => _weightController.text = "",
               onFieldSubmitted: (changes) {
                 _weightController.text = _details.weightAsString;
                 _weightController.selection =
                     _endOfSelection(_weightController);
                 widget._notifyParent;
+                setState(() {});
               },
               onChanged: (changes) {
                 if (changes[0] == "0") {

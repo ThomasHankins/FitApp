@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:fit_app/UI/components/clock_converter.dart';
 import 'package:fit_app/UI/components/tuples.dart';
-import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/dissmissible_widget.dart';
+import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/dismissible_widget.dart';
 import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/exercise_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -31,15 +31,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     //this might be redundant since thisWorkout is not longer a future, need to check with synchronization issues before deleting
     thisWorkout = await widget.thisWorkout;
     thisWorkout.start(); // start workout clock
-    loaded = true;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    loadWorkout();
-    super.initState();
-
     _exercises = getMapping();
     Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (mounted) {
@@ -49,6 +40,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         });
       }
     });
+    loaded = true;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    loadWorkout();
+    super.initState();
   }
 
   List<Tuple<ExerciseDescription, Tuple<int, int>>> getMapping() {
@@ -158,6 +157,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 index++) {
                               thisWorkout.deleteSet(index);
                             }
+                            _exercises = getMapping();
                           });
                         },
                         child: ExerciseWidget(
@@ -209,7 +209,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               builder: (context) => ExerciseSearch(
                                 currentWorkout: thisWorkout,
                                 notifyParent: () {
-                                  setState(() {});
+                                  setState(() {
+                                    _exercises = getMapping();
+                                    ;
+                                  });
                                 },
                               ),
                             ),

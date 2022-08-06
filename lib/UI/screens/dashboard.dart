@@ -7,7 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'main_screen_components/dashboard_ui.dart';
 import 'main_screen_components/workout_history_ui.dart';
 import 'workout_builder.dart';
-import 'workout_screen.dart';
+import 'workout_screen/workout_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);

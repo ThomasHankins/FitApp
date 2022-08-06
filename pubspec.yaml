@@ -18,6 +18,7 @@ dependencies:
   intl: ^0.17.0
   table_calendar: ^3.0.6
   sqflite:
+  sliver_tools:
   objectbox: ^1.5.0
   objectbox_sync_flutter_libs: any
 
@@ -37,5 +38,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - data/
+    - data/exercises.json
 

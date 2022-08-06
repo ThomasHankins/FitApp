@@ -16,7 +16,7 @@ void createDatabase2(db, version) {
       'exercise_name TEXT REFERENCES exercise_descriptions(name) ON DELETE CASCADE,'
       'PRIMARY KEY(equipment_name, exercise_name))');
 
-  //TODO when adding the brain add a "muscles" table and mapping table for exercises to muscle groups
+  //when adding the brain add a "muscles" table and mapping table for exercises to muscle groups
 
   db.execute('CREATE TABLE workout_history('
       'id INTEGER PRIMARY KEY AUTOINCREMENT,'

@@ -11,6 +11,9 @@ class StrengthDetails extends SetDetails {
   int? get rpe => _rpe;
   set rpe(int? rpe) => (rpe! >= 0 || rpe <= 10) ? _rpe = rpe : null;
 
+  String get weightAsString =>
+      weight.toStringAsFixed(weight.truncateToDouble() == weight ? 0 : 1);
+
   StrengthDetails(
       {required String note,
       required int restTime,

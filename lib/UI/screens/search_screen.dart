@@ -46,7 +46,7 @@ class SearchList {
     return returnList;
   }
 
-  void loadSearchList() async {
+  Future<void> loadSearchList() async {
     if (_list.isEmpty) {
       int i = 0;
       List<ExerciseDescription> dbList =
@@ -86,7 +86,7 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
   SearchList searchList = SearchList();
 
   Future<void> loadData() async {
-    searchList.loadSearchList();
+    await searchList.loadSearchList();
     loaded = true;
     setState(() {});
   }

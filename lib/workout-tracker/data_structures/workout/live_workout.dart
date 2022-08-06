@@ -29,6 +29,8 @@ class LiveWorkout extends AdjustableWorkout {
     return _sets[_currentSetIndex];
   }
 
+  int get currentSetIndex => _currentSetIndex;
+
   void start() async {
     workoutTimer.start();
     _id = await DatabaseManager().insertLiveWorkout(this);
