@@ -2,10 +2,13 @@ Current plan:
 
 App Bar header will remain as is
 
+Header
+    use a sliver app bar to expand workout details
 Body:
-    Reorderable List of "Exercises"
+    Reorderable List of exercises - can reorder exercises when in reorder mode
+    exercise header can't be rearranged
     this is an expandable widget with a reorderable list of sets inside
-    long press on exercise widget to open page, short tap to expand/close exercises
+    long press on exercise widget to reorder
     plus button at the bottom of each "exercise" to add another set:
         -if all sets are deleted exercise gets deleted, or can delete all sets by swiping left
 

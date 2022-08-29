@@ -6,6 +6,7 @@ export 'sets/details/details_cardio.dart';
 export 'sets/details/details_strength.dart';
 export 'sets/exercise_description.dart';
 export 'sets/exercise_set.dart';
+export 'tuples.dart';
 export 'workout/future_workout.dart';
 export 'workout/historic_workout.dart';
 export 'workout/live_workout.dart';

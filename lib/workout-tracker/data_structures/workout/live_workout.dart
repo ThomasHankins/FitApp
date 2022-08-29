@@ -80,6 +80,12 @@ class LiveWorkout extends AdjustableWorkout {
     }
   }
 
+  void reorderRange(Tuple<int, int> startRange, int endStart) {
+    for (int i = startRange.b; i >= startRange.a; i--) {
+      reorderSet(i, endStart);
+    }
+  }
+
   @override
   void deleteSet(int position) {
     if (_sets[position].isComplete) {

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:fit_app/UI/components/clock_converter.dart';
-import 'package:fit_app/UI/components/tuples.dart';
 import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/dismissible_widget.dart';
 import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/exercise_widget.dart';
+import 'package:fit_app/workout-tracker/data_structures/tuples.dart';
 import 'package:flutter/material.dart';
 
 import '../../../workout-tracker/data_structures/structures.dart';
@@ -65,6 +65,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     });
   }
 
+  refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return loaded
@@ -121,8 +125,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 },
               ),
               title: Row(children: [
-                SizedBox(
-                  width: 260,
+                Expanded(
                   child: TextFormField(
                     initialValue: thisWorkout.name,
                     maxLength: 28,
@@ -130,7 +133,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     decoration: const InputDecoration(
                         counterText: "", border: InputBorder.none),
                     keyboardType: TextInputType.text,
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.headline6,
                     onChanged: (changes) {
                       thisWorkout.name = changes;
                     },
@@ -160,35 +163,24 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             _exercises = getMapping();
                           });
                         },
-                        child: ExerciseWidget(
-                          thisWorkout: thisWorkout,
-                          exerciseSets: _exercises[i].b,
-                          ed: _exercises[i].a,
+                        child: ReorderableDragStartListener(
+                          index: i,
+                          child: Material(
+                              child: ExerciseWidget(
+                            thisWorkout: thisWorkout,
+                            exerciseSets: _exercises[i].b,
+                            notifyParent: refresh,
+                            ed: _exercises[i].a,
+                          )),
                         ));
                   },
                   onReorder: (int oldIndex, int newIndex) {
+                    if (newIndex > oldIndex) {
+                      newIndex--;
+                    } //this is caused by a bug? I think since it seems to be off by 1
                     setState(() {
-                      int modifier = 0;
-                      if (oldIndex < newIndex) {
-                        modifier =
-                            _exercises[newIndex].b.b - _exercises[newIndex].b.a;
-                      }
-
-                      for (int index = 0;
-                          index <=
-                              _exercises[oldIndex].b.b -
-                                  _exercises[oldIndex].b.a;
-                          index++) {
-                        if (oldIndex < newIndex) {
-                          thisWorkout.reorderSet(_exercises[oldIndex].b.a,
-                              _exercises[newIndex].b.a + modifier);
-                        } else {
-                          thisWorkout.reorderSet(
-                              _exercises[oldIndex].b.a + index,
-                              _exercises[newIndex].b.a + index);
-                        }
-                      }
-
+                      thisWorkout.reorderRange(
+                          _exercises[oldIndex].b, _exercises[newIndex].b.a);
                       _exercises = getMapping();
                     });
                   },
