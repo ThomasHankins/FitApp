@@ -30,6 +30,10 @@ class CardioDetails extends SetDetails {
       'note': note,
     };
   }
+  @override
+  String toString() {
+    return super.toString();
+  }
 
   @override
   void saveToDatabase(int setId) {

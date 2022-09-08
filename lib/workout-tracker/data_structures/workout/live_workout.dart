@@ -81,8 +81,15 @@ class LiveWorkout extends AdjustableWorkout {
   }
 
   void reorderRange(Tuple<int, int> startRange, int endStart) {
-    for (int i = startRange.b; i >= startRange.a; i--) {
-      reorderSet(i, endStart);
+    print("Moving ${startRange.a}-${startRange.b} to $endStart");
+    for (int i = startRange.a; i <= startRange.b; i++) {
+      if(startRange.b > endStart) {
+        print("     ${_sets[startRange.b]} -> $endStart");
+        reorderSet(startRange.b, endStart);
+      } else {
+        print("${_sets[startRange.a]} -> $endStart");
+        reorderSet(startRange.a, endStart);
+      }
     }
   }
 
@@ -189,5 +196,16 @@ class LiveWorkout extends AdjustableWorkout {
       'date': DateTime.now().toIso8601String(),
       'length': workoutTimer.elapsed.inSeconds,
     };
+  }
+
+  @override
+  String toString() {
+    String result = "";
+    int i = 0;
+    for(ExerciseSet exercise in sets){
+      i++;
+      result += "#$i $exercise";
+    }
+    return result;
   }
 }

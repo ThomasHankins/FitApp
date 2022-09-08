@@ -36,6 +36,7 @@ class ExerciseSet {
       required ExerciseDescription description}) async {
     SetDetails details = await futureDetails;
     return ExerciseSet(details: details, description: description);
+
   }
 
   ExerciseSet.fromDatabase({
@@ -60,5 +61,10 @@ class ExerciseSet {
       'position': _position,
       'time_marker': _time,
     };
+  }
+
+  @override
+  String toString(){
+    return "\n${_description.name}: \n $details";
   }
 }

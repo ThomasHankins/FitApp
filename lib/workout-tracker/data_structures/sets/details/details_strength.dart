@@ -27,6 +27,11 @@ class StrengthDetails extends SetDetails {
         );
 
   @override
+  String toString() {
+    return "   $weight lbs - $reps reps \n";
+  }
+
+  @override
   Map<String, dynamic> toMap() {
     return {
       'set_id': _setId,

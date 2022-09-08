@@ -175,15 +175,21 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         ));
                   },
                   onReorder: (int oldIndex, int newIndex) {
+                    print("oldIndex: $oldIndex new index: $newIndex");
+                    int destination = 0;
                     if (newIndex > oldIndex) {
-                      newIndex--;
-                    } //this is caused by a bug? I think since it seems to be off by 1
+                      destination = _exercises[newIndex-1].b.b;
+
+                    } else{
+                      destination = _exercises[newIndex].b.a;
+                    }
                     setState(() {
                       thisWorkout.reorderRange(
-                          _exercises[oldIndex].b, _exercises[newIndex].b.a);
+                          _exercises[oldIndex].b, destination);
                       _exercises = getMapping();
                     });
-                  },
+                    // print(thisWorkout);
+                    },
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
