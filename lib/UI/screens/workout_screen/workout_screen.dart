@@ -65,7 +65,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     });
   }
 
-  refresh() {
+  void refresh() {
     setState(() {});
   }
 
@@ -175,7 +175,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         ));
                   },
                   onReorder: (int oldIndex, int newIndex) {
-                    print("oldIndex: $oldIndex new index: $newIndex");
                     int destination = 0;
                     if (newIndex > oldIndex) {
                       destination = _exercises[newIndex-1].b.b;

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class StrengthSetWidget extends StatefulWidget {
+  final ExerciseSet _thisSet;
+  final Function() _notifyParent;
+
   const StrengthSetWidget({
     Key? key,
     required ExerciseSet inheritSet,
@@ -10,8 +13,6 @@ class StrengthSetWidget extends StatefulWidget {
   })  : _thisSet = inheritSet,
         _notifyParent = notifyParent,
         super(key: key);
-  final ExerciseSet _thisSet;
-  final Function() _notifyParent;
 
   @override
   _StrengthSetWidgetState createState() => _StrengthSetWidgetState();
@@ -76,15 +77,15 @@ class _StrengthSetWidgetState extends State<StrengthSetWidget> {
               ],
               keyboardType: TextInputType.number,
               onTap: () {
-                widget._notifyParent;
                 setState(() {});
                 _weightController.text = "";
+                widget._notifyParent();
               },
               onFieldSubmitted: (changes) {
                 _weightController.text = _details.weightAsString;
                 _weightController.selection =
                     _endOfSelection(_weightController);
-                widget._notifyParent;
+                widget._notifyParent();
               },
               onChanged: (changes) {
                 if (changes[0] == "0") {
@@ -98,13 +99,16 @@ class _StrengthSetWidgetState extends State<StrengthSetWidget> {
                 }
                 try {
                   _details.weight = double.parse(changes);
+                  print(_thisSet.description.name);
+                  print(_details.weight);
                 } catch (e) {
                   if (changes != "-" && changes != ".") {
                     _weightController.text = _details.weightAsString;
                     _weightController.selection =
                         _endOfSelection(_weightController);
                   }
-                }
+                };
+                widget._notifyParent();
               },
             ),
           ),
@@ -132,7 +136,7 @@ class _StrengthSetWidgetState extends State<StrengthSetWidget> {
               onFieldSubmitted: (changes) {
                 _repsController.text = _details.reps.toString();
                 _repsController.selection = _endOfSelection(_repsController);
-                widget._notifyParent;
+                widget._notifyParent();
               },
               onChanged: (changes) {
                 if (changes[0] == "0") {
@@ -152,6 +156,7 @@ class _StrengthSetWidgetState extends State<StrengthSetWidget> {
                         _endOfSelection(_repsController);
                   }
                 }
+                widget._notifyParent();
               },
             ),
           ),

@@ -81,13 +81,10 @@ class LiveWorkout extends AdjustableWorkout {
   }
 
   void reorderRange(Tuple<int, int> startRange, int endStart) {
-    print("Moving ${startRange.a}-${startRange.b} to $endStart");
     for (int i = startRange.a; i <= startRange.b; i++) {
       if(startRange.b > endStart) {
-        print("     ${_sets[startRange.b]} -> $endStart");
         reorderSet(startRange.b, endStart);
       } else {
-        print("${_sets[startRange.a]} -> $endStart");
         reorderSet(startRange.a, endStart);
       }
     }

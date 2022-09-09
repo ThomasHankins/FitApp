@@ -41,7 +41,8 @@ class _ExerciseWidgetState extends State<ExerciseWidget> {
 
   void refreshExercises() {
     setState(() {});
-    widget._notifyParent;
+    widget._notifyParent();
+
   }
 
   @override
@@ -56,7 +57,7 @@ class _ExerciseWidgetState extends State<ExerciseWidget> {
           return DismissibleWidget(
             onDismissed: (dismissDirection) {
               _thisWorkout.deleteSet(_setsRange.a + i);
-              widget._notifyParent();
+              refreshExercises();
             },
             key: Key('$i'),
             item: _thisWorkout.sets[_setsRange.a + i],
@@ -66,12 +67,12 @@ class _ExerciseWidgetState extends State<ExerciseWidget> {
                     const EdgeInsets.symmetric(horizontal: 0, vertical: .2),
                 child: _thisWorkout.currentSetIndex != i
                     ? StrengthSetWidget(
-                        inheritSet: _thisWorkout.sets[i],
-                        notifyParent: widget._notifyParent,
+                        inheritSet: _thisWorkout.sets[_setsRange.a + i],
+                        notifyParent: refreshExercises,
                       )
                     : StrengthSetExpandedWidget(
-                        inheritSet: _thisWorkout.sets[i],
-                        notifyParent: widget._notifyParent,
+                        inheritSet: _thisWorkout.sets[_setsRange.a + i],
+                        notifyParent: refreshExercises,
                       )),
           );
         },
