@@ -99,8 +99,6 @@ class _StrengthSetWidgetState extends State<StrengthSetWidget> {
                 }
                 try {
                   _details.weight = double.parse(changes);
-                  print(_thisSet.description.name);
-                  print(_details.weight);
                 } catch (e) {
                   if (changes != "-" && changes != ".") {
                     _weightController.text = _details.weightAsString;

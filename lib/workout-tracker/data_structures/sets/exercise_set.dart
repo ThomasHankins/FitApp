@@ -20,7 +20,7 @@ class ExerciseSet {
     _workoutId = workoutId;
     _complete = true;
     _time = timestamp;
-
+    _position = position;
     //insert into db on completion
     _id = await DatabaseManager().insertHistoricSet(this);
     details.saveToDatabase(_id);

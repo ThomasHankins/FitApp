@@ -66,14 +66,18 @@ class _ExerciseWidgetState extends State<ExerciseWidget> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 0, vertical: .2),
                 child: _thisWorkout.currentSetIndex != i
-                    ? StrengthSetWidget(
-                        inheritSet: _thisWorkout.sets[_setsRange.a + i],
-                        notifyParent: refreshExercises,
-                      )
+                    ? StrengthSetExpandedWidget(
+                  inheritSet: _thisWorkout.sets[_setsRange.a + i],
+                  notifyParent: refreshExercises,
+                  logSet: (){_thisWorkout.sets[_setsRange.a + i].complete(_thisWorkout.id, _thisWorkout.workoutTimer.elapsed.inSeconds, _setsRange.a + i);},
+                )
                     : StrengthSetExpandedWidget(
                         inheritSet: _thisWorkout.sets[_setsRange.a + i],
                         notifyParent: refreshExercises,
-                        logSet: (){_thisWorkout.sets[_setsRange.a + i].complete(_thisWorkout.id, _thisWorkout.workoutTimer.elapsed.inSeconds, _setsRange.a + i);},
+                        logSet: (){
+                          _thisWorkout.sets[_setsRange.a + i].complete(_thisWorkout.id, _thisWorkout.workoutTimer.elapsed.inSeconds, _setsRange.a + i);
+                          widget._notifyParent;
+                          },
                       )),
           );
         },

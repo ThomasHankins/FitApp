@@ -30,15 +30,15 @@ class _LogButtonState extends State<LogButtonWidget> {
 
     widget._callBack();
     setState(() {
-      if(!_pressed) {
+      if(_pressed) {
       _pressed = true;
       }
     });
   }
   @override
   Widget build(BuildContext context) {
-    return _pressed ? IconButton(onPressed: (){}, icon: const Icon(Icons.check)) :
-    IconButton(onPressed: (){}, icon: const Icon(Icons.circle));
+    return _pressed ? IconButton(onPressed: (){}, color: Colors.greenAccent, icon: const Icon(Icons.check)) :
+    IconButton(onPressed: buttonPress, color: Colors.green, icon: const Icon(Icons.circle));
   }
 
 }
