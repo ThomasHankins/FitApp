@@ -1,0 +1,1 @@
+/* abstract text changes/boxes into this class for resuse*/

@@ -1,3 +1,4 @@
+import 'package:fit_app/UI/screens/workout_screen/workout_screen_components/log_button.dart';
 import 'package:fit_app/workout-tracker/data_structures/structures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,11 +8,14 @@ class StrengthSetExpandedWidget extends StatefulWidget {
     Key? key,
     required ExerciseSet inheritSet,
     required Function() notifyParent,
-  })  : _thisSet = inheritSet,
+    required Function() logSet,
+  })  : _logSet = logSet,
+        _thisSet = inheritSet,
         _notifyParent = notifyParent,
         super(key: key);
   final ExerciseSet _thisSet;
   final Function() _notifyParent;
+  final Function() _logSet;
 
   @override
   _StrengthSetExpandedWidgetState createState() =>
@@ -153,6 +157,7 @@ class _StrengthSetExpandedWidgetState extends State<StrengthSetExpandedWidget> {
               },
             ),
           ),
+          LogButtonWidget(initStatus: _thisSet.isComplete, callBack: widget._logSet)
         ],
       ),
     );

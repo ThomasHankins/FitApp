@@ -73,6 +73,7 @@ class _ExerciseWidgetState extends State<ExerciseWidget> {
                     : StrengthSetExpandedWidget(
                         inheritSet: _thisWorkout.sets[_setsRange.a + i],
                         notifyParent: refreshExercises,
+                        logSet: (){_thisWorkout.sets[_setsRange.a + i].complete(_thisWorkout.id, _thisWorkout.workoutTimer.elapsed.inSeconds, _setsRange.a + i);},
                       )),
           );
         },
